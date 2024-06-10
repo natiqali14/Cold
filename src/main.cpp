@@ -20,6 +20,9 @@ void processInput(GLFWwindow *window);
 
 // settings
 ///
+void m(int arr[], int size ) {
+    arr[size -1]  =4;
+}
 
 int main()
 {
@@ -27,7 +30,13 @@ int main()
     Assimp::Importer importer;
     EventSystemHelper::initialise();
     WindowSystemUtility::initialise_glfw();
+    // --------------------------------  Creating main window  --------------------------------
+
     std::unique_ptr<GWindow> main_window = std::make_unique<GWindow>(SCR_WIDTH, SCR_HEIGHT, "OPENGL WINDOW");
+    main_window->should_hide_cursor(true);
+
+    // --------------------------------  Creating main window  --------------------------------
+
         // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -35,6 +44,9 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+    // ---------------------------------------
+    // render loop
+
     std::vector<u32> shader_ids;
     u32 v_shader = create_shader(GL_VERTEX_SHADER, vertexShaderSource);
     u32 f_shader = create_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
@@ -53,7 +65,7 @@ int main()
     while (!main_window->should_close_window())
     {
         u64 last_frame_time = main_clock.get_current_time_in_us();
-        std::cout<< "FRAME RATE: " << 1e6  / (last_frame_time - start) << "\n";
+        //std::cout<< "FRAME RATE: " << 1e6  / (last_frame_time - start) << "\n";
         start = main_clock.get_current_time_in_us();
         // input
         // -----
@@ -72,11 +84,10 @@ int main()
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
-        glfwSwapBuffers(main_window->get_window_ptr());
-        main_window->poll_input_events();
+        glfwSwapBuffers(main_window->get_window_ptr());   // swap buffers
+        main_window->poll_input_events();  //  polling input events in Event system Queue
         u64 end = main_clock.get_current_time_in_us();
         u64 time_taken = end - start;
-
         
         // --------------------------------   BELOW code is for sleep if needed.  --------------------------------
         // TODO find a better approach, here nanosleep is not accurate on mac os

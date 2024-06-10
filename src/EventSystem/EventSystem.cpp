@@ -38,7 +38,10 @@ void EventSystem::unsubscribe(EventType type, std::shared_ptr<IEventHandler> eve
 
 void EventSystem::trigger_event(EventType type, IEvent* event_data)
 {
-    if(!PFN_to_trigger.count(type)) return;
+    if(!PFN_to_trigger.count(type)) {
+        event_data->set_handled_flag(true);
+        return;
+    }
     for(auto& PFN_handle : PFN_to_trigger[type]) {
         event_handler_map[PFN_handle]->call(event_data);
     }

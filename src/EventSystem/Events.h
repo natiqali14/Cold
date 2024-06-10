@@ -3,7 +3,8 @@
 #include "../includes.h"
 
 // Enumeration for different types of events
-enum EventType : u16 {
+enum EventType : u16
+{
     EVENTTYPE_NONE,                  // No event
     EVENTTYPE_KEY_PRESSED,           // Key pressed event
     EVENTTYPE_KEY_RELEASED,          // Key released event
@@ -14,8 +15,9 @@ enum EventType : u16 {
 };
 
 // Interface for all events
-class IEvent {
-    bool b_handled;  // Flag to check if the event has been handled
+class IEvent
+{
+    bool b_handled; // Flag to check if the event has been handled
 
 public:
     /**
@@ -48,12 +50,13 @@ public:
     /**
      * @brief Destroy the IEvent object
      */
-    virtual ~IEvent() { }
+    virtual ~IEvent() {}
 };
 
 // Event for key press
-class KeyPressedEvent : public IEvent {
-    int key_code;  // Key code for the key press event
+class KeyPressedEvent : public IEvent
+{
+    int key_code; // Key code for the key press event
 
 public:
     /**
@@ -80,8 +83,9 @@ public:
 };
 
 // Event for key release
-class KeyReleasedEvent : public IEvent {
-    int key_code;  // Key code for the key release event
+class KeyReleasedEvent : public IEvent
+{
+    int key_code; // Key code for the key release event
 
 public:
     /**
@@ -108,9 +112,10 @@ public:
 };
 
 // Event for mouse move
-class KeyMouseMoved : public IEvent {
-    u16 x_val;  // X-coordinate for the mouse move event
-    u16 y_val;  // Y-coordinate for the mouse move event
+class KeyMouseMovedEvent : public IEvent
+{
+    f64 x_val; // X-coordinate for the mouse move event
+    f64 y_val; // Y-coordinate for the mouse move event
 
 public:
     /**
@@ -119,7 +124,7 @@ public:
      * @param x The x-coordinate for the mouse move event
      * @param y The y-coordinate for the mouse move event
      */
-    KeyMouseMoved(u16 x, u16 y)
+    KeyMouseMovedEvent(f64 x, f64 y)
         : IEvent(), x_val(x), y_val(y) {}
 
     /**
@@ -127,7 +132,7 @@ public:
      *
      * @return std::array<u16, 2> The coordinates for the mouse move event
      */
-    std::array<u16, 2> get_values() const { return {x_val, y_val}; }
+    std::array<f64, 2> get_values() const { return {x_val, y_val}; }
 
     /**
      * @brief Get the type of the event

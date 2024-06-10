@@ -15,6 +15,7 @@ private:  // functions
     explicit InputSystem();
     void key_input_callback(int key, int scancode, int action, int mods);
     void repeat_input_callbacks();
+    void mouse_input_callback(f64 x_pos, f64 y_pos);
     ~InputSystem() = default;
 
 

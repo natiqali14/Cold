@@ -16,5 +16,8 @@ public:
     GLFWwindow* get_window_ptr();
     void key_input_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
     void poll_input_events();
+    void should_hide_cursor(bool should_hide);
     ~GWindow();
+private:
+    void mouse_input_callback(GLFWwindow* window, f64 x_pos, f64 y_pos);
 };

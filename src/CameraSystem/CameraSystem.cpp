@@ -2,27 +2,47 @@
 #include "../EventSystem/EventSystemHelper.h"
 #include "../includes/GLFW/glfw3.h"
 
+
 CameraSystem::CameraSystem()
-: key_press_handler (std::make_shared<EventHandler<KeyPressedEvent>>
-   (EventHandler<KeyPressedEvent>([this](KeyPressedEvent* e) { onKeyPress(e); })))
-, key_release_handler (std::make_shared<EventHandler<KeyReleasedEvent>>
-   (EventHandler<KeyReleasedEvent>([this](KeyReleasedEvent* e) { on_key_release(e); })))
-, camera_view_space()
-, camera_position()
-, camera_direction(0,0,-1)
-, camera_up(0,1,0)
+    : key_press_handler  // Key press input handler
+    (
+        std::make_shared<EventHandler<KeyPressedEvent>>
+        (
+            [this](KeyPressedEvent *e) { 
+                onKeyPress(e); 
+            }
+        )
+    )
+    , key_release_handler (
+        std::make_shared<EventHandler<KeyReleasedEvent>>
+        (
+            [this](KeyReleasedEvent* e) {
+                on_key_release(e);
+            }
+        )
+    )
+    , key_mouse_moved_handler
+    (
+        std::make_shared<EventHandler<KeyMouseMovedEvent>>
+        (
+            [this](KeyMouseMovedEvent *e) {
+                on_mouse_moved(e); 
+            }
+        )
+    )
+    , camera_view_space()
+    , camera_position()
+    , camera_direction(0, 0, -1)
+    , camera_up(0, 1, 0)
 {
     EventSystemHelper::subscribe(EVENTTYPE_KEY_PRESSED, key_press_handler);
     EventSystemHelper::subscribe(EVENTTYPE_KEY_RELEASED, key_release_handler);
+    EventSystemHelper::subscribe(EVENTTYPE_MOUSE_MOVED, key_mouse_moved_handler);
 }
 
-    
-
-
-void CameraSystem::onKeyPress(KeyPressedEvent* event)
+void CameraSystem::onKeyPress(KeyPressedEvent *event)
 {
     u32 key = event->get_key_code();
-    std::cout << "pressed " << key << " end \n"; 
     event->set_handled_flag(true);
     // for forward movement
     switch (key)
@@ -43,17 +63,20 @@ void CameraSystem::onKeyPress(KeyPressedEvent* event)
         break;
     }
     camera_view_space = glm::lookAt(camera_position, camera_position + camera_direction, camera_up);
-    
-
 }
 
-void CameraSystem::on_key_release(KeyReleasedEvent* event)
+void CameraSystem::on_key_release(KeyReleasedEvent *event)
 {
-    std::cout << "released " << event->get_key_code() << " end \n"; 
+    event->set_handled_flag(true);
+}
+
+void CameraSystem::on_mouse_moved(KeyMouseMovedEvent *event)
+{
+    std::cout << event->get_values()[0] << " " << event->get_values()[1] << "\n";
     event->set_handled_flag(true);
 }
 
 glm::mat4 &CameraSystem::get_camera_view_space()
 {
-    return camera_view_space; 
+    return camera_view_space;
 }

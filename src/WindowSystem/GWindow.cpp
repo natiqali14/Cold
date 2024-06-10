@@ -25,7 +25,14 @@ GWindow::GWindow(u16 w, u16 h, std::string w_name)
         GWindow* this_window = static_cast<GWindow*> (glfwGetWindowUserPointer(w));
         this_window->key_input_callback(w,key,scancode,action,mods);
     };
-     glfwSetKeyCallback(window, lambda_ftn);
+
+    auto mouse_input_ftn_ptr = [](GLFWwindow* w, f64 x_pos, f64 y_pos) {
+        GWindow* my_window = static_cast<GWindow*> (glfwGetWindowUserPointer(w));
+        my_window->mouse_input_callback(w,x_pos,y_pos);
+    };
+
+    glfwSetKeyCallback(window, lambda_ftn);
+    glfwSetCursorPosCallback(window, mouse_input_ftn_ptr);
 
 }
 
@@ -55,8 +62,19 @@ void GWindow::poll_input_events()
     input_system->repeat_input_callbacks();
 }
 
+void GWindow::should_hide_cursor(bool should_hide)
+{
+    u32 value = should_hide ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL;
+    glfwSetInputMode(window, GLFW_CURSOR, value);
+}
+
 GWindow::~GWindow()
 {
     glfwSetWindowShouldClose(window, 1);
     glfwDestroyWindow(window);
+}
+
+void GWindow::mouse_input_callback(GLFWwindow *window, f64 x_pos, f64 y_pos)
+{
+    input_system->mouse_input_callback(x_pos, y_pos);
 }
