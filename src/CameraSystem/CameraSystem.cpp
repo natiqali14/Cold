@@ -34,6 +34,10 @@ CameraSystem::CameraSystem()
     , camera_position()
     , camera_direction(0, 0, -1)
     , camera_up(0, 1, 0)
+    , last_x(SCR_WIDTH / 2)
+    , last_y(SCR_HEIGHT / 2)
+    , pitch(0)
+    , yaw(0)
 {
     EventSystemHelper::subscribe(EVENTTYPE_KEY_PRESSED, key_press_handler);
     EventSystemHelper::subscribe(EVENTTYPE_KEY_RELEASED, key_release_handler);
@@ -72,7 +76,25 @@ void CameraSystem::on_key_release(KeyReleasedEvent *event)
 
 void CameraSystem::on_mouse_moved(KeyMouseMovedEvent *event)
 {
-    std::cout << event->get_values()[0] << " " << event->get_values()[1] << "\n";
+    f32 mouse_x = event->get_values()[0];
+    f32 mouse_y = event->get_values()[1];
+
+    f32 new_offset_x = mouse_x - last_x;
+    f32 new_offset_y = -mouse_y + last_y;
+    last_x = mouse_x;
+    last_y = mouse_y;
+    new_offset_x *= 0.1;
+    new_offset_y *= 0.1;
+    yaw += new_offset_x;
+    pitch += new_offset_y;
+    if(pitch > 89) pitch = 89;
+    else if (pitch < -89) pitch = -89;
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    camera_direction = glm::normalize(direction);
+    camera_view_space = glm::lookAt(camera_position, camera_position + camera_direction, camera_up);
     event->set_handled_flag(true);
 }
 

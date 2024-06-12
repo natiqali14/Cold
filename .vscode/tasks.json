@@ -22,6 +22,7 @@
 				"${workspaceFolder}/src/EventSystem/**.cpp",
 				"${workspaceFolder}/src/CameraSystem/**.cpp",
 				"${workspaceFolder}/src/Utility/Clock/**.cpp",
+				"${workspaceFolder}/src/Utility/**.cpp",
 				"${workspaceFolder}/glad.c",
 				"-o",
 				"${workspaceFolder}/app",

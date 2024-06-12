@@ -15,6 +15,7 @@
 #include "Utility/Clock/Clock.h"
 #include "Utility/helper.h"
 #include "comman_data.h"
+#include "Utility/Logger.h"
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -103,6 +104,12 @@ int main()
             u64 new_time = main_clock.get_current_time_in_us();
             remainin_time = new_time - start;
         }
+        ERROR("ERROR here");
+        WARNING("Warning here");
+        TRACE("TRACE here");
+        INFO("INFO here");
+        //Cold::Logger::log(Cold::Logger::LogType::LOGTYPE_ERROR, "main error %d", 2);
+        
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:

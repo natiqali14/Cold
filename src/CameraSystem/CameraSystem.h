@@ -24,4 +24,12 @@ private:
     glm::vec3 camera_position;
     glm::vec3 camera_direction;
     glm::vec3 camera_up;
+
+    // for angles
+    f32 last_x;
+    f32 last_y;
+
+    f32 pitch;
+    f32 yaw;
+
 };
