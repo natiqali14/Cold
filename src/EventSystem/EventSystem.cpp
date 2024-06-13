@@ -6,7 +6,7 @@ void EventSystem::initialise()
 }
 
 
-void EventSystem::subscribe(EventType type, std::shared_ptr<IEventHandler> event_handle)
+void EventSystem::subscribe(EventType type, IEventHandler* event_handle)
 {
      if(PFN_to_trigger.count(type)) {
         PFN_to_trigger[type].push_back(event_handle->get_uid());
@@ -21,7 +21,7 @@ void EventSystem::subscribe(EventType type, std::shared_ptr<IEventHandler> event
     
 }
 
-void EventSystem::unsubscribe(EventType type, std::shared_ptr<IEventHandler> event_handle)
+void EventSystem::unsubscribe(EventType type, IEventHandler* event_handle)
 {
     if(PFN_to_trigger.count(type)) {
         u32 id = event_handle->get_uid();

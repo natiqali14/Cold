@@ -4,32 +4,9 @@
 
 
 CameraSystem::CameraSystem()
-    : key_press_handler  // Key press input handler
-    (
-        std::make_shared<EventHandler<KeyPressedEvent>>
-        (
-            [this](KeyPressedEvent *e) { 
-                onKeyPress(e); 
-            }
-        )
-    )
-    , key_release_handler (
-        std::make_shared<EventHandler<KeyReleasedEvent>>
-        (
-            [this](KeyReleasedEvent* e) {
-                on_key_release(e);
-            }
-        )
-    )
-    , key_mouse_moved_handler
-    (
-        std::make_shared<EventHandler<KeyMouseMovedEvent>>
-        (
-            [this](KeyMouseMovedEvent *e) {
-                on_mouse_moved(e); 
-            }
-        )
-    )
+    : key_press_handler (BIND_EVENT_FUNCTION(KeyPressedEvent, &CameraSystem::onKeyPress, this))
+    , key_release_handler (BIND_EVENT_FUNCTION(KeyReleasedEvent, &CameraSystem::on_key_release, this))
+    , key_mouse_moved_handler (BIND_EVENT_FUNCTION(KeyMouseMovedEvent, &CameraSystem::on_mouse_moved, this))
     , camera_view_space()
     , camera_position()
     , camera_direction(0, 0, -1)
@@ -39,9 +16,25 @@ CameraSystem::CameraSystem()
     , pitch(0)
     , yaw(0)
 {
-    EventSystemHelper::subscribe(EVENTTYPE_KEY_PRESSED, key_press_handler);
-    EventSystemHelper::subscribe(EVENTTYPE_KEY_RELEASED, key_release_handler);
-    EventSystemHelper::subscribe(EVENTTYPE_MOUSE_MOVED, key_mouse_moved_handler);
+    // for key press events
+    EventSystemHelper::subscribe(EVENTTYPE_KEY_PRESSED, 
+    key_press_handler);
+    // for key release events
+    EventSystemHelper::subscribe(EVENTTYPE_KEY_RELEASED, 
+    key_release_handler);
+    // for move move event
+    EventSystemHelper::subscribe(EVENTTYPE_MOUSE_MOVED, 
+    key_mouse_moved_handler);
+}
+
+CameraSystem::~CameraSystem()
+{
+    EventSystemHelper::unsubscribe(EVENTTYPE_KEY_PRESSED,key_press_handler);
+    EventSystemHelper::unsubscribe(EVENTTYPE_KEY_RELEASED, key_release_handler);
+    EventSystemHelper::unsubscribe(EVENTTYPE_MOUSE_MOVED, key_mouse_moved_handler);
+    delete key_press_handler;
+    delete key_release_handler;
+    delete key_mouse_moved_handler;
 }
 
 void CameraSystem::onKeyPress(KeyPressedEvent *event)

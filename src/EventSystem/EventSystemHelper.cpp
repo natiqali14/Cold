@@ -8,12 +8,12 @@ void EventSystemHelper::initialise()
     event_system->initialise();
 }
 
-void EventSystemHelper::subscribe(EventType type, std::shared_ptr<IEventHandler> event_handle)
+void EventSystemHelper::subscribe(EventType type, IEventHandler* event_handle)
 {
     event_system->subscribe(type,event_handle);
 }
 
-void EventSystemHelper::unsubscribe(EventType type, std::shared_ptr<IEventHandler> event_handle)
+void EventSystemHelper::unsubscribe(EventType type, IEventHandler* event_handle)
 {
     event_system->unsubscribe(type, event_handle);
 }

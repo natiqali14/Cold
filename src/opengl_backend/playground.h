@@ -288,7 +288,7 @@ unsigned int indices[] = {  // note that we start from 0!
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 180, vertices, GL_DYNAMIC_DRAW);
-
+    glVertexAttribPointer()
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(float) * 3,(void*) 0);
     glEnableVertexAttribArray(0);
    // glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE, sizeof(float) * 5, (void*) (sizeof(float) * 3));

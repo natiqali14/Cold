@@ -108,8 +108,6 @@ int main()
         WARNING("Warning here");
         TRACE("TRACE here");
         INFO("INFO here");
-        //Cold::Logger::log(Cold::Logger::LogType::LOGTYPE_ERROR, "main error %d", 2);
-        
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:

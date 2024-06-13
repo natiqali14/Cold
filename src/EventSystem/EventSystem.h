@@ -8,15 +8,15 @@ public:
 
     void initialise();
     
-    void subscribe(EventType type, std::shared_ptr<IEventHandler> event_handle);
-    void unsubscribe(EventType type, std::shared_ptr<IEventHandler> event_handle);
+    void subscribe(EventType type, IEventHandler* event_handle);
+    void unsubscribe(EventType type, IEventHandler* event_handle);
     void trigger_event(EventType type, IEvent* event_data);
     void dispatch_events();
     void queue_events(EventType type, IEvent* event_data);
     void shut_down();
 private:
     std::unordered_map<EventType,std::vector<u32>> PFN_to_trigger;
-    std::unordered_map<u32, std::shared_ptr<IEventHandler>> event_handler_map;
+    std::unordered_map<u32, IEventHandler*> event_handler_map;
     // may be we need multiple Qs 
     // push events than need more time to process to high priority
     // and have another Q for low priority tasks (some light tasks).

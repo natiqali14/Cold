@@ -8,16 +8,16 @@ class CameraSystem
 {
 public:
     CameraSystem();
-    ~CameraSystem() = default; // for now
+    ~CameraSystem(); // for now
     void onKeyPress(KeyPressedEvent *event);
     void on_key_release(KeyReleasedEvent *event);
     void on_mouse_moved(KeyMouseMovedEvent *event);
     glm::mat4 &get_camera_view_space();
 
 private:
-    std::shared_ptr<EventHandler<KeyPressedEvent>> key_press_handler;
-    std::shared_ptr<EventHandler<KeyReleasedEvent>> key_release_handler;
-    std::shared_ptr<EventHandler<KeyMouseMovedEvent>> key_mouse_moved_handler;
+    EventHandler<KeyPressedEvent> *key_press_handler;
+    EventHandler<KeyReleasedEvent> *key_release_handler;
+    EventHandler<KeyMouseMovedEvent> *key_mouse_moved_handler;
     f32 camera_speed = 0.5f;
 
     glm::mat4 camera_view_space;
