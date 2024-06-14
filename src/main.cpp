@@ -104,10 +104,6 @@ int main()
             u64 new_time = main_clock.get_current_time_in_us();
             remainin_time = new_time - start;
         }
-        ERROR("ERROR here");
-        WARNING("Warning here");
-        TRACE("TRACE here");
-        INFO("INFO here");
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
