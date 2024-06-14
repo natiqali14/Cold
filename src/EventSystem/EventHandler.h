@@ -1,6 +1,6 @@
 
 #pragma once
-static int u_id_generator() {
+static inline int u_id_generator() {
     static int id = 0;
     return id++;
 }

@@ -1,16 +1,18 @@
+#pragma once 
 #include "includes.h"
-#pragma once
+#include "opengl_backend/buffers/VertexArrayBuffer.h"
+#include "opengl_backend/buffers/Vertexbuffer.h"
 // SOME extra structs down below just for prac
-struct buffer_data {
-    u32 vbo;
-    u32 vao;
-    u32 ebo;
-};
 
-struct CameraData {
-    glm::vec3 position = glm::vec3(0,0,0);
-};
 
+namespace Cold {
+    struct vertex_data {
+        std::vector<std::shared_ptr<VertexBuffer>> vertex_buffers;
+        std::vector<std::shared_ptr<VertexArrayBuffer>> vertex_array_buffers;
+    };
+
+    vertex_data v_data = {};
+}
 
 
 #define FRAME_RATE 60

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../includes/glad/glad.h"
+
 
 #include <glm/glm.hpp>
 #include <glm/vec2.hpp>

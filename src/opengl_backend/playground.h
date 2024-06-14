@@ -1,16 +1,20 @@
 
 // This is just a testing file for opengl, will be deleted
 #pragma once
-
+#include "../includes/glad/glad.h"
 #include "../comman_data.h"
 #include "../includes/GLFW/glfw3.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../stb_image.h"
 #include "../comman_data.h"
 #include "../CameraSystem/CameraSystem.h"
+#include "buffers/VertexArrayBuffer.h"
+#include "buffers/Vertexbuffer.h"
+#include "test_data.h"
+
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
-  // "layout (location = 1) in vec3 aCol;\n"
+    "layout (location = 1) in vec2 aCol;\n"
     "uniform mat4 model;\n"
     "uniform mat4 view;\n"
     "uniform mat4 p;\n"
@@ -18,7 +22,7 @@ const char *vertexShaderSource = "#version 330 core\n"
     "void main()\n"
     "{\n"
     "   gl_Position = p * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "   v_col = vec4(aPos.r+0.2,aPos.b+0.1,aPos.g+0.4,1.0);\n"
+    "   v_col = vec4(aPos.x + 0.3, aPos.y + 0.5, 1.0, 1.0);\n"
     "}\0";
 
 const char *vertexMultiInstanceSource = "#version 330 core\n"
@@ -131,7 +135,7 @@ void transformations(u32 shader_program) {
     glUniform1f(time_loc,time);
 }
 
-void render_cubes(u32 shader_program, buffer_data cube_1, buffer_data cube_2) {
+void render_cubes(u32 shader_program) {
     static CameraSystem* cs = new CameraSystem;
   //  std::cout << cs->camera_data.position.z << " " << cs->camera_data.position.x << " ";
     glm::mat4 vM = cs->get_camera_view_space();   //glm::translate(glm::mat4(1.0), glm::vec3(0.0f, 0.0f,-10.0));
@@ -152,8 +156,10 @@ void render_cubes(u32 shader_program, buffer_data cube_1, buffer_data cube_2) {
     glUseProgram(shader_program);
     glUniformMatrix4fv(loc3,1,GL_FALSE, glm::value_ptr(p));
 
-    glBindVertexArray(cube_1.vao);
-    glBindBuffer(GL_ARRAY_BUFFER, cube_1.vbo);
+    //glBindVertexArray(cube_1.vao);
+    Cold::v_data.vertex_array_buffers[0]->bind();
+    //glBindBuffer(GL_ARRAY_BUFFER, cube_1.vbo);
+    Cold::v_data.vertex_buffers[0]->bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
@@ -169,150 +175,84 @@ void render_cubes(u32 shader_program, buffer_data cube_1, buffer_data cube_2) {
     glUseProgram(shader_program);
     glUniformMatrix4fv(loc_5,1,GL_FALSE, glm::value_ptr(model_2));
 
-    glBindVertexArray(cube_2.vao);
-    glBindBuffer(GL_ARRAY_BUFFER, cube_2.vbo);
+     //glBindVertexArray(cube_1.vao);
+   // Cold::v_data.vertex_array_buffers[0]->bind();
+    //glBindBuffer(GL_ARRAY_BUFFER, cube_1.vbo);
+    Cold::v_data.vertex_buffers[1]->bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 }
 
-buffer_data initialise_triangle() {
-   GLfloat vertices[] = {
-	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
-	-1.0f,-1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f, // triangle 1 : end
-	1.0f, 1.0f,-1.0f, // triangle 2 : begin
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f,-1.0f, // triangle 2 : end
-	1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-
-	1.0f, 1.0f,-1.0f,
-	1.0f,-1.0f,-1.0f,
-	-1.0f,-1.0f,-1.0f,
-
-	-1.0f,-1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f,-1.0f,
-
-	1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f, 1.0f,
-	-1.0f,-1.0f,-1.0f,
-
-	-1.0f, 1.0f, 1.0f,
-	-1.0f,-1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f,
-
-	1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f,-1.0f,
-
-	1.0f,-1.0f,-1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f,
-
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f,-1.0f,
-	-1.0f, 1.0f,-1.0f,
-
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f,-1.0f,
-	-1.0f, 1.0f, 1.0f,
-
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f,
-	1.0f,-1.0f, 1.0f
-};
-
-GLfloat texcoord[]{
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f, //
-
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f, //
-
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f, //
-
-	0.0f, 0.0f,
-	1.0f, 1.0f,
-	0.0f, 1.0f, //
-
-	0.0f, 0.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f,
-
-	0.0f, 1.0f,
-	0.0f, 0.0f,
-	1.0f, 0.0f, //
-
-	0.0f, 1.0f,
-	1.0f, 0.0f,
-	1.0f, 1.0f, //
-
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f, //
-
-	1.0f, 0.0f,
-	1.0f, 1.0f, //
-	0.0f, 1.0f,
-
-	1.0f, 0.0f,
-	0.0f, 1.0f,
-	0.0f, 0.0f, //
-
-	1.0f, 1.0f,
-	0.0f, 1.0f,
-	1.0f, 0.0f, //
-};
-unsigned int indices[] = {  // note that we start from 0!
-    0, 1, 3,   // first triangle
-    1, 2, 3    // second triangle
-};
-
-    u32 vbo;
-    u32 vao;
-    u32 ebo;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+void  initialise_triangle() {
     
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 180, vertices, GL_DYNAMIC_DRAW);
-    glVertexAttribPointer()
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(float) * 3,(void*) 0);
-    glEnableVertexAttribArray(0);
-   // glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE, sizeof(float) * 5, (void*) (sizeof(float) * 3));
-   // glEnableVertexAttribArray(1);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER,0);
-    glGenBuffers(1,&ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices), indices, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-    buffer_data data = {vbo,vao,ebo};
-    glEnable(GL_DEPTH_TEST); 
-    glDepthFunc(GL_LEQUAL);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-    glFrontFace(GL_CW);
+    
+    
+    const auto  v_buffer_1 = 
+        std::shared_ptr<Cold::VertexBuffer>(
+                    Cold::VertexBuffer::create_vertex_buffer(
+                                                                vertices,
+                                                                sizeof(vertices),
+                                                                GL_DYNAMIC_DRAW,
+                                                                { { "aPos",3,GL_FLOAT,false,sizeof(float) * 3, 0 } }
+                                                            )
+    );
 
-    return data;
+    const auto  v_buffer_2 = 
+        std::shared_ptr<Cold::VertexBuffer>(
+                    Cold::VertexBuffer::create_vertex_buffer(
+                                                                vertices,
+                                                                sizeof(vertices),
+                                                                GL_DYNAMIC_DRAW,
+                                                                { { "aPos",3,GL_FLOAT,false,sizeof(float) * 3, 0 } }
+                                                            )
+    );
+
+    auto v_array_buffer = std::shared_ptr<Cold::VertexArrayBuffer> (
+            Cold::VertexArrayBuffer::create_vertex_array_buffer()
+    );
+    v_array_buffer->push_vertex_buffer(v_buffer_1);
+    v_array_buffer->push_vertex_buffer(v_buffer_2);
+    Cold::v_data.vertex_array_buffers.push_back(v_array_buffer);
+    Cold::v_data.vertex_buffers.push_back(v_buffer_1);
+    Cold::v_data.vertex_buffers.push_back(v_buffer_2);
+
+     
+    
+    
+    // u32 vbo;
+    // u32 vao;
+    // u32 ebo;
+    // glGenVertexArrays(1, &vao);
+    // glBindVertexArray(vao);
+    
+    // glGenBuffers(1, &vbo);
+    // glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 180, vertices, GL_DYNAMIC_DRAW);
+    // glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(float) * 3,(void*) 0);
+    // glEnableVertexAttribArray(0);
+    // glBindBuffer(GL_ARRAY_BUFFER,0);
+    // glGenBuffers(1,&ebo);
+    // glBindBuffer(GL_ARRAY_BUFFER, ebo);
+    // glBufferData(GL_ARRAY_BUFFER,sizeof(texcoord), texcoord, GL_DYNAMIC_DRAW);
+    // glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE, sizeof(float) * 2, (void*) (0));
+    // glEnableVertexAttribArray(1);
+    // glBindBuffer(GL_ARRAY_BUFFER,0);
+    // glBindVertexArray(0);
+    // buffer_data data = {vbo,vao,ebo};
+    // glEnable(GL_DEPTH_TEST); 
+    // glDepthFunc(GL_LEQUAL);
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_FRONT);
+    // glFrontFace(GL_CW);
+
+    return ;
 }
 
-void draw_triangle(buffer_data &data) {
-    glBindVertexArray(data.vao);
-    glBindBuffer(GL_ARRAY_BUFFER, data.vbo);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
+// void draw_triangle(buffer_data &data) {
+//     glBindVertexArray(data.vao);
+//     glBindBuffer(GL_ARRAY_BUFFER, data.vbo);
+//     glDrawArrays(GL_TRIANGLES, 0, 36);
+//     glBindVertexArray(0);
+//     glBindBuffer(GL_ARRAY_BUFFER, 0);
+// }

@@ -3,7 +3,6 @@
 #include "../includes.h"
 #include "../EventSystem/Events.h"
 #include "../EventSystem/EventHandler.h"
-#include "../comman_data.h"
 class CameraSystem
 {
 public:

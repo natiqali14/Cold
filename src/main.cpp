@@ -1,13 +1,13 @@
 
 
 #include "includes.h"
+#include "../includes/glad/glad.h"
 #include <iostream>
 #include "WindowSystem/GWindow.h"
 #include "WindowSystem/WindowSystemUtility.h"
 #include "opengl_backend/playground.h"
 #include <GLFW/glfw3.h>
 #include "EventSystem/EventSystemHelper.h"
-#include "CameraSystem/CameraSystem.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -16,6 +16,8 @@
 #include "Utility/helper.h"
 #include "comman_data.h"
 #include "Utility/Logger.h"
+
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -54,9 +56,10 @@ int main()
     shader_ids.push_back(v_shader);
     shader_ids.push_back(f_shader);
     u32 program = create_program(shader_ids);
+    glEnable(GL_DEPTH_TEST); 
+    glDepthFunc(GL_LEQUAL);
    
-    buffer_data data1 = initialise_triangle();
-    buffer_data data2 = initialise_triangle();
+   initialise_triangle();
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -66,7 +69,7 @@ int main()
     while (!main_window->should_close_window())
     {
         u64 last_frame_time = main_clock.get_current_time_in_us();
-        //std::cout<< "FRAME RATE: " << 1e6  / (last_frame_time - start) << "\n";
+        COLD_INFO("FRAME RATE %f", 1e6  / (last_frame_time - start));
         start = main_clock.get_current_time_in_us();
         // input
         // -----
@@ -80,7 +83,7 @@ int main()
 
         // draw our first triangle
         //transformations(program);
-        render_cubes(program, data1, data2);
+        render_cubes(program);
         glUseProgram(program);
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
