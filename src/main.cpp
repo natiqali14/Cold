@@ -17,15 +17,10 @@
 #include "comman_data.h"
 #include "Utility/Logger.h"
 
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
-// settings
-///
-void m(int arr[], int size ) {
-    arr[size -1]  =4;
-}
+
 
 int main()
 {

@@ -11,6 +11,7 @@
 #include "buffers/VertexArrayBuffer.h"
 #include "buffers/Vertexbuffer.h"
 #include "test_data.h"
+#include "../Utility/Logger.h"
 
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
@@ -180,8 +181,6 @@ void render_cubes(u32 shader_program) {
     //glBindBuffer(GL_ARRAY_BUFFER, cube_1.vbo);
     Cold::v_data.vertex_buffers[1]->bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
 }
 
 void  initialise_triangle() {
@@ -213,6 +212,7 @@ void  initialise_triangle() {
     );
     v_array_buffer->push_vertex_buffer(v_buffer_1);
     v_array_buffer->push_vertex_buffer(v_buffer_2);
+    // data making
     Cold::v_data.vertex_array_buffers.push_back(v_array_buffer);
     Cold::v_data.vertex_buffers.push_back(v_buffer_1);
     Cold::v_data.vertex_buffers.push_back(v_buffer_2);
