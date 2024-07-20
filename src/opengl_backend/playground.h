@@ -4,15 +4,14 @@
 #include "../includes/glad/glad.h"
 #include "../comman_data.h"
 #include "../includes/GLFW/glfw3.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "../stb_image.h"
+
 #include "../comman_data.h"
 #include "../CameraSystem/CameraSystem.h"
 #include "buffers/VertexArrayBuffer.h"
 #include "buffers/Vertexbuffer.h"
 #include "test_data.h"
 #include "../Utility/Logger.h"
-
+#include <TextureSystem.h>
 const char *vertexShaderSource = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
     "layout (location = 1) in vec2 aCol;\n"
@@ -218,7 +217,8 @@ void  initialise_triangle() {
     Cold::v_data.vertex_buffers.push_back(v_buffer_2);
 
      
-    
+   Cold::TextureSystem::initiate();
+   Cold::TextureSystem::texture_2D_immutable_create("Assets/image1.jpg", 4, GL_RGBA8);
     
     // u32 vbo;
     // u32 vao;

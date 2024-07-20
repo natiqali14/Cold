@@ -13,6 +13,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/includes/glm
     ${CMAKE_SOURCE_DIR}/includes/assimp
     ${CMAKE_SOURCE_DIR}/src/Utility
+    ${CMAKE_SOURCE_DIR}/src/third_party
+    ${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures
 )
 
 # Find required packages
@@ -31,6 +33,8 @@ file(GLOB_RECURSE SOURCES
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures/TextureSystem.cpp"
     "${CMAKE_SOURCE_DIR}/glad.c"
 )
+
+set(CMAKE_BUILD_TYPE Debug)
 
 # Create executable
 add_executable(app ${SOURCES})
