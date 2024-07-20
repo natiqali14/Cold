@@ -25,6 +25,7 @@
 				"${workspaceFolder}/src/Utility/**.cpp",
 				"${workspaceFolder}/src/opengl_backend/buffers/VertexArrayBuffer.cpp",
 				"${workspaceFolder}/src/opengl_backend/buffers/Vertexbuffer.cpp",
+				"${workspaceFolder}/src/opengl_backend/Textures/TextureSystem.cpp",
 				"${workspaceFolder}/glad.c",
 				"-o",
 				"${workspaceFolder}/app",
