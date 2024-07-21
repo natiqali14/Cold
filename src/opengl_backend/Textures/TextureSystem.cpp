@@ -76,20 +76,21 @@ namespace Cold {
         u8* image = stbi_load(cwd.c_str(), &width, &height,&channels, 0 ); 
         std::string msg = std::string("Cant load image ") + cwd.string();
         COLD_ASSERT(image != NULL, msg.c_str());
+        COLD_ERROR("Number of channels %d", channels);
         GLenum image_format = get_gl_format(channels);
 
         u32 id;
         // TODO right now as we are using 4.0 version of openGL, so for imutable we use glTexImage
         glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
-        glTexImage2D(GL_TEXTURE_2D, lod_level, internal_format, width, height, 0, image_format, GL_UNSIGNED_BYTE, image);
+        glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, image_format, GL_UNSIGNED_BYTE, image);
         // TODO right now only hard-coding liner filtering for textures, have to make is more customisable
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  //minification filter
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  //magnification filter
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  //minification filter
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  //magnification filter
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  //clamp horizontal
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  //clamp vertical   
 
-        glGenerateMipmap(GL_TEXTURE_2D);
+     //   glGenerateMipmap(GL_TEXTURE_2D);
 
         instance->textures.insert(
             {
@@ -106,6 +107,7 @@ namespace Cold {
             );
         }
         stbi_image_free(image);
+         glBindTexture(GL_TEXTURE_2D, 0);
         return id;
     }
 
@@ -117,10 +119,14 @@ namespace Cold {
             return u_id;
         }
 
-        std::string new_path = "../../../" + path;
+        std::filesystem::path cwd = std::filesystem::current_path();
+        cwd = cwd / path;
         i32 width, height, channels;
-        u8* image = stbi_load(new_path.c_str(), &width, &height,&channels, 0 ); 
+        u8* image = stbi_load(cwd.c_str(), &width, &height,&channels, 0 ); 
+        std::string msg = std::string("Cant load image ") + cwd.string();
+        COLD_ASSERT(image != NULL, msg.c_str());
         GLenum image_format = get_gl_format(channels);
+
         u32 id;
         glGenTextures(GL_TEXTURE_2D, &id);
         glBindTexture(GL_TEXTURE_2D, id);

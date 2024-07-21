@@ -45,6 +45,7 @@ int main()
     // ---------------------------------------
     // render loop
 
+    initialise_triangle();
     std::vector<u32> shader_ids;
     u32 v_shader = create_shader(GL_VERTEX_SHADER, vertexShaderSource);
     u32 f_shader = create_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
@@ -53,8 +54,7 @@ int main()
     u32 program = create_program(shader_ids);
     glEnable(GL_DEPTH_TEST); 
     glDepthFunc(GL_LEQUAL);
-   
-   initialise_triangle();
+
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
