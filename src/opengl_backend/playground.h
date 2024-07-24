@@ -73,10 +73,10 @@ const char *fragmentShaderSource = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
                                    "in vec2 tc;\n"
                                    "in vec4 v_col;\n"
-                                   "uniform sampler2D frameTexture[32];\n"
+                                   "uniform sampler2D frameTexture;\n"
                                    "void main()\n"
                                    "{\n"
-                                    "  vec4 col = texture(frameTexture[1], tc);\n"
+                                    "  vec4 col = texture(frameTexture, tc);\n"
                                    "   FragColor = vec4(col);\n"
                                    "}\n\0";
 
@@ -124,11 +124,15 @@ u32 create_program(std::vector<u32> &shaders_id)
 
 void transformations(u32 shader_program)
 {
+
+
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
     u32 loci = glGetUniformLocation(shader_program, "frameTexture");
-    glUniform1i(loci, 1);
-    glActiveTexture(GL_TEXTURE1);
+    glUniform1i(loci, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+
     f64 time = glfwGetTime();
     f32 translation = (time) * 70;
     glm::mat4 model = glm::mat4(1.0);
@@ -235,7 +239,8 @@ void initialise_triangle()
   //  v_array_buffer->push_vertex_buffer(v_buffer_2);
     // data making
     Cold::TextureSystem::initiate();
-    u32 u_id = Cold::TextureSystem::texture_2D_immutable_create("Assets/image1.jpg", 4, GL_RGB);
+    u32 u_id = Cold::TextureSystem::texture_2D_immutable_create("Assets/imag2.jpeg", 
+    {GL_RGB, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE});
 
     Cold::v_data.vertex_array_buffers.push_back(v_array_buffer);
     Cold::v_data.vertex_buffers.push_back(v_buffer_1);

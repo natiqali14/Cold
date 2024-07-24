@@ -1,4 +1,5 @@
 #include "WindowSystemUtility.h"
+#include <Logger.h>
 void WindowSystemUtility::initialise_glfw() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -15,7 +16,7 @@ glfwSetErrorCallback(&WindowSystemUtility::glfw_error_callback);
 }
 
 void WindowSystemUtility::glfw_error_callback(int error_code, const char* error_msg) {
-    std::cerr << "GLFW ERROR : code:" << error_code << " " << "Msg:" << error_msg << "\n";
+    COLD_ERROR("GLFW ERROR : code %d, Msg : %s", error_code, error_msg);
 }
 
 void WindowSystemUtility::frame_buffer_size_callback(GLFWwindow* window, int width, int height) {

@@ -9,12 +9,11 @@ namespace Cold {
     struct Texture {
         u32 width;
         u32 height;
-        GLenum internal_format;
         GLenum data_type;
-        u32 lod_level;
         u16 ref_count;
-        Texture(u32 w, u32 h, GLenum int_form, GLenum d_type, u32 lods, u16 count)
-        : width(w), height(h), internal_format(int_form), data_type(d_type), lod_level(lods), ref_count(count) {
+        TextureProps tex_props;
+        Texture(u32 w, u32 h, u16 count, TextureProps props)
+        : width(w), height(h), ref_count(count), tex_props(props) {
 
         }
     };
@@ -22,13 +21,13 @@ namespace Cold {
     static GLenum get_gl_format(u8 channel) {
     switch (channel) {
         case 1:
-            return GL_R8;
+            return GL_R;
         case 2:
-            return GL_RG16;
+            return GL_RG;
         case 3:
-            return GL_RGB8;
+            return GL_RGB;
         case 4:
-            return GL_RGBA8;
+            return GL_RGBA;
         default:
             return GL_R8;
     }
@@ -42,12 +41,15 @@ namespace Cold {
 
     void TextureSystem::shutdown()
     {
+        for(auto& pair : instance->textures) {
+            glDeleteTextures(1, &pair.first);
+        }
         delete instance;
         instance = nullptr;
         COLD_TRACE("Texture System Shutdown");
     }
 
-    bool TextureSystem::delete_texture(const u32 texture_id)
+    bool TextureSystem::delete_texture(const TextureId texture_id)
     {
         // texture id not found
         if(!instance->textures.count(texture_id)) return false;
@@ -62,40 +64,45 @@ namespace Cold {
         return false;
     }
 
-    u32 TextureSystem::texture_2D_immutable_create(const std::string &path, const i32 lod_level, const GLenum internal_format)
+    TextureId TextureSystem::texture_2D_immutable_create(const std::string &path, const TextureProps& props)
     {
         if(instance->external_textures_ref.count(path)) {
-            u32 u_id = instance->external_textures_ref.count(path);
+            TextureId u_id = instance->external_textures_ref.count(path);
             instance->textures[u_id]->ref_count++;
             return u_id;
         }
 
-        std::filesystem::path cwd = std::filesystem::current_path();
+        std::filesystem::path cwd = std::filesystem::current_path(); // TODO find better way
         cwd = cwd / path;
         i32 width, height, channels;
-        u8* image = stbi_load(cwd.c_str(), &width, &height,&channels, 0 ); 
+        u8* image = stbi_load(cwd.string().c_str(), &width, &height,&channels, 0 ); 
         std::string msg = std::string("Cant load image ") + cwd.string();
         COLD_ASSERT(image != NULL, msg.c_str());
-        COLD_ERROR("Number of channels %d", channels);
+        COLD_TRACE("Image of path %s, with width %d, height %d and channels %d", cwd.string().c_str(), width, height, channels);
         GLenum image_format = get_gl_format(channels);
 
-        u32 id;
+        TextureId id;
         // TODO right now as we are using 4.0 version of openGL, so for imutable we use glTexImage
         glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
-        glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, image_format, GL_UNSIGNED_BYTE, image);
+       
         // TODO right now only hard-coding liner filtering for textures, have to make is more customisable
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);  //minification filter
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);  //magnification filter
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  //clamp horizontal
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  //clamp vertical   
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, props.minification_filter);  //minification filter
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, props.magnification_fillter);  //magnification filter
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, props.wrap_x_axis);  //clamp horizontal
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, props.wrap_y_axis);  //clamp vertical   
 
-     //   glGenerateMipmap(GL_TEXTURE_2D);
+        if(width % 4 != 0 || height % 4 != 0) glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // if not then they have no 4 bytes allignment
 
+        glTexImage2D(GL_TEXTURE_2D, 0, props.internal_format, width, height, 0, image_format, props.image_data_type, image);
+        if(props.should_generate_mipmap)
+            glGenerateMipmap(GL_TEXTURE_2D);
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
         instance->textures.insert(
             {
                 id,
-                std::make_shared<Texture>(width, height, internal_format, GL_UNSIGNED_BYTE, lod_level, 1)
+                std::make_shared<Texture>(width, height, 1, std::move(props))
 
             }
         );
@@ -107,42 +114,46 @@ namespace Cold {
             );
         }
         stbi_image_free(image);
-         glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         return id;
     }
 
-    u32 TextureSystem::texture_2D_mutable_create(const std::string &path, const i32 lod_level, const GLenum internal_format)
+    TextureId TextureSystem::texture_2D_mutable_create(const std::string &path, const TextureProps& props)
     {
        if(instance->external_textures_ref.count(path)) {
-            u32 u_id = instance->external_textures_ref.count(path);
+            TextureId u_id = instance->external_textures_ref.count(path);
             instance->textures[u_id]->ref_count++;
             return u_id;
         }
 
-        std::filesystem::path cwd = std::filesystem::current_path();
+        std::filesystem::path cwd = std::filesystem::current_path(); // TODO find better way
         cwd = cwd / path;
         i32 width, height, channels;
-        u8* image = stbi_load(cwd.c_str(), &width, &height,&channels, 0 ); 
+        u8* image = stbi_load(cwd.string().c_str(), &width, &height,&channels, 0 ); 
         std::string msg = std::string("Cant load image ") + cwd.string();
         COLD_ASSERT(image != NULL, msg.c_str());
+        COLD_TRACE("Image of path %s, with width %d, height %d and channels %d", cwd.string().c_str(), width, height, channels);
         GLenum image_format = get_gl_format(channels);
 
-        u32 id;
-        glGenTextures(GL_TEXTURE_2D, &id);
+        TextureId id;
+        // TODO right now as we are using 4.0 version of openGL, so for imutable we use glTexImage
+        glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
-        glTexImage2D(GL_TEXTURE_2D, lod_level, internal_format, width, height, 0, image_format, GL_UNSIGNED_BYTE, image);
+       
         // TODO right now only hard-coding liner filtering for textures, have to make is more customisable
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);  //minification filter
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  //magnification filter
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  //clamp horizontal
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);  //clamp vertical   
-
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, props.minification_filter);  //minification filter
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, props.magnification_fillter);  //magnification filter
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, props.wrap_x_axis);  //clamp horizontal
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, props.wrap_y_axis);  //clamp vertical   
+       
+        glTexImage2D(GL_TEXTURE_2D, 0, props.internal_format, width, height, 0, image_format, props.image_data_type, image);
+        if(props.should_generate_mipmap)
+            glGenerateMipmap(GL_TEXTURE_2D);
 
         instance->textures.insert(
             {
                 id,
-                std::make_shared<Texture>(width, height, internal_format, GL_UNSIGNED_BYTE, lod_level, 1)
+                std::make_shared<Texture>(width, height, 1, std::move(props))
 
             }
         );
@@ -154,6 +165,7 @@ namespace Cold {
             );
         }
         stbi_image_free(image);
+        glBindTexture(GL_TEXTURE_2D, 0);
         return id;
     }
 }
