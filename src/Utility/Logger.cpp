@@ -6,13 +6,13 @@ namespace Cold {
         static std::string get_log_type(Cold::Logger::LogType type) {
             switch (type) {
                 case LogType::LOGTYPE_TRACE:
-                    return "-TRACE- ";
+                    return "[TRACE]: ";
                 case LogType::LOGTYPE_ERROR:
-                    return "-ERROR- ";
+                    return "[ERROR]: ";
                 case LogType::LOGTYPE_WARNING:
-                    return "-WARNING- ";
+                    return "[WARNING]: ";
                 case LogType::LOGTYPE_INFO:
-                    return "-INFO- ";
+                    return "[INFO]: ";
             }
         }
             

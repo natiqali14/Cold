@@ -239,7 +239,7 @@ void initialise_triangle()
   //  v_array_buffer->push_vertex_buffer(v_buffer_2);
     // data making
     Cold::TextureSystem::initiate();
-    u32 u_id = Cold::TextureSystem::texture_2D_immutable_create("Assets/imag2.jpeg", 
+    u32 u_id = Cold::TextureSystem::texture_2D_immutable_create("Assets/image4.jpeg", 
     {GL_RGB, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE});
 
     Cold::v_data.vertex_array_buffers.push_back(v_array_buffer);
