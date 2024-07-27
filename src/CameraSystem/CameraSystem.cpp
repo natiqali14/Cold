@@ -71,13 +71,13 @@ void CameraSystem::on_mouse_moved(KeyMouseMovedEvent *event)
 {
     f32 mouse_x = event->get_values()[0];
     f32 mouse_y = event->get_values()[1];
-
+   
     f32 new_offset_x = mouse_x - last_x;
     f32 new_offset_y = -mouse_y + last_y;
-    last_x = mouse_x;
+    last_x = mouse_x; 
     last_y = mouse_y;
-    new_offset_x *= 0.1;
-    new_offset_y *= 0.1;
+    new_offset_x *= 0.3;
+    new_offset_y *= 0.3;
     yaw += new_offset_x;
     pitch += new_offset_y;
     if(pitch > 89) pitch = 89;

@@ -17,10 +17,13 @@ namespace Cold {
             , _stride(stride)
             , _offset(offset) {}
     };
-    
+
+    class VertexBuffer;
+    using VertexBufferSPtr = std::shared_ptr<VertexBuffer>;
     class VertexBuffer {
+        
     public:
-        static VertexBuffer* create_vertex_buffer(float* data, u64 size, GLenum usage,
+        static VertexBufferSPtr create_vertex_buffer(void* data, u64 size, GLenum usage,
                                                   const std::initializer_list<VertexBufferLayout>& buffer_layout);
         void bind();
         void un_bind();
@@ -29,5 +32,6 @@ namespace Cold {
     private:
         u32 m_vbo_id;
         std::vector<VertexBufferLayout> m_buffer_layout_elements;
+        void* data_ptr;
     };
 }

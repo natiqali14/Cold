@@ -12,6 +12,11 @@
 #include "test_data.h"
 #include "../Utility/Logger.h"
 #include <TextureSystem.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <filesystem>
+#include <sstream>
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
                                  "layout (location = 1) in vec2 aTexCoord;\n"
@@ -168,7 +173,7 @@ void render_cubes(u32 shader_program)
     glm::mat4 vM = cs->get_camera_view_space(); // glm::translate(glm::mat4(1.0), glm::vec3(0.0f, 0.0f,-10.0));
     f64 time = glfwGetTime();
     f32 translation = (time) * 70;
-    glm::mat4 model_1 = glm::rotate(glm::mat4(1.0), glm::radians(translation), glm::vec3(0.0, 1.0, 0.0));
+    glm::mat4 model_1 = glm::mat4(1.0);// glm::rotate(glm::mat4(1.0), glm::radians(translation), glm::vec3(0.0, 1.0, 0.0));
 
     u32 loc_1 = glGetUniformLocation(shader_program, "view");
     glUseProgram(shader_program);
@@ -185,34 +190,106 @@ void render_cubes(u32 shader_program)
 
     // glBindVertexArray(cube_1.vao);
     Cold::v_data.vertex_array_buffers[0]->bind();
+   // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Cold::v_data.ebo_id);
+   // glDrawElements(GL_TRIANGLES, 697,GL_UNSIGNED_INT ,0);
     // glBindBuffer(GL_ARRAY_BUFFER, cube_1.vbo);
-    Cold::v_data.vertex_buffers[0]->bind();
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, 259683);
 
-    glm::mat4 model_2 = glm::translate(glm::mat4(1.0), glm::vec3(5.0f, 0.0f, 0.0f));
-    model_2 = glm::rotate(model_2, glm::radians(translation), glm::vec3(1.0, 0.0, 0.0));
-    glm::mat4 vM_2 = vM * model_1;
+    // glm::mat4 model_2 = glm::translate(glm::mat4(1.0), glm::vec3(5.0f, 0.0f, 0.0f));
+    // model_2 = glm::rotate(model_2, glm::radians(translation), glm::vec3(1.0, 0.0, 0.0));
+    // glm::mat4 vM_2 = vM * model_1;
 
-    u32 loc_4 = glGetUniformLocation(shader_program, "view");
-    glUseProgram(shader_program);
-    glUniformMatrix4fv(loc_4, 1, GL_FALSE, glm::value_ptr(vM_2));
+    // u32 loc_4 = glGetUniformLocation(shader_program, "view");
+    // glUseProgram(shader_program);
+    // glUniformMatrix4fv(loc_4, 1, GL_FALSE, glm::value_ptr(vM_2));
 
-    u32 loc_5 = glGetUniformLocation(shader_program, "model");
-    glUseProgram(shader_program);
-    glUniformMatrix4fv(loc_5, 1, GL_FALSE, glm::value_ptr(model_2));
+    // u32 loc_5 = glGetUniformLocation(shader_program, "model");
+    // glUseProgram(shader_program);
+    // glUniformMatrix4fv(loc_5, 1, GL_FALSE, glm::value_ptr(model_2));
 
-    // glBindVertexArray(cube_1.vao);
-    // Cold::v_data.vertex_array_buffers[0]->bind();
-    // glBindBuffer(GL_ARRAY_BUFFER, cube_1.vbo);
-  //  Cold::v_data.vertex_buffers[1]->bind();
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    // glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void assimp_testing() 
+{
+    Assimp::Importer importer;
+    std::filesystem::path cwd = std::filesystem::current_path();
+    std::string path = "Assets/falcon/falcon.obj";
+    cwd = cwd / path;
+    const aiScene* cottage =   importer.ReadFile(cwd.string(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
+    COLD_ASSERT(cottage != nullptr, "Can not open Obj file");
+
+    aiNode* root = cottage->mRootNode;
+    
+    COLD_TRACE("Cottage assets has Meshes %d, Materials %d, Textures %d, childeren %d t %d", 
+    cottage->mNumMeshes, cottage->mNumMaterials, cottage->mNumTextures, root->mNumChildren);
+    aiString t_path;
+    cottage->mMaterials[1]->GetTexture(aiTextureType_DIFFUSE, 0, &t_path);
+    aiMesh* cottage_mesh = nullptr;
+    if(cottage->mMeshes) {
+        for(int i = 0; i < cottage->mNumMeshes ;  i++) {
+            std::string mesh_name = cottage->mMeshes[i]->mName.C_Str();
+            if(strcmp(mesh_name.c_str(), "Plane_Plane.001") == 0) {
+                cottage_mesh = cottage->mMeshes[i];
+            }
+        }
+    }
+    if (cottage_mesh == nullptr) return;
+    COLD_TRACE("GOT COTTAGE MESH has a diffuse map %s", t_path.C_Str());
+    std::stringstream texture_path;
+    texture_path << "Assets/falcon/";
+    texture_path << t_path.C_Str();
+    aiVector3D* cottage_vertex_data = cottage_mesh->mVertices;
+    aiVector3D* cottage_tc_data = cottage_mesh->mTextureCoords[0];
+    u32 total_vertices = cottage_mesh->mNumVertices;
+   
+
+    std::vector<float> vertex_data;
+    // vertex_data.resize((total_vertices * 3));
+    for(u32 i = 0; i < total_vertices; i ++) {
+        vertex_data.push_back(cottage_vertex_data[i].x);
+        vertex_data.push_back(cottage_vertex_data[i].y);
+        vertex_data.push_back(cottage_vertex_data[i].z);
+        vertex_data.push_back(cottage_tc_data[i].x);
+        vertex_data.push_back(cottage_tc_data[i].y);
+    }
+
+    Cold::VertexBufferSPtr cottage_vert_buffer = Cold::VertexBuffer::create_vertex_buffer(
+        vertex_data.data(),
+        sizeof(float) * vertex_data.size(),
+        GL_DYNAMIC_DRAW,
+        {
+            {"aPos", 3, GL_FLOAT, false, sizeof(float) * 5, 0}, 
+            {"aTexCoord", 2, GL_FLOAT, false, sizeof(float) * 5, sizeof(float) * 3}
+        }
+    );
+    Cold::VertexArrayBufferSPtr cottage_vao = Cold::VertexArrayBuffer::create_vertex_array_buffer();
+    cottage_vao->push_vertex_buffers({cottage_vert_buffer});
+    Cold::v_data.vertex_array_buffers.push_back(cottage_vao);
+
+    auto u_id = Cold::TextureSystem::texture_2D_immutable_create(texture_path.str(),
+    {GL_RGBA, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE});
+
+    aiFace* face = cottage_mesh->mFaces;
+    
+    COLD_TRACE("Cottage Meshh total Vertices %d %d", cottage_mesh->mNumVertices, cottage_mesh->mNumFaces);
+    u32 ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * face->mNumIndices, face->mIndices, GL_DYNAMIC_DRAW);
+    Cold::v_data.ebo_id = ebo;
+
+
+    Cold::v_data.tex_id = u_id;
+    glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
+
+
 }
 
 void initialise_triangle()
 {
 
-    const auto v_buffer_1 =
-        std::shared_ptr<Cold::VertexBuffer>(
+    Cold::VertexBufferSPtr v_buffer_1 =
             Cold::VertexBuffer::create_vertex_buffer(
                 vertices_with_tc,
                 sizeof(vertices_with_tc),
@@ -220,33 +297,22 @@ void initialise_triangle()
                 {
                     {"aPos", 3, GL_FLOAT, false, sizeof(float) * 5, 0},                      // for vertices
                     {"aTexCoord", 2, GL_FLOAT, false, sizeof(float) * 5, sizeof(float) * 3} // for tc's
-                }));
+                });
 
-    // const auto v_buffer_2 =
-    //     std::shared_ptr<Cold::VertexBuffer>(
-    //         Cold::VertexBuffer::create_vertex_buffer(
-    //             vertices,
-    //             sizeof(vertices),
-    //             GL_DYNAMIC_DRAW,
-    //             {
-    //                 {"aPos", 2, GL_FLOAT, false, sizeof(float) * 3, 0},                      // for vertices
-    //             //    {"aTexCoord", 2, GL_FLOAT, false, sizeof(float) * 2, sizeof(float) * 36} // for tc's
-    //             }));
 
-    auto v_array_buffer = std::shared_ptr<Cold::VertexArrayBuffer>(
-        Cold::VertexArrayBuffer::create_vertex_array_buffer());
-    v_array_buffer->push_vertex_buffer(v_buffer_1);
+    auto v_array_buffer = 
+        Cold::VertexArrayBuffer::create_vertex_array_buffer();
+    v_array_buffer->push_vertex_buffers({v_buffer_1});
   //  v_array_buffer->push_vertex_buffer(v_buffer_2);
     // data making
     Cold::TextureSystem::initiate();
-    u32 u_id = Cold::TextureSystem::texture_2D_immutable_create("Assets/image4.jpeg", 
-    {GL_RGB, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE});
+    // u32 u_id = Cold::TextureSystem::texture_2D_immutable_create("Assets/image4.jpeg", 
+    // {GL_RGB, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE});
 
-    Cold::v_data.vertex_array_buffers.push_back(v_array_buffer);
-    Cold::v_data.vertex_buffers.push_back(v_buffer_1);
-    Cold::v_data.tex_id = u_id;
-    glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
-
+  //  Cold::v_data.vertex_array_buffers.push_back(v_array_buffer);
+  //  Cold::v_data.tex_id = u_id;
+   // glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
+    assimp_testing();
     // u32 vbo;
     // u32 vao;
     // u32 ebo;

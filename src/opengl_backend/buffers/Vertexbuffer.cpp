@@ -1,15 +1,17 @@
 #include "Vertexbuffer.h"
 namespace Cold {
 
-    VertexBuffer* 
-    VertexBuffer::create_vertex_buffer(float *data, u64 size, GLenum usage,
+    VertexBufferSPtr 
+    VertexBuffer::create_vertex_buffer(void *data, u64 size, GLenum usage,
                                        const std::initializer_list<VertexBufferLayout> &buffer_layout)
     {
-        VertexBuffer* object = new VertexBuffer;
+        VertexBufferSPtr object = std::make_shared<VertexBuffer>();
         glGenBuffers(1, &object->m_vbo_id);
         glBindBuffer(GL_ARRAY_BUFFER, object->m_vbo_id);
         glBufferData(GL_ARRAY_BUFFER, size, data, usage);
         object->m_buffer_layout_elements = buffer_layout ;
+        glBindBuffer(GL_ARRAY_BUFFER, 0); // unbind
+        object->data_ptr = data;
         return object;
         
     }

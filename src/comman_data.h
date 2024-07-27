@@ -7,9 +7,9 @@
 
 namespace Cold {
     struct vertex_data {
-        std::vector<std::shared_ptr<VertexBuffer>> vertex_buffers;
         std::vector<std::shared_ptr<VertexArrayBuffer>> vertex_array_buffers;
         u32 tex_id;
+        u32 ebo_id;
     };
 
     vertex_data v_data = {};
