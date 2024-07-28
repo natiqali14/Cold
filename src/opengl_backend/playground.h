@@ -17,6 +17,7 @@
 #include <assimp/postprocess.h>
 #include <filesystem>
 #include <sstream>
+#include <ModelLoader.h>
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
                                  "layout (location = 1) in vec2 aTexCoord;\n"
@@ -190,10 +191,11 @@ void render_cubes(u32 shader_program)
 
     // glBindVertexArray(cube_1.vao);
     Cold::v_data.vertex_array_buffers[0]->bind();
-   // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Cold::v_data.ebo_id);
-   // glDrawElements(GL_TRIANGLES, 697,GL_UNSIGNED_INT ,0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Cold::v_data.ebo_id);
+    glDrawElements(GL_TRIANGLES, 259683,GL_UNSIGNED_INT ,0);
     // glBindBuffer(GL_ARRAY_BUFFER, cube_1.vbo);
-    glDrawArrays(GL_TRIANGLES, 0, 259683);
+    //glDrawArrays(GL_TRIANGLES, 0, 259683);
+    
 
     // glm::mat4 model_2 = glm::translate(glm::mat4(1.0), glm::vec3(5.0f, 0.0f, 0.0f));
     // model_2 = glm::rotate(model_2, glm::radians(translation), glm::vec3(1.0, 0.0, 0.0));
@@ -269,19 +271,31 @@ void assimp_testing()
 
     auto u_id = Cold::TextureSystem::texture_2D_immutable_create(texture_path.str(),
     {GL_RGBA, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE});
-
-    aiFace* face = cottage_mesh->mFaces;
     
+    u32 total_indices = cottage_mesh->mNumFaces;
+    std::vector<u32> faces;
+    for(u32 i = 0; i < total_indices; i++) {
+        aiFace face = cottage_mesh->mFaces[i];
+        faces.push_back(face.mIndices[0]);
+        faces.push_back(face.mIndices[1]);
+        faces.push_back(face.mIndices[2]);
+    }
     COLD_TRACE("Cottage Meshh total Vertices %d %d", cottage_mesh->mNumVertices, cottage_mesh->mNumFaces);
     u32 ebo;
     glGenBuffers(1, &ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * face->mNumIndices, face->mIndices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(u32) * faces.size(), faces.data(), GL_DYNAMIC_DRAW);
     Cold::v_data.ebo_id = ebo;
 
 
     Cold::v_data.tex_id = u_id;
     glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
+
+
+
+    // asimp model loader testing
+
+    Cold::ModelLoader::model_load("Assets/sponza/sponza.obj",aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
 
 
 }

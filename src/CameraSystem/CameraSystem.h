@@ -18,6 +18,7 @@ private:
     EventHandler<KeyReleasedEvent> *key_release_handler;
     EventHandler<KeyMouseMovedEvent> *key_mouse_moved_handler;
     f32 camera_speed = 0.5f;
+    f32 rotation_factor = 3.0f;
 
     glm::mat4 camera_view_space;
     glm::vec3 camera_position;

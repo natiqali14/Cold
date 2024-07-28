@@ -56,6 +56,33 @@ void CameraSystem::onKeyPress(KeyPressedEvent *event)
     case GLFW_KEY_D:
         camera_position += (camera_speed * glm::normalize(glm::cross(camera_direction, camera_up)));
         break;
+    case GLFW_KEY_Q:
+        camera_position += (camera_speed * camera_up);
+        break;
+    case GLFW_KEY_E:
+        camera_position -= (camera_speed * camera_up);
+        break;
+    case GLFW_KEY_Z: { // rotation on left side
+        yaw -= camera_speed * rotation_factor;
+        glm::vec3 direction;
+        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        direction.y = sin(glm::radians(pitch));
+        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+        camera_direction = glm::normalize(direction);
+        camera_view_space = glm::lookAt(camera_position, camera_position + camera_direction, camera_up);
+    }
+        
+        break;
+    case GLFW_KEY_C: { // rotation on right side
+        yaw += camera_speed * rotation_factor;
+        glm::vec3 direction;
+        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        direction.y = sin(glm::radians(pitch));
+        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+        camera_direction = glm::normalize(direction);
+        camera_view_space = glm::lookAt(camera_position, camera_position + camera_direction, camera_up);
+    }
+        break;
     default:
         break;
     }
