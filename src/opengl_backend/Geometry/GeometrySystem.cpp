@@ -1,4 +1,3 @@
-#pragma once
 #include "GeometrySystem.h"
 #include <Logger.h>
 namespace Cold {
@@ -70,6 +69,21 @@ namespace Cold {
             return false;
         }
         return true;
+    }
+
+    void GeometrySystem::set_material(GeometryId id, const Material &material)
+    {
+        COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
+        GeometrySPtr geometry = instance->geometries.at(id);
+        geometry->set_material(material);
+
+    }
+
+    TransformSPtr GeometrySystem::get_material_transform(GeometryId id)
+    {
+        COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
+        GeometrySPtr geometry = instance->geometries.at(id);
+        return geometry->get_transform();
     }
 
     GeometrySystem::~GeometrySystem()

@@ -18,9 +18,11 @@
 #include <filesystem>
 #include <sstream>
 #include <ModelLoader.h>
+#include <StaticMesh.h>
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
-                                 "layout (location = 1) in vec2 aTexCoord;\n"
+                                 "layout (location = 1) in vec3 aNormal;\n"
+                                 "layout (location = 2) in vec2 aTexCoord;\n"
                                  "uniform mat4 model;\n"
                                  "uniform mat4 view;\n"
                                  "uniform mat4 p;\n"
@@ -123,7 +125,7 @@ u32 create_program(std::vector<u32> &shaders_id)
     glDeleteShader(shaders_id[0]);
     glDeleteShader(shaders_id[1]);
 
-    
+    Cold::v_data.program_id = program;
 
     return program;
 }
@@ -169,30 +171,31 @@ void transformations(u32 shader_program)
 void render_cubes(u32 shader_program)
 {
     static CameraSystem *cs = new CameraSystem;
-  //  glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
-    //  std::cout << cs->camera_data.position.z << " " << cs->camera_data.position.x << " ";
-    glm::mat4 vM = cs->get_camera_view_space(); // glm::translate(glm::mat4(1.0), glm::vec3(0.0f, 0.0f,-10.0));
-    f64 time = glfwGetTime();
-    f32 translation = (time) * 70;
-    glm::mat4 model_1 = glm::mat4(1.0);// glm::rotate(glm::mat4(1.0), glm::radians(translation), glm::vec3(0.0, 1.0, 0.0));
+//   //  glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
+//     //  std::cout << cs->camera_data.position.z << " " << cs->camera_data.position.x << " ";
+//     glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
+//     glm::mat4 vM = cs->get_camera_view_space(); // glm::translate(glm::mat4(1.0), glm::vec3(0.0f, 0.0f,-10.0));
+//     f64 time = glfwGetTime();
+//     f32 translation = (time) * 70;
+//     glm::mat4 model_1 = glm::mat4(1.0);// glm::rotate(glm::mat4(1.0), glm::radians(translation), glm::vec3(0.0, 1.0, 0.0));
 
-    u32 loc_1 = glGetUniformLocation(shader_program, "view");
-    glUseProgram(shader_program);
-    glUniformMatrix4fv(loc_1, 1, GL_FALSE, glm::value_ptr(vM));
+//     u32 loc_1 = glGetUniformLocation(shader_program, "view");
+//     glUseProgram(shader_program);
+//     glUniformMatrix4fv(loc_1, 1, GL_FALSE, glm::value_ptr(vM));
 
-    u32 loc_2 = glGetUniformLocation(shader_program, "model");
-    glUseProgram(shader_program);
-    glUniformMatrix4fv(loc_2, 1, GL_FALSE, glm::value_ptr(model_1));
+//     u32 loc_2 = glGetUniformLocation(shader_program, "model");
+//     glUseProgram(shader_program);
+//     glUniformMatrix4fv(loc_2, 1, GL_FALSE, glm::value_ptr(model_1));
 
-    glm::mat4 p = glm::perspective(45.0f, 800.f / 600.f, 0.1f, 200.f);
-    u32 loc3 = glGetUniformLocation(shader_program, "p");
-    glUseProgram(shader_program);
-    glUniformMatrix4fv(loc3, 1, GL_FALSE, glm::value_ptr(p));
+//     glm::mat4 p = glm::perspective(45.0f, 800.f / 600.f, 0.1f, 200.f);
+//     u32 loc3 = glGetUniformLocation(shader_program, "p");
+//     glUseProgram(shader_program);
+//     glUniformMatrix4fv(loc3, 1, GL_FALSE, glm::value_ptr(p));
 
-    // glBindVertexArray(cube_1.vao);
-    Cold::v_data.vertex_array_buffers[0]->bind();
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Cold::v_data.ebo_id);
-    glDrawElements(GL_TRIANGLES, 259683,GL_UNSIGNED_INT ,0);
+//     // glBindVertexArray(cube_1.vao);
+//     Cold::v_data.vertex_array_buffers[0]->bind();
+//     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Cold::v_data.ebo_id);
+//     glDrawElements(GL_TRIANGLES, 25968,GL_UNSIGNED_INT ,0);
     // glBindBuffer(GL_ARRAY_BUFFER, cube_1.vbo);
     //glDrawArrays(GL_TRIANGLES, 0, 259683);
     
@@ -210,6 +213,15 @@ void render_cubes(u32 shader_program)
     // glUniformMatrix4fv(loc_5, 1, GL_FALSE, glm::value_ptr(model_2));
 
     // glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+
+
+    Cold::v_data.cs = cs;
+   if(Cold::v_data.m && Cold::v_data.cs) {
+    Cold::v_data.m->render();
+   }
+
 }
 
 void assimp_testing() 
@@ -242,6 +254,7 @@ void assimp_testing()
     texture_path << "Assets/falcon/";
     texture_path << t_path.C_Str();
     aiVector3D* cottage_vertex_data = cottage_mesh->mVertices;
+    aiVector3D* norms = cottage_mesh->mNormals;
     aiVector3D* cottage_tc_data = cottage_mesh->mTextureCoords[0];
     u32 total_vertices = cottage_mesh->mNumVertices;
    
@@ -252,6 +265,9 @@ void assimp_testing()
         vertex_data.push_back(cottage_vertex_data[i].x);
         vertex_data.push_back(cottage_vertex_data[i].y);
         vertex_data.push_back(cottage_vertex_data[i].z);
+        vertex_data.push_back(norms[i].x);
+        vertex_data.push_back(norms[i].y);
+        vertex_data.push_back(norms[i].z);
         vertex_data.push_back(cottage_tc_data[i].x);
         vertex_data.push_back(cottage_tc_data[i].y);
     }
@@ -261,8 +277,9 @@ void assimp_testing()
         sizeof(float) * vertex_data.size(),
         GL_DYNAMIC_DRAW,
         {
-            {"aPos", 3, GL_FLOAT, false, sizeof(float) * 5, 0}, 
-            {"aTexCoord", 2, GL_FLOAT, false, sizeof(float) * 5, sizeof(float) * 3}
+            {"aPos", 3, GL_FLOAT, false, sizeof(float) * 8, 0}, 
+             {"aNormal", 3, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 3},
+            {"aTexCoord", 2, GL_FLOAT, false, sizeof(float) * 8, sizeof(float) * 6}
         }
     );
     Cold::VertexArrayBufferSPtr cottage_vao = Cold::VertexArrayBuffer::create_vertex_array_buffer();
@@ -295,8 +312,9 @@ void assimp_testing()
 
     // asimp model loader testing
 
-    Cold::ModelLoader::model_load("Assets/sponza/sponza.obj",aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
-
+   auto sm =  Cold::ModelLoader::model_load("Assets/sponza/sponza.obj",aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
+    sm->buffer_to_gpu();
+    Cold::v_data.m = sm;
 
 }
 
@@ -326,7 +344,7 @@ void initialise_triangle()
   //  Cold::v_data.vertex_array_buffers.push_back(v_array_buffer);
   //  Cold::v_data.tex_id = u_id;
    // glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
-    assimp_testing();
+  //  assimp_testing();
     // u32 vbo;
     // u32 vao;
     // u32 ebo;
@@ -353,6 +371,9 @@ void initialise_triangle()
     // glCullFace(GL_FRONT);
     // glFrontFace(GL_CW);
 
+auto sm =  Cold::ModelLoader::model_load("Assets/sponza/sponza.obj",aiProcess_Triangulate | aiProcess_FlipUVs );
+    sm->buffer_to_gpu();
+    Cold::v_data.m = sm;
     return;
 }
 

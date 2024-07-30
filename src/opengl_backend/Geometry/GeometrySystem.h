@@ -12,7 +12,7 @@ namespace Cold {
         u32 vertex_count;
         aiVector3D* normals;
         u32 normal_count;
-        aiVector2D* tex_coords;
+        aiVector3D* tex_coords;
         u32 tex_coords_count;
         aiFace* faces;
         u32 faces_count;
@@ -31,6 +31,8 @@ namespace Cold {
         static void render_geometry(GeometryId id);
         static bool delete_geometry(GeometryId id);
         static bool should_load_geometry_data(const std::string& geometry_path);
+        static void set_material(GeometryId id, const Material& material);
+        static TransformSPtr get_material_transform(GeometryId id);
     private: 
         GeometrySystem() = default;
         ~GeometrySystem();

@@ -4,6 +4,8 @@
 #include <VertexBuffer.h>
 #include <VertexArrayBuffer.h>
 #include <assimp/scene.h>
+#include <Transforms.h>
+
 namespace Cold {
 
     struct Vertex {
@@ -12,7 +14,12 @@ namespace Cold {
         glm::vec2 tex_coord; 
     };
 
-    
+    struct Material { /* Just for now will move it to its on class and sub system*/
+        std::string diff_tex;
+        u32 diff_tex_id;
+    };
+
+
     class Geometry {
     public:
         Geometry(GLenum geometry_usage);
@@ -21,12 +28,14 @@ namespace Cold {
 
         void push_vertex_data(aiVector3D* vertices, u32 vertex_count,
                               aiVector3D* normals, u32 normal_count,
-                              aiVector2D* tex_coords, u32 tex_coords_count);
+                              aiVector3D* tex_coords, u32 tex_coords_count);
         void push_indicies(aiFace* faces, u32 face_count);
         void buffer_data_to_gpu();
         void delete_data_from_gpu();
 
         void render();
+        void set_material(const Material& material);
+        TransformSPtr get_transform();
         inline const u32 get_ref_count() const {return ref_count;}
         inline void increament_ref_count() {ref_count++;}
         inline void decreament_ref_count() {ref_count--;}
@@ -46,6 +55,9 @@ namespace Cold {
         GLenum usage;
         u32 total_vertex_count;
         u32 ref_count;
+        Material geometry_material;
+        TransformSPtr transform;
+
     };
 
 

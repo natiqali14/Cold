@@ -93,8 +93,8 @@ namespace Cold {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, props.wrap_y_axis);  //clamp vertical   
 
         if(width % 4 != 0 || height % 4 != 0) glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // if not then they have no 4 bytes allignment
-
-        glTexImage2D(GL_TEXTURE_2D, 0, props.internal_format, width, height, 0, image_format, props.image_data_type, image);
+        // TODO for now its better to use image_format got from channels
+        glTexImage2D(GL_TEXTURE_2D, 0, image_format, width, height, 0, image_format, props.image_data_type, image);
         if(props.should_generate_mipmap)
             glGenerateMipmap(GL_TEXTURE_2D);
 

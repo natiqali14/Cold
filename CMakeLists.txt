@@ -18,6 +18,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils
+    ${CMAKE_SOURCE_DIR}/src/CameraSystem
     ${CMAKE_SOURCE_DIR}/src
 
 )
