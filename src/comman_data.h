@@ -14,7 +14,7 @@ namespace Cold {
         u32 ebo_id;
         u32 program_id;
         CameraSystem* cs;
-        Mesh* m;
+        StaticMesh* m;
     };
 
     inline vertex_data v_data = {};

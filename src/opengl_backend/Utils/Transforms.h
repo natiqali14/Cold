@@ -4,13 +4,21 @@ namespace Cold {
     class Transform;
     using TransformSPtr = std::shared_ptr<Transform>;
     class Transform {
+        glm::vec3 position {glm::vec3(0.0f)};
+        glm::quat rotation {glm::identity<glm::quat>()}; // TODO make it to quant
+        glm::vec3 _scale {glm::vec3(1.0f)};;
+        bool is_dirty {false};
+
+        void re_calculate_transform_members();
     public:
         void set_parent(TransformSPtr p);
         glm::mat4 get_world_model();
         glm::mat4 get_local_model();
-        glm::vec3 position {glm::vec3(0.0f)};
-        glm::vec3 rotation {glm::vec3(0.0f)}; // TODO make it to quant
-        glm::vec3 scale {glm::vec3(1.0f)};;
+        void translate(glm::vec3 amount);
+        void set_absolute_position(glm::vec3 position);
+        void scale(glm::vec3 amount);
+        void set_absolute_scale(glm::vec3 _scale);
+        void rotate(glm::vec3 amount);
 
         TransformSPtr parent {nullptr};
 

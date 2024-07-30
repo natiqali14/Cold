@@ -3,13 +3,14 @@
 #include <GeometrySystem.h>
 #include <Transforms.h>
 namespace Cold {
-    class Mesh {
+    class StaticMesh {
     public:
-        Mesh(TransformSPtr root);
-        ~Mesh();
+        StaticMesh(TransformSPtr root);
+        ~StaticMesh();
         void push_geometry(GeometryId geometry_id);
         void buffer_to_gpu();
         void render();
+        TransformSPtr get_transform();
     private:
         TransformSPtr root_transform;
         std::vector<GeometryId> geometries;

@@ -1,0 +1,23 @@
+[] Generalise the model load class
+    [] memory de-allocation for assimp
+[] Geometry system 
+    [] Geommetry system memory allocation
+    [] Transform class update have more functions and moere useful
+[] Have something like a mesh system
+    [] Mesh system completion
+[] Shader system
+    [] normals etc
+    [] lighning
+[] Material system
+[] Connection between renderer backend and glfw window
+    [] some frame packet logic to pass data to and from backend
+[] Event system make it multi-threaded
+[] Camera system
+    [] Have a proper camera clas for multi-cam setup
+
+
+
+
+--------------------------------------- Long plans ---------------------------------------
+[] Integration of Imgui
+[] finish all todos ><

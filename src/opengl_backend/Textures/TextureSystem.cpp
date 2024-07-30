@@ -67,7 +67,7 @@ namespace Cold {
     TextureId TextureSystem::texture_2D_immutable_create(const std::string &path, const TextureProps& props)
     {
         if(instance->external_textures_ref.count(path)) {
-            TextureId u_id = instance->external_textures_ref.count(path);
+            TextureId u_id = instance->external_textures_ref[path];
             instance->textures[u_id]->ref_count++;
             return u_id;
         }

@@ -315,6 +315,9 @@ void assimp_testing()
    auto sm =  Cold::ModelLoader::model_load("Assets/sponza/sponza.obj",aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
     sm->buffer_to_gpu();
     Cold::v_data.m = sm;
+    auto sm_transform = sm->get_transform();
+    sm_transform->scale({0.05,0.05,0.05});
+    sm_transform->translate({100,0,0});
 
 }
 

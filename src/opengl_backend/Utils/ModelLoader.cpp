@@ -16,11 +16,11 @@ namespace Cold {
     {
     }
 
-    Mesh* ModelLoader::model_load(const std::string &file_path, u32 flags)
+    StaticMesh* ModelLoader::model_load(const std::string &file_path, u32 flags)
     {
         GeometrySystem::initiate(); // TODO move this
         TransformSPtr root_t = std::make_shared<Transform>();
-        Mesh* static_mesh = new Mesh(root_t);
+        StaticMesh* static_mesh = new StaticMesh(root_t);
         std::filesystem::path cwd = std::filesystem::current_path();
         cwd = cwd / file_path;
         Assimp::Importer importer;
