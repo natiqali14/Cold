@@ -15,6 +15,7 @@ namespace Cold {
         u32 program_id;
         CameraSystem* cs;
         StaticMesh* m;
+        std::vector<StaticMesh*> meshes;
     };
 
     inline vertex_data v_data = {};

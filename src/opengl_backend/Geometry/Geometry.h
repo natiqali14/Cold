@@ -39,24 +39,25 @@ namespace Cold {
         inline const u32 get_ref_count() const {return ref_count;}
         inline void increament_ref_count() {ref_count++;}
         inline void decreament_ref_count() {ref_count--;}
+
         ~Geometry();
     private:
         /** 
-         * gpu vertex data for a geometry
-         * can have vertex data or some thing else like normal maps, texture co-oridnates etc
+         * gpu vertex data for a geometry 
         */
-        std::vector<VertexBufferSPtr> vbo_vector;
          std::vector<Vertex> verticies;
+        u32 total_vertex_count;
+        u32 ref_count;
         /* unique VAO for this geometry  */
         VertexArrayBufferSPtr vao;
+        Material geometry_material;
+         
+        TransformSPtr transform;
+        GLenum usage;
+
         /* ebo data */
         u32 ebo;
         std::vector<u32> indicies;
-        GLenum usage;
-        u32 total_vertex_count;
-        u32 ref_count;
-        Material geometry_material;
-        TransformSPtr transform;
 
     };
 

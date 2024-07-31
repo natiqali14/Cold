@@ -11,7 +11,7 @@ namespace Cold {
     public:
         static void initiate();
         static void shutdown();
-        static StaticMesh*  model_load(const std::string& file_path, u32 flags);
+        static void model_load(const std::string& file_path, u32 flags, StaticMesh* mesh);
 
     private:
     };

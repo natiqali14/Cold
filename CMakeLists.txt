@@ -13,12 +13,14 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/includes/glm
     ${CMAKE_SOURCE_DIR}/includes/assimp
     ${CMAKE_SOURCE_DIR}/src/Utility
+    ${CMAKE_SOURCE_DIR}/src/Utility/Clock
     ${CMAKE_SOURCE_DIR}/src/third_party
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils
     ${CMAKE_SOURCE_DIR}/src/CameraSystem
+    ${CMAKE_SOURCE_DIR}/src/EventSystem
     ${CMAKE_SOURCE_DIR}/src
 
 )

@@ -28,6 +28,7 @@ namespace Cold {
         void bind();
         void un_bind();
         const std::vector<VertexBufferLayout>& get_buffer_elements();
+        ~VertexBuffer();
 
     private:
         u32 m_vbo_id;

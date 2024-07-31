@@ -12,10 +12,10 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Utility/Clock/Clock.h"
 #include "Utility/helper.h"
 #include "comman_data.h"
 #include "Utility/Logger.h"
+#include <Clock.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -24,7 +24,7 @@ void processInput(GLFWwindow *window);
 
 int main()
 {
-    Clock main_clock;
+    Cold::Clock main_clock;
     Assimp::Importer importer;
     EventSystemHelper::initialise();
     WindowSystemUtility::initialise_glfw();

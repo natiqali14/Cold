@@ -17,12 +17,15 @@ namespace Cold {
     GeometryId GeometrySystem::create_geometry(const std::string& geometry_path)
     {
         if(instance->geometry_path_refs.count(geometry_path)) {
-            return instance->geometry_path_refs[geometry_path];
+            auto geomerty_ref = instance->geometry_path_refs[geometry_path];
+            instance->geometries[geomerty_ref]->increament_ref_count();
+            return geomerty_ref;
         }
         GeometryId id = generate_id();
         GeometrySPtr geometry_ptr = std::make_shared<Geometry>(GL_STATIC_DRAW);
         instance->geometries.insert({id, geometry_ptr});
         instance->geometry_path_refs.insert({geometry_path, id});
+        COLD_TRACE("Geometry created with path %s and id %d", geometry_path, id);
         return id;
     }
 
@@ -59,10 +62,16 @@ namespace Cold {
 
     bool GeometrySystem::delete_geometry(GeometryId id)
     {
-        // TODO here fill it
+        COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
+        auto geometry_ref = instance->geometries[id];
+        geometry_ref->decreament_ref_count();
+        if(geometry_ref->get_ref_count() == 0) {
+            geometry_ref.reset();
+        }
         return false;
     }
 
+    /* NO in use this function*/
     bool GeometrySystem::should_load_geometry_data(const std::string &geometry_path)
     {
         if(instance->geometry_path_refs.count(geometry_path)) {
@@ -79,7 +88,7 @@ namespace Cold {
 
     }
 
-    TransformSPtr GeometrySystem::get_material_transform(GeometryId id)
+    TransformSPtr GeometrySystem::get_transform(GeometryId id)
     {
         COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
         GeometrySPtr geometry = instance->geometries.at(id);
@@ -88,6 +97,8 @@ namespace Cold {
 
     GeometrySystem::~GeometrySystem()
     {
-        // TODO here fill it
+        for(auto id : geometries) {
+            id.second.reset();
+        }
     }
 }

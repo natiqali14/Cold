@@ -16,6 +16,7 @@ namespace Cold {
         void push_vertex_buffers(const std::vector<VertexBufferSPtr> vertex_buffers);
         void bind();
         void un_bind();
+        ~VertexArrayBuffer();
     private:
         u32 m_vao_id;
         std::vector<VertexBufferSPtr> vertex_buffers;

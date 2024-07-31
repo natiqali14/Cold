@@ -5,13 +5,13 @@
 #include <comman_data.h>
 namespace Cold {
     Geometry::Geometry(GLenum geometry_usage)
-    : total_vertex_count(0)
-    , ref_count(0)
+    : ref_count(1)
+    , total_vertex_count(0)
     , vao(nullptr)
     , transform(std::make_shared<Transform>())
+    , usage(geometry_usage)
+    , ebo(0)
     {
-        COLD_TRACE("Geometry Created");
-        usage = geometry_usage;
     }
 
     void Geometry::push_vertex(const Vertex &vertex_data)
@@ -74,11 +74,12 @@ namespace Cold {
         props.wrap_x_axis = GL_REPEAT;
         props.wrap_y_axis = GL_REPEAT;
         geometry_material.diff_tex_id = TextureSystem::texture_2D_immutable_create(geometry_material.diff_tex, std::move(props));
-     }
+    }
 
     void Geometry::delete_data_from_gpu()
     {
-        // TODO fill this
+        glDeleteBuffers(1, &ebo);
+        vao.reset();
     }
 
     void Geometry::render()
@@ -90,21 +91,17 @@ namespace Cold {
         glBindTexture(GL_TEXTURE_2D, geometry_material.diff_tex_id);
 
         u32 loci = glGetUniformLocation(p_id, "frameTexture");
-         glUniform1i(loci, 0);
-      //  glBindTexture(GL_TEXTURE_2D, geometry_material.diff_tex_id);
+        glUniform1i(loci, 0);
         auto camera = v_data.cs;
         glm::mat4 vM = camera->get_camera_view_space();
-        glm::mat4 model_1 = glm::mat4(1.0);//transform->get_world_model();
-        
-       // model_1 = glm::scale(model_1, glm::vec3(0.05,0.05,0.05));
-      //  model_1 = glm::translate(model_1, glm::vec3(50,0,50));
+        glm::mat4 model_1 = transform->get_world_model();
         u32 loc_1 = glGetUniformLocation(p_id, "view");
         glUseProgram(p_id);
         glUniformMatrix4fv(loc_1, 1, GL_FALSE, glm::value_ptr(vM));
 
         u32 loc_2 = glGetUniformLocation(p_id, "model");
         glUseProgram(p_id);
-        glUniformMatrix4fv(loc_2, 1, GL_FALSE, glm::value_ptr(model_1));
+        glUniformMatrix4fv(loc_2, 1, GL_FALSE, glm::value_ptr(transform->get_world_model()));
 
         glm::mat4 p = glm::perspective(45.0f, 800.f / 600.f, 0.1f, 1000.f);
         u32 loc3 = glGetUniformLocation(p_id, "p");
@@ -131,7 +128,7 @@ namespace Cold {
 
     Geometry::~Geometry()
     {
-        // TODO fill this
+        glDeleteBuffers(1, &ebo);
     }
 
 }

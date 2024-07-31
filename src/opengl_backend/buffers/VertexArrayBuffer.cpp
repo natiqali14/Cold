@@ -1,9 +1,11 @@
 #include "VertexArrayBuffer.h"
 
 #include <glad/glad.h>
+#include <Logger.h>
 namespace Cold {
     VertexArrayBufferSPtr VertexArrayBuffer::create_vertex_array_buffer()
     {
+        COLD_INFO("Vertex Array Buffer Constructed");
         VertexArrayBufferSPtr object = std::make_shared<VertexArrayBuffer>();
         glGenVertexArrays(1,&object->m_vao_id);
         glBindVertexArray(object->m_vao_id);
@@ -29,6 +31,7 @@ namespace Cold {
         
 
         glBindVertexArray(0);
+        this->vertex_buffers = std::move(vertex_buffers);
 
     }
     
@@ -39,5 +42,11 @@ namespace Cold {
     void VertexArrayBuffer::un_bind()
     {   
         glBindVertexArray(0);
+    }
+
+    VertexArrayBuffer::~VertexArrayBuffer()
+    {
+        COLD_INFO("Vertex Array buffer destrcuted");
+        glDeleteVertexArrays(1, &m_vao_id);
     }
 }

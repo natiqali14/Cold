@@ -19,6 +19,7 @@
 #include <sstream>
 #include <ModelLoader.h>
 #include <StaticMesh.h>
+#include <GeometrySystem.h>
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
                                  "layout (location = 1) in vec3 aNormal;\n"
@@ -218,9 +219,9 @@ void render_cubes(u32 shader_program)
 
 
     Cold::v_data.cs = cs;
-   if(Cold::v_data.m && Cold::v_data.cs) {
-    Cold::v_data.m->render();
-   }
+    for(auto m : Cold::v_data.meshes) {
+        m->render();
+    }
 
 }
 
@@ -312,78 +313,43 @@ void assimp_testing()
 
     // asimp model loader testing
 
-   auto sm =  Cold::ModelLoader::model_load("Assets/sponza/sponza.obj",aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
-    sm->buffer_to_gpu();
-    Cold::v_data.m = sm;
-    auto sm_transform = sm->get_transform();
-    sm_transform->scale({0.05,0.05,0.05});
-    sm_transform->translate({100,0,0});
+   
 
 }
 
 void initialise_triangle()
 {
-
-    Cold::VertexBufferSPtr v_buffer_1 =
-            Cold::VertexBuffer::create_vertex_buffer(
-                vertices_with_tc,
-                sizeof(vertices_with_tc),
-                GL_DYNAMIC_DRAW,
-                {
-                    {"aPos", 3, GL_FLOAT, false, sizeof(float) * 5, 0},                      // for vertices
-                    {"aTexCoord", 2, GL_FLOAT, false, sizeof(float) * 5, sizeof(float) * 3} // for tc's
-                });
-
-
-    auto v_array_buffer = 
-        Cold::VertexArrayBuffer::create_vertex_array_buffer();
-    v_array_buffer->push_vertex_buffers({v_buffer_1});
-  //  v_array_buffer->push_vertex_buffer(v_buffer_2);
-    // data making
+    Cold::GeometrySystem::initiate();
     Cold::TextureSystem::initiate();
-    // u32 u_id = Cold::TextureSystem::texture_2D_immutable_create("Assets/image4.jpeg", 
-    // {GL_RGB, true, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, GL_UNSIGNED_BYTE});
+    Cold::TransformSPtr root = std::make_shared<Cold::Transform>();
+    Cold::TransformSPtr root_2 = std::make_shared<Cold::Transform>();
+    Cold::StaticMesh* sponza_mesh = new Cold::StaticMesh(root, "Assets/Models/sponza/sponza.obj");
+    root->scale({0.05,00.05,0.05});
+    sponza_mesh->load_mesh();
+    sponza_mesh->buffer_to_gpu();
+    Cold::StaticMesh* falcon = new Cold::StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
+    falcon->load_mesh();
+    falcon->buffer_to_gpu();
+    Cold::v_data.meshes.push_back(sponza_mesh);
+    Cold::v_data.meshes.push_back(falcon);
 
-  //  Cold::v_data.vertex_array_buffers.push_back(v_array_buffer);
-  //  Cold::v_data.tex_id = u_id;
-   // glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
-  //  assimp_testing();
-    // u32 vbo;
-    // u32 vao;
-    // u32 ebo;
-    // glGenVertexArrays(1, &vao);
-    // glBindVertexArray(vao);
-
-    // glGenBuffers(1, &vbo);
-    // glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 180, vertices, GL_DYNAMIC_DRAW);
-    // glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(float) * 3,(void*) 0);
-    // glEnableVertexAttribArray(0);
-    // glBindBuffer(GL_ARRAY_BUFFER,0);
-    // glGenBuffers(1,&ebo);
-    // glBindBuffer(GL_ARRAY_BUFFER, ebo);
-    // glBufferData(GL_ARRAY_BUFFER,sizeof(texcoord), texcoord, GL_DYNAMIC_DRAW);
-    // glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE, sizeof(float) * 2, (void*) (0));
-    // glEnableVertexAttribArray(1);
-    // glBindBuffer(GL_ARRAY_BUFFER,0);
-    // glBindVertexArray(0);
-    // buffer_data data = {vbo,vao,ebo};
-    // glEnable(GL_DEPTH_TEST);
-    // glDepthFunc(GL_LEQUAL);
-    // glEnable(GL_CULL_FACE);
-    // glCullFace(GL_FRONT);
-    // glFrontFace(GL_CW);
-
-auto sm =  Cold::ModelLoader::model_load("Assets/sponza/sponza.obj",aiProcess_Triangulate | aiProcess_FlipUVs );
-    sm->buffer_to_gpu();
-    Cold::v_data.m = sm;
     return;
 }
 
-// void draw_triangle(buffer_data &data) {
-//     glBindVertexArray(data.vao);
-//     glBindBuffer(GL_ARRAY_BUFFER, data.vbo);
-//     glDrawArrays(GL_TRIANGLES, 0, 36);
-//     glBindVertexArray(0);
-//     glBindBuffer(GL_ARRAY_BUFFER, 0);
-// }
+
+
+
+
+
+
+
+;
+//     // glEnable(GL_DEPTH_TEST);
+//     // glDepthFunc(GL_LEQUAL);
+//     // glEnable(GL_CULL_FACE);
+//     // glCullFace(GL_FRONT);
+//     // glFrontFace(GL_CW);
+
+
+
+
