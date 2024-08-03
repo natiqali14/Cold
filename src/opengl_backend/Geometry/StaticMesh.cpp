@@ -1,10 +1,11 @@
 #include "StaticMesh.h"
 #include <Logger.h>
 #include <ModelLoader.h>
+#include <helper.h>
 namespace Cold {
     StaticMesh::StaticMesh(TransformSPtr root, const std::string file_path)
     : root_transform(root)
-    , mesh_file_path(std::move(file_path))
+    , mesh_file_path(Helper::normalize_paths(file_path))
     {
         COLD_TRACE("StaticMesh constructed");
     }

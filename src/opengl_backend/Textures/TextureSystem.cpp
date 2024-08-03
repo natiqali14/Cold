@@ -3,6 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <filesystem>
+#include <helper.h>
 namespace Cold {
     static TextureSystem* instance = nullptr;
 
@@ -75,8 +76,9 @@ namespace Cold {
         std::filesystem::path cwd = std::filesystem::current_path(); // TODO find better way
         cwd = cwd / path;
         i32 width, height, channels;
-        u8* image = stbi_load(cwd.string().c_str(), &width, &height,&channels, 0 ); 
-        std::string msg = std::string("Cant load image ") + cwd.string();
+        std::string norm_path = Helper::normalize_paths(cwd.string().c_str());
+        u8* image = stbi_load(norm_path.c_str(), &width, &height,&channels, 0 ); 
+        std::string msg = std::string("Cant load image ") + norm_path;
         COLD_ASSERT(image != NULL, msg.c_str());
         COLD_TRACE("Image of path %s, with width %d, height %d and channels %d", cwd.string().c_str(), width, height, channels);
         GLenum image_format = get_gl_format(channels);

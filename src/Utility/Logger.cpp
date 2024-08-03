@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include <sstream>
-
+#include <stdio.h>
+#include <stdarg.h>
 namespace Cold {
     namespace Logger {
         static std::string get_log_type(Cold::Logger::LogType type) {

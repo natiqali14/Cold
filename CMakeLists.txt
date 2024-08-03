@@ -5,7 +5,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add compiler flags
-add_compile_options(-fcolor-diagnostics -Wall -fansi-escape-codes -g -Wno-deprecated)
+if(WIN32)
+    add_definitions(-DWIN=1)
+    add_compile_options(/W1)
+endif(WIN32)
+if(APPLE)
+    add_compile_options(-fcolor-diagnostics -Wall -fansi-escape-codes -g -Wno-deprecated)   
+endif(APPLE)
+
+
 
 # Include directories
 include_directories(
@@ -48,7 +56,8 @@ set(CMAKE_BUILD_TYPE Debug)
 add_executable(app ${SOURCES})
 
 # Link libraries
-target_link_libraries(app
+if(APPLE)
+    target_link_libraries(app
     ${CMAKE_SOURCE_DIR}/libs/libassimp.5.4.1.dylib
     ${CMAKE_SOURCE_DIR}/libglfw3.a
     "-framework OpenGL"
@@ -58,7 +67,32 @@ target_link_libraries(app
     "-framework CoreFoundation"
 )
 
+endif(APPLE)
+if(WIN32)
+    target_link_libraries(app
+    ${CMAKE_SOURCE_DIR}/libs/Windows/assimp-vc143-mtd.lib
+
+    ${CMAKE_SOURCE_DIR}/libs/Windows/glfw3.lib
+    opengl32
+    )
+endif(WIN32)
+
+
 # Set output directory
 set_target_properties(app PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
+
+# Ensure consistency across build types
+set_target_properties(app PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_SOURCE_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_SOURCE_DIR}"
+)
+
+
+# Handle runtime library conflicts if any
+if(WIN32)
+    target_link_options(app PRIVATE /NODEFAULTLIB:MSVCRT)
+endif(WIN32)

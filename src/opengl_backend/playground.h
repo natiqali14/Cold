@@ -309,8 +309,6 @@ void assimp_testing()
     Cold::v_data.tex_id = u_id;
     glBindTexture(GL_TEXTURE_2D, Cold::v_data.tex_id);
 
-
-
     // asimp model loader testing
 
    
@@ -333,13 +331,13 @@ void initialise_triangle()
     Cold::v_data.meshes.push_back(sponza_mesh);
     Cold::v_data.meshes.push_back(falcon);
 
-    auto square_vbo = Cold::VertexBuffer::create_vertex_buffer(vertices, sizeof(vertices),GL_DYNAMIC_DRAW,
-    {
-        {"aPos", 3, GL_FLOAT, false, sizeof(float) * 5, 0},
-            {"aTex", 3, GL_FLOAT, false, sizeof(float) * 5, (void*) sizeof(float)  *3},
-    });
-    auto square_vao = Cold::VertexArrayBuffer::create_vertex_array_buffer();
-    square_vao->push_vertex_buffers({square_vbo});
+    // auto square_vbo = Cold::VertexBuffer::create_vertex_buffer(vertices, sizeof(vertices),GL_DYNAMIC_DRAW,
+    // {
+    //     {"aPos", 3, GL_FLOAT, false, sizeof(float) * 5, 0},
+    //         {"aTex", 3, GL_FLOAT, false, sizeof(float) * 5, (void*) sizeof(float)  *3},
+    // });
+    // auto square_vao = Cold::VertexArrayBuffer::create_vertex_array_buffer();
+    // square_vao->push_vertex_buffers({square_vbo});
 
     return;
 }

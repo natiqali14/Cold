@@ -16,6 +16,34 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "macos-clang-arm64"
+        },
+
+        {
+            "name": "Windows",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/includes",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/includes/glm",
+                "${workspaceFolder}/includes/assimp",
+                "${workspaceFolder}/src/Utility",
+                "${workspaceFolder}/src/Utility/Clock",
+                "${workspaceFolder}/src/third_party",
+                "${workspaceFolder}/src/opengl_backend/Textures",
+                "${workspaceFolder}/src/opengl_backend/buffers",
+                "${workspaceFolder}/src/opengl_backend/Geometry",
+                "${workspaceFolder}/src/opengl_backend/Utils",
+                "${workspaceFolder}/src/CameraSystem",
+                "${workspaceFolder}/src/EventSystem"
+            ],
+            "defines": [
+                "_CRT_SECURE_NO_WARNINGS",
+                "_WIN32"
+            ],
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.XX/bin/Hostx64/x64/cl.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "msvc-x64"
         }
     ],
     "version": 4

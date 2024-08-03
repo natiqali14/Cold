@@ -5,6 +5,7 @@
 #include <Transforms.h>
 #include <GeometrySystem.h>
 #include <sstream>
+#include <helper.h>
 namespace Cold {
     static ModelLoader* instance = nullptr;
     void ModelLoader::initiate()
@@ -23,13 +24,13 @@ namespace Cold {
             * 4. also returns the sub path for textures staring from Assets/Models/     
     */
     static std::string helper_verification_for_model_loader(const std::string& file_path) {
-        std::string targert_directory = "Assets/Models/";
-        u64 pos = file_path.find("Assets/Models/");
+        std::string targert_directory = Helper::normalize_paths("Assets/Models/") ;
+        u64 pos = file_path.find(targert_directory);
         COLD_ASSERT(pos == 0, "ERROR target  model is not in directory Assets/Models");
         u64 obj_file_check = file_path.rfind("."); // TODO right now only .obj is tested and being supported
         COLD_ASSERT(obj_file_check != std::string::npos, "No file extension is provided");
         COLD_ASSERT((file_path.length() - obj_file_check) ==  3 + 1, "Provided file is not of obj extension");
-        u64 split_pos = file_path.rfind("/");
+        u64 split_pos = file_path.rfind(Helper::normalize_paths("/"));
         return file_path.substr(0,split_pos+1);
     }
 
@@ -70,11 +71,12 @@ namespace Cold {
                 // if yes then make a full path of this texture
                 if(count > 0) {
                     texture_path << texture_dir;
+                    COLD_ERROR("Path %s", path.C_Str());
                     texture_path << path.C_Str();
                 }
                 // if not then use default texture
                 else {
-                    texture_path << "Assets/default.png";
+                    texture_path << Helper::normalize_paths("Assets/default.png");
                 }
                 // creation of material object for geom
                 Material mater;
