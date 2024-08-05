@@ -25,7 +25,7 @@ namespace Cold {
         GeometrySPtr geometry_ptr = std::make_shared<Geometry>(GL_STATIC_DRAW);
         instance->geometries.insert({id, geometry_ptr});
         instance->geometry_path_refs.insert({geometry_path, id});
-        COLD_TRACE("Geometry created with path %s and id %d", geometry_path, id);
+        COLD_TRACE("Geometry created with path %s and id %d", geometry_path.c_str(), id);
         return id;
     }
 

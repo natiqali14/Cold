@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string>
 #include <algorithm>
-#define win
+
 namespace Cold{
     namespace Helper {
     /// TODO right now this function is only for linux based systems 
@@ -18,6 +18,8 @@ namespace Cold{
 
         }
         inline std::string normalize_paths(const std::string& path) {
+            // TODO make this function runnable on both mac / windows platforms
+            return path;
             #ifdef win
                 std::string normalized_string = path;
                 std::replace(normalized_string.begin(), normalized_string.end(), '/', '\\');

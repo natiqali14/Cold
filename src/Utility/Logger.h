@@ -1,7 +1,8 @@
 #pragma once
 #include "../includes.h"
-//# include <csignal>
+#include <csignal>
 #include <string>
+#include <unistd.h>
 namespace Cold {
     namespace Logger {
 
@@ -17,9 +18,9 @@ namespace Cold {
     }
 }
 
-#define TRACE_ENABLED 0
+#define TRACE_ENABLED 1
 #define ERROR_ENABLED 1
-#define INFO_ENABLED 0
+#define INFO_ENABLED 1
 #define WARNING_ENABLED 1
 
 #define COLD_ERROR(msg, ...) Cold::Logger::log(Cold::Logger::LogType::LOGTYPE_ERROR, msg, ##__VA_ARGS__)
@@ -29,7 +30,7 @@ namespace Cold {
     if(expression) {}                                                                                        \
     else {                                                                                                   \
         COLD_ERROR("-ASSERTION FAILED- expression %s, with msg %s at line %d at file %s", #expression, msg, __LINE__, __FILE__);  \
-       /* kill(getpid(), SIGABRT);  */                                                                                    \
+        kill(getpid(), SIGABRT);                                                                                   \
     }                                                                                                        \
 }
 
