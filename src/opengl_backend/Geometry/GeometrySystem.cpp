@@ -45,6 +45,20 @@ namespace Cold {
         geometry->push_indicies(geometry_config.faces, geometry_config.faces_count);
     }
 
+    void GeometrySystem::pass_data_to_geometry(GeometryId id, const std::vector<Vertex> &geom_data)
+    {
+        COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
+        GeometrySPtr geometry = instance->geometries.at(id);
+        geometry->push_vertex_data(geom_data);   
+    }
+
+    void GeometrySystem::pass_indicies_data_to_geometry(GeometryId id, const std::vector<u32> &index_data)
+    {
+        COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
+        GeometrySPtr geometry = instance->geometries.at(id);
+        geometry->push_inicies(index_data);
+    }
+
     void GeometrySystem::buffer_geometry_data_to_gpu(GeometryId id)
     {
         COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");

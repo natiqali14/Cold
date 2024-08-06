@@ -6,6 +6,7 @@
 #include <GeometrySystem.h>
 #include <sstream>
 #include <helper.h>
+#include <Geometry.h>
 namespace Cold {
     static ModelLoader* instance = nullptr;
     void ModelLoader::initiate()
@@ -32,6 +33,28 @@ namespace Cold {
         COLD_ASSERT((file_path.length() - obj_file_check) ==  3 + 1, "Provided file is not of obj extension");
         u64 split_pos = file_path.rfind(Helper::normalize_paths("/"));
         return file_path.substr(0,split_pos+1);
+    }
+
+    static void  prepare_vertex3D_data(aiVector3D* vertices, aiVector3D* tex_coords, aiVector3D* normals, u32 vertex_count ,std::vector<Vertex>& data) {
+        Vertex v;
+        for(u32 i = 0; i < vertex_count; i++) {
+            aiVector3D vert = vertices[i];
+            aiVector3D tex = tex_coords[i];
+            aiVector3D norm = normals[i];
+            v.position = {vert.x, vert.y, vert.z};
+            v.normals = {norm.x, norm.y, norm.z};
+            v.tex_coord = {tex.x, tex.y};
+            data.push_back(v);
+        }
+    }
+    static void prepare_index_data(aiFace* faces, u32 face_count,  std::vector<u32>& data) {
+        for(u32 i = 0; i < face_count; i++) {
+            aiFace face = faces[i];
+            for(u8 j = 0; j < face.mNumIndices;  j++) {
+                face.mIndices[j];
+                data.push_back(face.mIndices[j]);
+            }
+        }
     }
 
     void  ModelLoader::model_load(const std::string &file_path, u32 flags, StaticMesh* static_mesh)
@@ -89,17 +112,22 @@ namespace Cold {
                 aiVector3D* normals = mesh->mNormals;
                 aiVector3D* tcs = mesh->mTextureCoords[0];
                 u32 total_faces = mesh->mNumFaces;
-
-                GeommetryConfig config; // geom config
-                config.verticies = vertices;
-                config.vertex_count = total_vertex_count;
-                config.normals = normals;
-                config.normal_count = total_vertex_count;
-                config.tex_coords = tcs;
-                config.tex_coords_count = total_vertex_count;
-                config.faces = mesh->mFaces;
-                config.faces_count = total_faces;
-                GeometrySystem::pass_data_to_geometry(geometry, config);
+                std::vector<Vertex> vertices_data;
+                prepare_vertex3D_data(vertices, tcs, normals, total_vertex_count, vertices_data);
+                std::vector<u32> index_data;
+                prepare_index_data(mesh->mFaces, total_faces, index_data);
+                GeometrySystem::pass_data_to_geometry(geometry, vertices_data);
+                GeometrySystem::pass_indicies_data_to_geometry(geometry, index_data);
+                // GeommetryConfig config; // geom config
+                // config.verticies = vertices;
+                // config.vertex_count = total_vertex_count;
+                // config.normals = normals;
+                // config.normal_count = total_vertex_count;
+                // config.tex_coords = tcs;
+                // config.tex_coords_count = total_vertex_count;
+                // config.faces = mesh->mFaces;
+                // config.faces_count = total_faces;
+                // GeometrySystem::pass_data_to_geometry(geometry, config);
             }            
         }
 

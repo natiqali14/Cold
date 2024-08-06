@@ -4,6 +4,7 @@
 #include <VertexBuffer.h>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 #include "Geometry.h"
 namespace Cold {
    
@@ -27,6 +28,8 @@ namespace Cold {
         static GeometryId create_geometry(const std::string& geometry_path);
         static GeometryId generate_id();
         static void pass_data_to_geometry(GeometryId id, const GeommetryConfig& geometry_config);
+        static void pass_data_to_geometry(GeometryId id, const std::vector<Vertex>& geom_data);
+        static void pass_indicies_data_to_geometry(GeometryId id, const std::vector<u32>& index_data);
         static void buffer_geometry_data_to_gpu(GeometryId id);
         static void render_geometry(GeometryId id);
         static bool delete_geometry(GeometryId id);

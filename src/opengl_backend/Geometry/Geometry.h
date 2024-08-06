@@ -29,7 +29,9 @@ namespace Cold {
         void push_vertex_data(aiVector3D* vertices, u32 vertex_count,
                               aiVector3D* normals, u32 normal_count,
                               aiVector3D* tex_coords, u32 tex_coords_count);
+        void push_vertex_data(const std::vector<Vertex> &vert_data);
         void push_indicies(aiFace* faces, u32 face_count);
+        void push_inicies(const std::vector<u32>& index_data);
         void buffer_data_to_gpu();
         void delete_data_from_gpu();
 

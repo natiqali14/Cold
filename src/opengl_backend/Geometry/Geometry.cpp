@@ -37,14 +37,27 @@ namespace Cold {
         }
     }
 
-    void Geometry::push_indicies(aiFace *faces, u32 face_count)
+    void Geometry::push_vertex_data(const std::vector<Vertex> &vert_data)
     {
+        if(!verticies.empty()) verticies.clear();
+        total_vertex_count = vert_data.size();
+        this->verticies = std::move(vert_data);
+    }
+
+    void Geometry::push_indicies(aiFace *faces, u32 face_count)
+    {   
         for(u32 i = 0; i < face_count; i++) {
             aiFace face = faces[i];
             indicies.push_back(face.mIndices[0]);
             indicies.push_back(face.mIndices[1]);
             indicies.push_back(face.mIndices[2]);
         }
+    }
+
+    void Geometry::push_inicies(const std::vector<u32> &index_data)
+    {
+        if(!indicies.empty()) indicies.clear();
+        indicies = std::move(index_data);
     }
 
     void Geometry::buffer_data_to_gpu()
