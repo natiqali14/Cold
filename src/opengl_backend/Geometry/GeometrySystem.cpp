@@ -102,6 +102,13 @@ namespace Cold {
 
     }
 
+    void GeometrySystem::set_geometry_parent_transform(GeometryId id, TransformSPtr transform)
+    {
+        COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
+        GeometrySPtr geometry = instance->geometries.at(id);
+        geometry->get_transform()->set_parent(transform);
+    }
+
     TransformSPtr GeometrySystem::get_transform(GeometryId id)
     {
         COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");

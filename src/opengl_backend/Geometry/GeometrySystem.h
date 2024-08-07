@@ -35,6 +35,7 @@ namespace Cold {
         static bool delete_geometry(GeometryId id);
         static bool should_load_geometry_data(const std::string& geometry_path);
         static void set_material(GeometryId id, const Material& material);
+        static void set_geometry_parent_transform(GeometryId id, TransformSPtr transform);
         static TransformSPtr get_transform(GeometryId id);
     private: 
         GeometrySystem() = default;

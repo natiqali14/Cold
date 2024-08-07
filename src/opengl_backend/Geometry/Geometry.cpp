@@ -62,22 +62,29 @@ namespace Cold {
 
     void Geometry::buffer_data_to_gpu()
     {
-        if(vao) return;
-        auto vbo_data = VertexBuffer::create_vertex_buffer(verticies.data(), verticies.size() * sizeof(Vertex), usage,
-        {
-            {"aPos", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, position)},
-            {"aNormal", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, normals)},
-            {"aTexCoord", 2, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, tex_coord)}
-        }
-        );
-        vao = VertexArrayBuffer::create_vertex_array_buffer();
-        vao->push_vertex_buffers({vbo_data});
-        
-        glGenBuffers(1, &ebo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(u32), indicies.data(), usage);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        if(!vao) {
+            auto vbo_data = VertexBuffer::create_vertex_buffer(verticies.data(), verticies.size() * sizeof(Vertex), usage,
+            {
+                {"aPos", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, position)},
+                {"aNormal", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, normals)},
+                {"aTexCoord", 2, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, tex_coord)}
+            }
+            );
+            vao = VertexArrayBuffer::create_vertex_array_buffer();
+            vao->push_vertex_buffers({vbo_data});
+            if(indicies.size() == 0) {
+                ebo = 0; 
+            }
+            else {
+                glGenBuffers(1, &ebo);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(u32), indicies.data(), usage);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            }
+           
 
+        } 
+       
         TextureProps props;
         props.image_data_type = GL_UNSIGNED_BYTE;
         props.internal_format = GL_RGBA;
@@ -124,9 +131,16 @@ namespace Cold {
 
        
         vao->bind();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glDrawElements(GL_TRIANGLES, total_vertex_count, GL_UNSIGNED_INT ,0);
-         glBindTexture(GL_TEXTURE_2D, 0);
+        if(ebo != 0) 
+        {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+            glDrawElements(GL_TRIANGLES, total_vertex_count, GL_UNSIGNED_INT ,0);
+        }
+        else {
+            glDrawArrays(GL_TRIANGLES, 0, total_vertex_count);
+        }
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void Geometry::set_material(const Material &material)

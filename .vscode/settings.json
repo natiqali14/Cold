@@ -73,7 +73,8 @@
         "xutility": "cpp",
         "memory": "cpp",
         "xlocale": "cpp",
-        "xlocinfo": "cpp"
+        "xlocinfo": "cpp",
+        "csignal": "cpp"
     },
     "cmake.configureOnOpen": false,
     "editor.cursorStyle": "block",

@@ -70,6 +70,8 @@ namespace Cold {
         if(instance->external_textures_ref.count(path)) {
             TextureId u_id = instance->external_textures_ref[path];
             instance->textures[u_id]->ref_count++;
+            COLD_TRACE("TextureSystem::texture_2D_immutable_create Image of this path %s already found with texture id %d and total ref %d",
+            path.c_str(),u_id, instance->textures[u_id]->ref_count);
             return u_id;
         }
 
@@ -80,7 +82,8 @@ namespace Cold {
         u8* image = stbi_load(norm_path.c_str(), &width, &height,&channels, 0 ); 
         std::string msg = std::string("Cant load image ") + norm_path;
         COLD_ASSERT(image != NULL, msg.c_str());
-        COLD_TRACE("Image of path %s, with width %d, height %d and channels %d", cwd.string().c_str(), width, height, channels);
+        COLD_TRACE("TextureSystem::texture_2D_immutable_create Image of path %s, with width %d, height %d and channels %d", 
+                    cwd.string().c_str(), width, height, channels);
         GLenum image_format = get_gl_format(channels);
 
         TextureId id;

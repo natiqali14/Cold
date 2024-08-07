@@ -94,7 +94,6 @@ namespace Cold {
                 // if yes then make a full path of this texture
                 if(count > 0) {
                     texture_path << texture_dir;
-                    COLD_ERROR("Path %s", path.C_Str());
                     texture_path << path.C_Str();
                 }
                 // if not then use default texture

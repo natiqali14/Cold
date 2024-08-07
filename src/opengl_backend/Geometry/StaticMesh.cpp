@@ -7,7 +7,7 @@ namespace Cold {
     : root_transform(root)
     , mesh_file_path(Helper::normalize_paths(file_path))
     {
-        COLD_TRACE("StaticMesh constructed");
+        COLD_TRACE("StaticMesh constructed with file path %s", mesh_file_path.c_str());
     }
     void StaticMesh::push_geometry(GeometryId geometry_id)
     {

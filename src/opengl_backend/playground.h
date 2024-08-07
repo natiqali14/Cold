@@ -20,6 +20,9 @@
 #include <ModelLoader.h>
 #include <StaticMesh.h>
 #include <GeometrySystem.h>
+#include <VertexStructures.h>
+#include <GeometrySystem.h>
+#include <helper.h>
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
                                  "layout (location = 1) in vec3 aNormal;\n"
@@ -319,6 +322,8 @@ void initialise_triangle()
 {
     Cold::GeometrySystem::initiate();
     Cold::TextureSystem::initiate();
+
+
     Cold::TransformSPtr root = std::make_shared<Cold::Transform>();
     Cold::TransformSPtr root_2 = std::make_shared<Cold::Transform>();
     Cold::StaticMesh* sponza_mesh = new Cold::StaticMesh(root, "Assets/Models/sponza/sponza.obj");
@@ -326,19 +331,37 @@ void initialise_triangle()
     sponza_mesh->load_mesh();
     sponza_mesh->buffer_to_gpu();
     Cold::StaticMesh* falcon = new Cold::StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
+    root_2->translate({50,0,0});
     falcon->load_mesh();
     falcon->buffer_to_gpu();
     Cold::v_data.meshes.push_back(sponza_mesh);
     Cold::v_data.meshes.push_back(falcon);
 
-    // auto square_vbo = Cold::VertexBuffer::create_vertex_buffer(vertices, sizeof(vertices),GL_DYNAMIC_DRAW,
-    // {
-    //     {"aPos", 3, GL_FLOAT, false, sizeof(float) * 5, 0},
-    //         {"aTex", 3, GL_FLOAT, false, sizeof(float) * 5, (void*) sizeof(float)  *3},
-    // });
-    // auto square_vao = Cold::VertexArrayBuffer::create_vertex_array_buffer();
-    // square_vao->push_vertex_buffers({square_vbo});
+    std::vector<Cold::Vertex> vertices;
+    for(u32 i = 0; i < 36; i ++) {
+        Cold::Vertex v;
+        v.position.x = vertices_with_tc[(i * 5) + 0];
+        v.position.y = vertices_with_tc[(i * 5) + 1];
+        v.position.z = vertices_with_tc[(i * 5) + 2];
+        v.tex_coord.x = vertices_with_tc[(i * 5) + 3];
+        v.tex_coord.y = vertices_with_tc[(i * 5) + 4];
+        vertices.push_back(v);
+    }
 
+    Cold::TransformSPtr sqaur_trans = std::make_shared<Cold::Transform>();
+    Cold::StaticMesh* sqaure_mesh = new Cold::StaticMesh(sqaur_trans, "");
+    
+    sqaur_trans->scale({5.0,5.0,5.0});
+    sqaur_trans->translate({0,5,0});
+    Cold::GeometryId square_geom = Cold::GeometrySystem::create_geometry("sqaure_my");
+    Cold::GeometrySystem::set_geometry_parent_transform(square_geom, sqaur_trans);
+    Cold::GeometrySystem::pass_data_to_geometry(square_geom, vertices);
+    Cold::Material sqaure_material;
+    sqaure_material.diff_tex = "Assets/default.png";
+    Cold::GeometrySystem::set_material(square_geom, sqaure_material);
+    sqaure_mesh->push_geometry(square_geom);
+    sqaure_mesh->buffer_to_gpu();
+    Cold::v_data.meshes.push_back(sqaure_mesh);
     return;
 }
 
