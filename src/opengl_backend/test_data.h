@@ -1,5 +1,5 @@
 #pragma once
-   float vertices[] = {
+   static float vertices[] = {
 	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
 	-1.0f,-1.0f, 1.0f,
 	-1.0f, 1.0f, 1.0f, // triangle 1 : end
@@ -95,7 +95,7 @@
 	1.0f, 0.0f, //
 };
 
-float texcoord[]{
+static float texcoord[]{
 	0.0f, 0.0f,
 	1.0f, 0.0f,
 	1.0f, 1.0f, //
@@ -144,12 +144,12 @@ float texcoord[]{
 	0.0f, 1.0f,
 	1.0f, 0.0f, //
 };
-unsigned int indices[] = {  // note that we start from 0!
+static unsigned int indices[] = {  // note that we start from 0!
     0, 1, 3,   // first triangle
     1, 2, 3    // second triangle
 };
 
-float vertices_with_tc[] = {
+static float vertices_with_tc[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
