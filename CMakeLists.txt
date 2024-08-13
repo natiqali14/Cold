@@ -29,6 +29,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils
     ${CMAKE_SOURCE_DIR}/src/CameraSystem
     ${CMAKE_SOURCE_DIR}/src/EventSystem
+    ${CMAKE_SOURCE_DIR}/src/Shaders
     ${CMAKE_SOURCE_DIR}/src
 
 )
@@ -47,6 +48,7 @@ file(GLOB_RECURSE SOURCES
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers/VertexArrayBuffer.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers/Vertexbuffer.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures/TextureSystem.cpp"
+    "${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders/ShaderSystem.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils/*.cpp"
     "${CMAKE_SOURCE_DIR}/glad.c"
 )

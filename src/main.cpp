@@ -15,8 +15,11 @@
 #include "Utility/helper.h"
 #include "comman_data.h"
 #include "Utility/Logger.h"
+#include <filesystem>
 #include <Clock.h>
-
+#include <fstream>
+#include <sstream>
+#include <ShaderCode/ShaderGetter.h>
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -24,6 +27,7 @@ void processInput(GLFWwindow *window);
 
 int main()
 {
+    Cold::initiate_shader_map();
     Cold::Clock main_clock;
     Assimp::Importer importer;
     EventSystemHelper::initialise();
@@ -47,8 +51,8 @@ int main()
 
     initialise_triangle();
     std::vector<u32> shader_ids;
-    u32 v_shader = create_shader(GL_VERTEX_SHADER, vertexShaderSource);
-    u32 f_shader = create_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+    u32 v_shader = create_shader(GL_VERTEX_SHADER, Cold::shader_map[Cold::ShaderEnum::VERT_3D].c_str());
+    u32 f_shader = create_shader(GL_FRAGMENT_SHADER, Cold::shader_map[Cold::ShaderEnum::FRAG_3D].c_str());
     shader_ids.push_back(v_shader);
     shader_ids.push_back(f_shader);
     u32 program = create_program(shader_ids);
