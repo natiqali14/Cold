@@ -4,6 +4,7 @@
 #include <any>
 #include <Logger.h>
 #include <ShaderGetter.h>
+#include <glad/glad.h>
 namespace Cold {
 
     enum EUniformType {
@@ -43,7 +44,7 @@ namespace Cold {
             for (auto& s_data : data_to_update) {
                 free(s_data.sub_data);
             }
-            free(data);
+            glDeleteBuffers(1, &uniform_buffer_u_id);
         }
     };
     using UniformBufferSPtr = std::shared_ptr<UniformBuffer>;
@@ -74,7 +75,10 @@ namespace Cold {
         ShaderEnum vertex_shader {SE_NONE};
         ShaderEnum fragment_shader {SE_NONE};  // TODO right now only vertex and fragment shaders
 
-
+        ~Shader() 
+        {
+            glDeleteProgram(program_id);
+        }
 
 
     };
@@ -90,6 +94,7 @@ namespace Cold {
         static void global_uniform_buffer_objects_pass_to_gpu(ShaderId shader_id);
         static void create_shader(const std::string& name);
         static void delete_shader(ShaderId shader_id);
+        static void apply_shader(ShaderId shader_id);
         static void shaders_compile(ShaderId shader_id, ShaderEnum vertex_shader, ShaderEnum fragment_shader);
         static void uniform_object_add(ShaderId shader_id, const std::string& uniform, const std::any& value, EUniformType type);
         static void uniform_object_update(ShaderId shader_id, const std::string& uniform, const std::any& value, EUniformType type);
@@ -98,8 +103,9 @@ namespace Cold {
         static void local_uniform_object_update(ShaderId shader_id, const std::string& uniform, const std::any& value, EUniformType type);
         static void local_uniform_objects_pass_to_gpu(ShaderId shader_id);
         static void uniform_buffer_object_add(ShaderId shader_id, void* data, u32 size, const std::string& name);
-        static void uniform_buffer_object_update(ShaderId shader_id, void* sub_data, u32 size, u32 offset);
+        static void uniform_buffer_object_update(ShaderId shader_id, void* sub_data, u32 size, u32 offset, const std::string& name);
         static void uniform_buffer_objects_pass_to_gpu(ShaderId shader_id);
+        static void pass_all_shader_data_to_gpu(ShaderId shader_id);
         
     private:
         std::unordered_map<std::string, ShaderSPtr> shaders_data;
@@ -107,7 +113,7 @@ namespace Cold {
         std::unordered_map<std::string, UniformBufferSPtr> global_uniform_buffer_objects;
         // uniform buffers to pass to GPU
         std::vector<std::string> global_uniform_buffers_to_pass_to_gpu;
-        u32 u_id {0};
-        std::vector<u32> free_ids;
+
+        ~ShaderSystem();
     };
 }

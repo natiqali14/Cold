@@ -28,7 +28,6 @@ namespace Cold {
             sqaure_material.diff_tex = "Assets/default.png";
             Cold::GeometrySystem::set_material(square_geom, sqaure_material);
             sqaure_mesh->push_geometry(square_geom);
-            sqaure_mesh->buffer_to_gpu();
 
             return sqaure_mesh;
         }

@@ -20,6 +20,7 @@
 #include <fstream>
 #include <sstream>
 #include <ShaderCode/ShaderGetter.h>
+#include <RendererBackend.h>
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -29,7 +30,6 @@ int main()
 {
     Cold::initiate_shader_map();
     Cold::Clock main_clock;
-    Assimp::Importer importer;
     EventSystemHelper::initialise();
     WindowSystemUtility::initialise_glfw();
     // --------------------------------  Creating main window  --------------------------------
@@ -39,25 +39,19 @@ int main()
 
     // --------------------------------  Creating main window  --------------------------------
 
-        // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-    // ---------------------------------------
     // render loop
 
-    initialise_triangle();
-    std::vector<u32> shader_ids;
-    u32 v_shader = create_shader(GL_VERTEX_SHADER, Cold::shader_map[Cold::ShaderEnum::VERT_3D].c_str());
-    u32 f_shader = create_shader(GL_FRAGMENT_SHADER, Cold::shader_map[Cold::ShaderEnum::FRAG_3D].c_str());
-    shader_ids.push_back(v_shader);
-    shader_ids.push_back(f_shader);
-    u32 program = create_program(shader_ids);
-    glEnable(GL_DEPTH_TEST); 
-    glDepthFunc(GL_LEQUAL);
+    Cold::RendererBackend::initiate();
+
+    // initialise_triangle();
+    // std::vector<u32> shader_ids;
+    // u32 v_shader = create_shader(GL_VERTEX_SHADER, Cold::shader_map[Cold::ShaderEnum::VERT_3D].c_str());
+    // u32 f_shader = create_shader(GL_FRAGMENT_SHADER, Cold::shader_map[Cold::ShaderEnum::FRAG_3D].c_str());
+    // shader_ids.push_back(v_shader);
+    // shader_ids.push_back(f_shader);
+    // u32 program = create_program(shader_ids);
+    Cold::RendererBackend::set_open_gl_settings();
+    Cold::RendererBackend::load_data();
 
     // uncomment this call to draw in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -107,9 +101,6 @@ int main()
             remainin_time = new_time - start;
         }
     }
-
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
    
 
     // glfw: terminate, clearing all previously allocated GLFW resources.

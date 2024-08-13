@@ -1,9 +1,9 @@
 #include "ShaderSystem.h"
-#include <glad/glad.h>
+
 namespace Cold
 {
-#define CHECK_FOR_GLOBAL_UNIFORM(instance_map, name) { \
-    COLD_ASSERT(instance_map.count(name) > 0, "Failed to have a global uniform buffer of that name") \
+#define CHECK_FOR_UNIFORM_OBJECT(map, name) { \
+    COLD_ASSERT(map.count(name) > 0, "Failed to have a global uniform buffer of that name") \
 }
 
 #define CHECK_FOR_SHADER(shader_id, map) { \
@@ -105,6 +105,43 @@ namespace Cold
     }
 
 
+    static void ubo_pass_to_gpu(UniformBufferSPtr uniform_buffer_obj, const std::string& name, ShaderSPtr shader) 
+    {
+        if(uniform_buffer_obj->uniform_buffer_u_id == 0) 
+        {
+            // ubo is not initialised
+            // buffer all data
+            glGenBuffers(1, &uniform_buffer_obj->uniform_buffer_u_id);
+            glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer_obj->uniform_buffer_u_id);
+            glBufferData(GL_UNIFORM_BUFFER, uniform_buffer_obj->size, uniform_buffer_obj->data, GL_STATIC_DRAW);
+        }
+
+            // checking for update of ubo data
+        for (auto& sub_data : uniform_buffer_obj->data_to_update) 
+        {
+            u64 address = (u64) uniform_buffer_obj->data;
+            memcpy((void*)address + sub_data.offset, sub_data.sub_data, sub_data.size);
+            glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer_obj->uniform_buffer_u_id);
+            glBufferSubData(GL_UNIFORM_BUFFER, sub_data.offset, sub_data.size, sub_data.sub_data);   
+            free(sub_data.sub_data);
+        }
+        uniform_buffer_obj->data_to_update.clear();
+
+        // bindind this ubo to the shader program currently running.
+        glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer_obj->uniform_buffer_u_id);
+        uniform_buffer_obj->current_binding_point = shader->get_next_binding_point();
+        glBindBufferBase(GL_UNIFORM_BUFFER,
+                            uniform_buffer_obj->current_binding_point,
+                            uniform_buffer_obj->uniform_buffer_u_id);
+        
+        u32 block_index = glGetUniformBlockIndex(shader->program_id, name.c_str());
+        glUniformBlockBinding(shader->program_id, block_index, uniform_buffer_obj->current_binding_point);
+
+        UNBIND_UNIFORM_BUFFER();
+    }
+
+
+
 
     // others
     void ShaderSystem::initiate()
@@ -129,49 +166,20 @@ namespace Cold
 
     void ShaderSystem::global_uniform_buffer_object_update(const std::string& name, void *sub_data, u32 size, u32 offset)
     {
-        CHECK_FOR_GLOBAL_UNIFORM(instance->global_uniform_buffer_objects, name);
+        CHECK_FOR_UNIFORM_OBJECT(instance->global_uniform_buffer_objects, name);
         UniformBufferSPtr buffer = instance->global_uniform_buffer_objects[name];
         buffer->add_sub_data_to_pass_to_gpu(sub_data, size, offset);
     }
 
+
+
     void ShaderSystem::global_uniform_buffer_objects_pass_to_gpu(ShaderId shader_id)
     {
         CHECK_FOR_SHADER(shader_id, instance->shaders_data);
+        auto& shader = instance->shaders_data[shader_id];
         for (auto& ubo : instance->global_uniform_buffer_objects) 
         {
-            auto uniform_buffer_obj = ubo.second;
-            if(ubo.second->uniform_buffer_u_id == 0) 
-            {
-                // ubo is not initialised
-                // buffer all data
-                glGenBuffers(1, &uniform_buffer_obj->uniform_buffer_u_id);
-                glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer_obj->uniform_buffer_u_id);
-                glBufferData(GL_UNIFORM_BUFFER, uniform_buffer_obj->size, uniform_buffer_obj->data, GL_STATIC_DRAW);
-            }
-
-            // checking for update of ubo data
-            for (auto& sub_data : uniform_buffer_obj->data_to_update) 
-            {
-                u64 address = (u64) uniform_buffer_obj->data;
-                memcpy((void*)address + sub_data.offset, sub_data.sub_data, sub_data.size);
-                glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer_obj->uniform_buffer_u_id);
-                glBufferSubData(GL_UNIFORM_BUFFER, sub_data.offset, sub_data.size, sub_data.sub_data);   
-                free(sub_data.sub_data);
-            }
-            uniform_buffer_obj->data_to_update.clear();
-
-            // bindind this ubo to the shader program currently running.
-            glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer_obj->uniform_buffer_u_id);
-            auto& shader = instance->shaders_data[shader_id];
-            uniform_buffer_obj->current_binding_point = shader->get_next_binding_point();
-            glBindBufferBase(GL_UNIFORM_BUFFER,
-                             uniform_buffer_obj->current_binding_point,
-                             uniform_buffer_obj->uniform_buffer_u_id);
-            
-            u32 block_index = glGetUniformBlockIndex(shader->program_id, ubo.first.c_str());
-            glUniformBlockBinding(shader->program_id, block_index, uniform_buffer_obj->current_binding_point);
-
-            UNBIND_UNIFORM_BUFFER();
+            ubo_pass_to_gpu(ubo.second, ubo.first, instance->shaders_data[shader_id]);   
         }
     }
 
@@ -190,6 +198,12 @@ namespace Cold
         if(instance->shaders_data[shader_id]->ref_count <= 0) {
             instance->shaders_data[shader_id].reset();
         }
+    }
+
+    void ShaderSystem::apply_shader(ShaderId shader_id)
+    {
+        CHECK_FOR_SHADER(shader_id, instance->shaders_data);
+        instance->shaders_data[shader_id]->ref_count++;   
     }
 
     void ShaderSystem::shaders_compile(ShaderId shader_id, ShaderEnum vertex_shader, ShaderEnum fragment_shader)
@@ -267,18 +281,43 @@ namespace Cold
 
     void ShaderSystem::uniform_buffer_object_add(ShaderId shader_id, void *data, u32 size, const std::string &name)
     {
+        CHECK_FOR_SHADER(shader_id, instance->shaders_data);
+        auto& shader = instance->shaders_data[shader_id];
         UniformBufferSPtr buffer =  std::make_shared<UniformBuffer>();
         buffer->data = data;
         buffer->size = size;
-        instance->global_uniform_buffer_objects.insert({name, buffer});
+        shader->uniform_buffer_objects.insert({name, buffer});
     }
 
-    void ShaderSystem::uniform_buffer_object_update(ShaderId shader_id, void *sub_data, u32 size, u32 offset)
+    void ShaderSystem::uniform_buffer_object_update(ShaderId shader_id, void *sub_data, u32 size, u32 offset, const std::string& name)
     {
+        CHECK_FOR_SHADER(shader_id, instance->shaders_data);
+        auto& shader = instance->shaders_data[shader_id]; 
+        CHECK_FOR_UNIFORM_OBJECT(shader->uniform_objects, name);
+
+        shader->uniform_buffer_objects[name]->add_sub_data_to_pass_to_gpu(sub_data, size, offset);
     }
 
     void ShaderSystem::uniform_buffer_objects_pass_to_gpu(ShaderId shader_id)
     {
+        CHECK_FOR_SHADER(shader_id, instance->shaders_data);
+        auto& shader = instance->shaders_data[shader_id]; 
+
+        for (auto& ubo : shader->uniform_buffer_objects)
+        {
+            ubo_pass_to_gpu(ubo.second, ubo.first, shader);
+        }   
     }
 
+    void ShaderSystem::pass_all_shader_data_to_gpu(ShaderId shader_id)
+    {
+        global_uniform_buffer_objects_pass_to_gpu(shader_id);
+        uniform_buffer_objects_pass_to_gpu(shader_id);
+        uniform_objects_pass_to_gpu(shader_id);
+        local_uniform_objects_pass_to_gpu(shader_id);
+    }
+    ShaderSystem::~ShaderSystem()
+    {
+        
+    }
 }
