@@ -106,6 +106,7 @@ namespace Cold {
         static void uniform_buffer_object_update(ShaderId shader_id, void* sub_data, u32 size, u32 offset, const std::string& name);
         static void uniform_buffer_objects_pass_to_gpu(ShaderId shader_id);
         static void pass_all_shader_data_to_gpu(ShaderId shader_id);
+        static void pass_sampler_to_gpu(ShaderId shader_id, u32 tex_id, u8 tex_unit, const std::string& name);
         
     private:
         std::unordered_map<std::string, ShaderSPtr> shaders_data;

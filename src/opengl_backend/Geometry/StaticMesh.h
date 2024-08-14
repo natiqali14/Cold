@@ -11,10 +11,12 @@ namespace Cold {
         void buffer_to_gpu();
         void render();
         void load_mesh();
+        void set_cull_facing(bool cull_face);
         TransformSPtr get_transform();
     private:
         TransformSPtr root_transform;
         std::vector<GeometryId> geometries;
         std::string mesh_file_path;
+        bool should_cull_face;
     };
 }

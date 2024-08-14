@@ -1,4 +1,3 @@
-#pragma once
 #include "ModelLoader.h"
 #include <filesystem>
 #include <Logger.h>
@@ -90,6 +89,7 @@ namespace Cold {
                 scene->mMaterials[mat]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
                 // checking if it has diffuse texture or not
                 auto count = scene->mMaterials[mat]->GetTextureCount(aiTextureType_DIFFUSE);
+                auto material_for_geom = scene->mMaterials[mat];
                 std::stringstream texture_path;
                 // if yes then make a full path of this texture
                 if(count > 0) {
@@ -103,6 +103,11 @@ namespace Cold {
                 // creation of material object for geom
                 Material mater;
                 mater.diff_tex = texture_path.str(); // diffusion texture path final
+                aiColor3D diffuse_color;
+                auto status = material_for_geom->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color);
+                if(status == AI_SUCCESS) {
+                    mater.diffuse_color = {diffuse_color.r, diffuse_color.g, diffuse_color.b};
+                }
                 GeometrySystem::set_material(geometry, mater); // setting material for our geometry
 
                 /* Setting vertex data and index data for geometry*/

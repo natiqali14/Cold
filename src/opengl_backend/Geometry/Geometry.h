@@ -6,6 +6,7 @@
 #include <assimp/scene.h>
 #include <Transforms.h>
 #include <VertexStructures.h>
+#include <ShaderSystem.h>
 namespace Cold {
 
     
@@ -53,6 +54,9 @@ namespace Cold {
         /* ebo data */
         u32 ebo;
         std::vector<u32> indicies;
+
+        // shaders
+        std::string shader;
 
     };
 

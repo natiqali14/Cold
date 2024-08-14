@@ -60,12 +60,21 @@ namespace Cold {
 
     void Transform::rotate(glm::vec3 amount)
     {
+
         glm::vec3 current_in_degrees = glm::degrees(glm::eulerAngles(rotation));
         glm::vec3 to_rotate = amount - current_in_degrees;
         glm::quat new_rot = glm::quat(glm::radians(to_rotate));
         glm::mat4 rot_mat = glm::mat4_cast(new_rot);
         model_matrix = rot_mat * model_matrix;
         rotation = new_rot;
+        is_dirty = true;
+    }
+    void Transform::anim_rotate(glm::vec3 amount)
+    {
+        glm::quat new_rot = glm::quat(glm::radians(amount));
+        glm::mat4 rot_mat = glm::mat4_cast(new_rot);
+        model_matrix = rot_mat * model_matrix;
+        rotation += new_rot;
         is_dirty = true;
     }
 }

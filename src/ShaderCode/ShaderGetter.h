@@ -18,8 +18,8 @@ namespace Cold {
         // ..
        SE_MAX,
     };
-    static std::unordered_map<ShaderEnum, std::string> shader_map;
-    void get_shader_string(ShaderEnum e) {
+    inline std::unordered_map<ShaderEnum, std::string> shader_map;
+    static void get_shader_string(ShaderEnum e) {
         std::filesystem::path cwd = std::filesystem::current_path();
         cwd /= "src/ShaderCode/";
         switch (e)
@@ -40,10 +40,10 @@ namespace Cold {
         if(!file.is_open()) COLD_ERROR("Error opening file %s", cwd.string().c_str());
         std::stringstream ss;
         ss << file.rdbuf();
-        shader_map[e] = ss.str();
+        shader_map.insert({e, ss.str()});
     }
-    void initiate_shader_map() {
-        for(i32 i = 0; i < SE_MAX; i++) {
+    static void initiate_shader_map() {
+        for(i32 i = 1; i < SE_MAX; i++) {
            get_shader_string((ShaderEnum)i);
         }
     }

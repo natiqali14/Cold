@@ -5,12 +5,8 @@
 #include <iostream>
 #include "WindowSystem/GWindow.h"
 #include "WindowSystem/WindowSystemUtility.h"
-#include "opengl_backend/playground.h"
 #include <GLFW/glfw3.h>
 #include "EventSystem/EventSystemHelper.h"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "Utility/helper.h"
 #include "comman_data.h"
@@ -28,10 +24,10 @@ void processInput(GLFWwindow *window);
 
 int main()
 {
-    Cold::initiate_shader_map();
     Cold::Clock main_clock;
     EventSystemHelper::initialise();
     WindowSystemUtility::initialise_glfw();
+    CameraSystem* camera = new CameraSystem;
     // --------------------------------  Creating main window  --------------------------------
 
     std::unique_ptr<GWindow> main_window = std::make_unique<GWindow>(SCR_WIDTH, SCR_HEIGHT, "OPENGL WINDOW");
@@ -39,22 +35,20 @@ int main()
 
     // --------------------------------  Creating main window  --------------------------------
 
-    // render loop
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+    }
+
+
+    // --------------------------------  Backend Preparations ---------------------------------
 
     Cold::RendererBackend::initiate();
-
-    // initialise_triangle();
-    // std::vector<u32> shader_ids;
-    // u32 v_shader = create_shader(GL_VERTEX_SHADER, Cold::shader_map[Cold::ShaderEnum::VERT_3D].c_str());
-    // u32 f_shader = create_shader(GL_FRAGMENT_SHADER, Cold::shader_map[Cold::ShaderEnum::FRAG_3D].c_str());
-    // shader_ids.push_back(v_shader);
-    // shader_ids.push_back(f_shader);
-    // u32 program = create_program(shader_ids);
     Cold::RendererBackend::set_open_gl_settings();
     Cold::RendererBackend::load_data();
 
-    // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // --------------------------------  Backend Preparations ---------------------------------
 
     // render loop
     // -----------
@@ -71,13 +65,9 @@ int main()
 
         // render
         // ------
-        glClearColor(0.2f, 0.1f, 0.1f, 01.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // draw our first triangle
-        //transformations(program);
-        render_cubes(program);
-        glUseProgram(program);
+        Cold::RendererBackend::on_view_model_change(camera->get_camera_view_space());
+        Cold::RendererBackend::on_frame_render();
+        
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -85,14 +75,6 @@ int main()
         main_window->poll_input_events();  //  polling input events in Event system Queue
         u64 end = main_clock.get_current_time_in_us();
         u64 time_taken = end - start;
-        
-        // --------------------------------   BELOW code is for sleep if needed.  --------------------------------
-        // TODO find a better approach, here nanosleep is not accurate on mac os
-        // so right now using while loop for fake but precise sleep
-        // if(time_taken < MICRO_SECONDS_PER_FRAME) {
-        //     u64 time_to_sleep = (MICRO_SECONDS_PER_FRAME - time_taken) * 1e3;
-        //     Engine::Helper::sleep_current_thread(0, time_to_sleep);
-        // }
 
         u64 remainin_time = MICRO_SECONDS_PER_FRAME - time_taken;
         while(remainin_time <= MICRO_SECONDS_PER_FRAME) {

@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <TextureSystem.h>
 #include <comman_data.h>
+#include <BackendConfigData.h>
 namespace Cold {
     Geometry::Geometry(GLenum geometry_usage)
     : ref_count(1)
@@ -11,7 +12,9 @@ namespace Cold {
     , transform(std::make_shared<Transform>())
     , usage(geometry_usage)
     , ebo(0)
+    , shader(default_data.default_shader_name)
     {
+        ShaderSystem::apply_shader(shader);
     }
 
     void Geometry::push_vertex(const Vertex &vertex_data)
@@ -105,31 +108,10 @@ namespace Cold {
     void Geometry::render()
     {
         // TODO change this
-        glBindTexture(GL_TEXTURE_2D, 0);
-        u32 p_id = v_data.program_id;
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, geometry_material.diff_tex_id);
-
-        u32 loci = glGetUniformLocation(p_id, "frameTexture");
-        glUniform1i(loci, 0);
-        auto camera = v_data.cs;
-        glm::mat4 vM = camera->get_camera_view_space();
-        glm::mat4 model_1 = transform->get_world_model();
-        u32 loc_1 = glGetUniformLocation(p_id, "view");
-        glUseProgram(p_id);
-        glUniformMatrix4fv(loc_1, 1, GL_FALSE, glm::value_ptr(vM));
-
-        u32 loc_2 = glGetUniformLocation(p_id, "model");
-        glUseProgram(p_id);
-        glUniformMatrix4fv(loc_2, 1, GL_FALSE, glm::value_ptr(transform->get_world_model()));
-
-        glm::mat4 p = glm::perspective(45.0f, 800.f / 600.f, 0.1f, 1000.f);
-        u32 loc3 = glGetUniformLocation(p_id, "p");
-        glUseProgram(p_id);
-        glUniformMatrix4fv(loc3, 1, GL_FALSE, glm::value_ptr(p));
-
-
-       
+        ShaderSystem::pass_sampler_to_gpu(shader, geometry_material.diff_tex_id, 0, "frameTexture");
+        ShaderSystem::local_uniform_object_add(shader, "model", transform->get_world_model(), EUT_MAT_4x4);
+        ShaderSystem::local_uniform_object_add(shader, "diffuse_color", geometry_material.diffuse_color, EUT_FLOAT_3);
+        ShaderSystem::pass_all_shader_data_to_gpu(shader);
         vao->bind();
         if(ebo != 0) 
         {

@@ -10,6 +10,7 @@ namespace Cold {
      struct Material { /* Just for now will move it to its on class and sub system*/
         std::string diff_tex;
         u32 diff_tex_id;
+        glm::vec3 diffuse_color {1.0,1.0,1.0}; // by default white
     };
 
 }

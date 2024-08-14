@@ -19,6 +19,7 @@ namespace Cold {
         void scale(glm::vec3 amount);
         void set_absolute_scale(glm::vec3 _scale);
         void rotate(glm::vec3 amount);
+        void anim_rotate(glm::vec3 amount);
 
         TransformSPtr parent {nullptr};
 

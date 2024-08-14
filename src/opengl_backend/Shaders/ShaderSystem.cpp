@@ -14,14 +14,14 @@ namespace Cold
 
 #define ANY_CAST(val, type) std::any_cast<type>(val)
 
-    ShaderSystem* instance = nullptr;
+    static ShaderSystem* instance = nullptr;
 
 
     // static private functions
 
     static u32 create_gl_shader(ShaderEnum e, GLenum shader_type) 
     {
-        const char* shader_code = shader_map[e].c_str();
+        const char* shader_code = shader_map.at(e).c_str();
         u32 shader = glCreateShader(shader_type);
         glShaderSource(shader, 1, &shader_code, NULL);
         glCompileShader(shader);
@@ -34,6 +34,7 @@ namespace Cold
             COLD_ERROR("Shader compilation failed %s", info_log);
             std::cout << "Shader compilation failed. \n"
                     << info_log << "\n";
+            COLD_ASSERT(false, "Killing process due to shader failure");
         }
         return shader;
     }
@@ -120,10 +121,9 @@ namespace Cold
         for (auto& sub_data : uniform_buffer_obj->data_to_update) 
         {
             u64 address = (u64) uniform_buffer_obj->data;
-            memcpy((void*)address + sub_data.offset, sub_data.sub_data, sub_data.size);
+            memcpy((void*)(address + sub_data.offset), sub_data.sub_data, sub_data.size);
             glBindBuffer(GL_UNIFORM_BUFFER, uniform_buffer_obj->uniform_buffer_u_id);
-            glBufferSubData(GL_UNIFORM_BUFFER, sub_data.offset, sub_data.size, sub_data.sub_data);   
-            free(sub_data.sub_data);
+            glBufferSubData(GL_UNIFORM_BUFFER, sub_data.offset, sub_data.size, sub_data.sub_data);
         }
         uniform_buffer_obj->data_to_update.clear();
 
@@ -316,8 +316,18 @@ namespace Cold
         uniform_objects_pass_to_gpu(shader_id);
         local_uniform_objects_pass_to_gpu(shader_id);
     }
+    void ShaderSystem::pass_sampler_to_gpu(ShaderId shader_id, u32 tex_id, u8 tex_unit, const std::string &name)
+    {
+        CHECK_FOR_SHADER(shader_id, instance->shaders_data);
+        auto& shader = instance->shaders_data[shader_id]; 
+        glActiveTexture(GL_TEXTURE0 + tex_unit);
+        glBindTexture(GL_TEXTURE_2D, tex_id);
+
+        u32 loci = glGetUniformLocation(shader->program_id, name.c_str());
+        glUniform1i(loci, tex_unit);
+    }
     ShaderSystem::~ShaderSystem()
     {
-        
+
     }
 }

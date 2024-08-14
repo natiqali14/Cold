@@ -74,7 +74,9 @@
         "memory": "cpp",
         "xlocale": "cpp",
         "xlocinfo": "cpp",
-        "csignal": "cpp"
+        "csignal": "cpp",
+        "any": "cpp",
+        "fstream": "cpp"
     },
     "cmake.configureOnOpen": false,
     "editor.cursorStyle": "block",

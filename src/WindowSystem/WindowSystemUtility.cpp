@@ -1,6 +1,7 @@
 #include "WindowSystemUtility.h"
 #include <Logger.h>
-#include <glad/glad.h>
+
+
 void WindowSystemUtility::initialise_glfw() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -16,10 +17,6 @@ void WindowSystemUtility::initialise_glfw() {
     // setting error callback msg for GLFW errors
     glfwSetErrorCallback(&WindowSystemUtility::glfw_error_callback);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-    }
 
 }
 
