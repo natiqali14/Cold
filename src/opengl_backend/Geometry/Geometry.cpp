@@ -97,6 +97,10 @@ namespace Cold {
         props.wrap_x_axis = GL_REPEAT;
         props.wrap_y_axis = GL_REPEAT;
         geometry_material.diff_tex_id = TextureSystem::texture_2D_immutable_create(geometry_material.diff_tex, std::move(props));
+        if(geometry_material.shininess > 0) {
+            geometry_material.specular_texture_id = 
+                TextureSystem::texture_2D_immutable_create(geometry_material.specular_texure, std::move(props));
+        }
     }
 
     void Geometry::delete_data_from_gpu()
@@ -109,6 +113,11 @@ namespace Cold {
     {
         // TODO change this
         ShaderSystem::pass_sampler_to_gpu(shader, geometry_material.diff_tex_id, 0, "frameTexture");
+        if(geometry_material.shininess > 0) {
+            ShaderSystem::pass_sampler_to_gpu(shader, geometry_material.specular_texture_id, 1, "frameTexture");
+        }
+        ShaderSystem::local_uniform_object_add(shader, "shininess", geometry_material.shininess, EUT_FLOAT_1);
+            
         ShaderSystem::local_uniform_object_add(shader, "model", transform->get_world_model(), EUT_MAT_4x4);
         ShaderSystem::local_uniform_object_add(shader, "diffuse_color", geometry_material.diffuse_color, EUT_FLOAT_3);
         ShaderSystem::pass_all_shader_data_to_gpu(shader);

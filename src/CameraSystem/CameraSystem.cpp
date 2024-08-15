@@ -122,3 +122,8 @@ glm::mat4 &CameraSystem::get_camera_view_space()
 {
     return camera_view_space;
 }
+
+glm::vec3 &CameraSystem::get_camera_position()
+{
+    return camera_position;
+}

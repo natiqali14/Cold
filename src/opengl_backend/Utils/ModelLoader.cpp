@@ -85,14 +85,16 @@ namespace Cold {
                 GeometrySystem::get_transform(geometry)->set_parent(static_mesh->get_transform());
                 // getting material index for this geom
                 auto mat = mesh->mMaterialIndex;
-                aiString path;  // path for diffuse texture
-                scene->mMaterials[mat]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+                // creation of material object for geom
+                Material mater;
                 // checking if it has diffuse texture or not
                 auto count = scene->mMaterials[mat]->GetTextureCount(aiTextureType_DIFFUSE);
                 auto material_for_geom = scene->mMaterials[mat];
                 std::stringstream texture_path;
                 // if yes then make a full path of this texture
                 if(count > 0) {
+                    aiString path;  // path for diffuse texture
+                    scene->mMaterials[mat]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
                     texture_path << texture_dir;
                     texture_path << path.C_Str();
                 }
@@ -100,8 +102,24 @@ namespace Cold {
                 else {
                     texture_path << Helper::normalize_paths("Assets/default.png");
                 }
-                // creation of material object for geom
-                Material mater;
+
+                // for specular 
+                std::stringstream specular_path;
+                count = scene->mMaterials[mat]->GetTextureCount(aiTextureType_SPECULAR);
+                if(count > 0) 
+                {
+                    aiString path;  // path for diffuse texture
+                    scene->mMaterials[mat]->GetTexture(aiTextureType_SPECULAR, 0, &path);
+                    specular_path << texture_dir;
+                    specular_path << path.C_Str();
+                    mater.specular_texure = specular_path.str();
+                    f32 shininess;
+                     if (AI_SUCCESS == scene->mMaterials[mat]->Get(AI_MATKEY_SHININESS, shininess)) 
+                    {
+                        mater.shininess = shininess;
+                    }
+                }
+
                 mater.diff_tex = texture_path.str(); // diffusion texture path final
                 aiColor3D diffuse_color;
                 auto status = material_for_geom->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color);

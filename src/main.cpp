@@ -65,7 +65,8 @@ int main()
 
         // render
         // ------
-        Cold::RendererBackend::on_view_model_change(camera->get_camera_view_space());
+        Cold::RendererBackend::on_camera_props_change(camera->get_camera_view_space(),
+                                                      camera->get_camera_position());
         Cold::RendererBackend::on_frame_render();
         
  

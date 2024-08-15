@@ -41,6 +41,8 @@ namespace Cold {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         for(auto mesh : instance->meshes) 
         {
+            if(mesh.first ==  "sqaure")
+                mesh.second->get_transform()->anim_rotate({0,0.5,0});
             mesh.second->render();
         }
 
@@ -61,18 +63,24 @@ namespace Cold {
         
     }
 
-    void RendererBackend::on_view_model_change(const glm::mat4& new_view_model)
+    void RendererBackend::on_camera_props_change(const glm::mat4& new_view_model, const glm::vec3 new_camera_position)
     {
         instance->global_uniform_object->view_model = new_view_model;
+        instance->global_uniform_object->camera_position = new_camera_position;
         ShaderSystem::global_uniform_buffer_object_update(global_data.global_uniform_buffer_name,
                                                             &instance->global_uniform_object->view_model,
                                                             sizeof(glm::mat4),
                                                             offsetof(GlobalUniformObject, view_model));
+
+        ShaderSystem::global_uniform_buffer_object_update(global_data.global_uniform_buffer_name,
+                                                            &instance->global_uniform_object->camera_position,
+                                                            sizeof(glm::vec3),
+                                                            offsetof(GlobalUniformObject, camera_position));
     }
 
     void RendererBackend::load_data()
     {
-        // MEMORY LEAK HERE
+       // MEMORY LEAK HERE
         TransformSPtr root = std::make_shared<Cold::Transform>();
         TransformSPtr root_2 = std::make_shared<Cold::Transform>();
         StaticMesh* sponza_mesh = new StaticMesh(root, "Assets/Models/sponza/sponza.obj");

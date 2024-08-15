@@ -12,6 +12,7 @@ public:
     void on_key_release(KeyReleasedEvent *event);
     void on_mouse_moved(KeyMouseMovedEvent *event);
     glm::mat4 &get_camera_view_space();
+    glm::vec3 &get_camera_position();
 
 private:
     EventHandler<KeyPressedEvent> *key_press_handler;

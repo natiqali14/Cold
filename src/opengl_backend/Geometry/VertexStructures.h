@@ -11,6 +11,10 @@ namespace Cold {
         std::string diff_tex;
         u32 diff_tex_id;
         glm::vec3 diffuse_color {1.0,1.0,1.0}; // by default white
+
+        std::string specular_texure {""};
+        u32 specular_texture_id;
+        f32 shininess{0};
     };
 
 }

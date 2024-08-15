@@ -324,7 +324,7 @@ namespace Cold
         glBindTexture(GL_TEXTURE_2D, tex_id);
 
         u32 loci = glGetUniformLocation(shader->program_id, name.c_str());
-        glUniform1i(loci, tex_unit);
+        glUniform1i(loci+tex_unit, tex_unit);
     }
     ShaderSystem::~ShaderSystem()
     {

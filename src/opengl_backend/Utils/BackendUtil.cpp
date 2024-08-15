@@ -1,6 +1,7 @@
 #include "BackendUtil.h"
 
 #include "../test_data.h"
+#include <BackendConfigData.h>
 namespace Cold {
     namespace BackendUtil {
         StaticMesh* create_sqaure() 
@@ -25,12 +26,14 @@ namespace Cold {
             Cold::StaticMesh* sqaure_mesh = new Cold::StaticMesh(sqaur_trans, "");
             
             sqaur_trans->scale({5.0,5.0,5.0});
-            sqaur_trans->translate({0,0,0});
+            sqaur_trans->translate({0,3,0});
             Cold::GeometryId square_geom = Cold::GeometrySystem::create_geometry("sqaure_my");
             Cold::GeometrySystem::set_geometry_parent_transform(square_geom, sqaur_trans);
             Cold::GeometrySystem::pass_data_to_geometry(square_geom, vertices);
             Cold::Material sqaure_material;
-            sqaure_material.diff_tex = "Assets/default.png";
+            sqaure_material.diff_tex = cobble_stone.diffuse;
+            sqaure_material.specular_texure = cobble_stone.specular;
+            sqaure_material.shininess = cobble_stone.shininess;
             Cold::GeometrySystem::set_material(square_geom, sqaure_material);
             sqaure_mesh->push_geometry(square_geom);
 
