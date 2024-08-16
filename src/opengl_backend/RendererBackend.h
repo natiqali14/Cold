@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include <StaticMesh.h>
 #include <vector>
+#include <Events.h>
+#include <EventHandler.h>
+#include <EventSystemHelper.h>
 namespace Cold {
     struct FramePacket {
         f32 frame_rate;
@@ -41,5 +44,10 @@ namespace Cold {
             std::unordered_map<std::string , StaticMesh*> meshes;
             ~RendererBackend();
             void initialise_default_shader(); // TODO SHOULD BE MOVED FROM HERE
+
+            // TODO move to some place else here just for testing
+            EventHandler<KeyPressedEvent>* key_press_handler;
+
+            void on_key_press_event(KeyPressedEvent* event);
     };
 }

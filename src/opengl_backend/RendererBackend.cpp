@@ -4,6 +4,7 @@
 #include <ShaderSystem.h>
 #include <BackendConfigData.h>
 #include <BackendUtil.h>
+#include "../includes/GLFW/glfw3.h"
 namespace Cold {
     RendererBackend* instance = nullptr;
     void RendererBackend::initiate()
@@ -24,6 +25,14 @@ namespace Cold {
         ShaderSystem::global_uniform_buffer_object_add(instance->global_uniform_object,
                      sizeof(GlobalUniformObject), global_data.global_uniform_buffer_name);
         instance->initialise_default_shader();
+
+        // TODO move these
+
+        instance->key_press_handler = BIND_EVENT_FUNCTION(KeyPressedEvent, &RendererBackend::on_key_press_event, instance);
+        EventSystemHelper::subscribe(EVENTTYPE_KEY_PRESSED, instance->key_press_handler);
+        instance->key_press_handler->is_toggle = true;
+
+
     }
     void RendererBackend::shut_down()
     {
@@ -92,7 +101,10 @@ namespace Cold {
         falcon->load_mesh();
         falcon->buffer_to_gpu();
 
-        auto sqaure_mesh = BackendUtil::create_sqaure();
+        TransformSPtr square_transform = std::make_shared<Transform>();
+        square_transform->scale({5,5,5});
+        auto sqaure_mesh = new StaticMesh(square_transform, "Assets/Models/Cube/cube.obj");
+        sqaure_mesh->load_mesh();
         sqaure_mesh->buffer_to_gpu();
         sqaure_mesh->set_cull_facing(false);
 
@@ -110,5 +122,28 @@ namespace Cold {
     {
         ShaderSystem::create_shader(default_data.default_shader_name);
         ShaderSystem::shaders_compile(default_data.default_shader_name, ShaderEnum::VERT_3D, ShaderEnum::FRAG_3D);
+    }
+    void RendererBackend::on_key_press_event(KeyPressedEvent *event)
+    {
+        static u32 i = 2;
+        if(event->get_key_code() == GLFW_KEY_T) {
+            Material mat;
+            if (i%2 == 0) {
+                mat.diff_tex = cobble_stone.diffuse;
+                mat.specular_texure = cobble_stone.specular;
+                mat.shininess = cobble_stone.shininess;
+                
+            }
+            else {
+                mat.diff_tex = default_data.default_texture_path;
+            }
+            if(instance->meshes.count("sqaure")) {
+                instance->meshes["sqaure"]->set_material(mat, "Cube");
+
+            }
+            i++;
+        }
+
+        event->set_handled_flag(true);
     }
 }

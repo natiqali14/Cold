@@ -62,13 +62,11 @@ int main()
         // -----
         processInput(main_window->get_window_ptr());
         EventSystemHelper::dispatch_events();
-
         // render
         // ------
         Cold::RendererBackend::on_camera_props_change(camera->get_camera_view_space(),
                                                       camera->get_camera_position());
         Cold::RendererBackend::on_frame_render();
-        
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

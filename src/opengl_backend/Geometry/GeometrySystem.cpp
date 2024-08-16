@@ -31,7 +31,7 @@ namespace Cold {
 
     GeometryId GeometrySystem::generate_id()
     {
-        static GeometryId id = 0;
+        static GeometryId id = 1;
         return id++; 
     }
 
@@ -102,11 +102,31 @@ namespace Cold {
 
     }
 
+    void GeometrySystem::change_material(GeometryId id, const Material &material)
+    {
+        COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
+        GeometrySPtr geometry = instance->geometries.at(id);   
+        geometry->change_material(material);
+    }
+
     void GeometrySystem::set_geometry_parent_transform(GeometryId id, TransformSPtr transform)
     {
         COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
         GeometrySPtr geometry = instance->geometries.at(id);
         geometry->get_transform()->set_parent(transform);
+    }
+
+    GeometryId GeometrySystem::get_geometry_id(const std::string & geom_name)
+    {
+        COLD_ASSERT(instance->geometry_path_refs.count(geom_name) != 0, "No Geometry found in the map");
+        return instance->geometry_path_refs[geom_name];
+    }
+
+    void GeometrySystem::pass_material_to_gpu(GeometryId id)
+    {
+        COLD_ASSERT(instance->geometries.count(id) > 0, "No Geometry found in the map");
+        GeometrySPtr geometry = instance->geometries.at(id);
+        geometry->buffer_material_data();
     }
 
     TransformSPtr GeometrySystem::get_transform(GeometryId id)

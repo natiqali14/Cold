@@ -82,5 +82,14 @@
     "editor.cursorStyle": "block",
     "editor.cursorSmoothCaretAnimation": "off",
     "editor.cursorBlinking": "blink",
-    "workbench.colorTheme": "Material Theme Palenight High Contrast",
+    "workbench.colorTheme": "Palenight (Mild Contrast)",
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [{
+            "scope": "comment",
+            "settings": {
+                "foreground": "#85ff49"
+            }
+        }]
+        
+    }
 }

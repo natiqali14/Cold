@@ -45,6 +45,13 @@ namespace Cold {
     {
         should_cull_face = cull_face;
     }
+
+    void StaticMesh::set_material(Material material, const std::string &geom_name)
+    {
+        auto id = GeometrySystem::get_geometry_id(geom_name);
+        GeometrySystem::change_material(id, material);
+    }
+
     TransformSPtr StaticMesh::get_transform()
     {
         return root_transform;

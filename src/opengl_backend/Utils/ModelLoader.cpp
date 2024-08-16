@@ -17,7 +17,7 @@ namespace Cold {
     {
     }
 
-     /* This function will do following things
+     /** This function will do following things
             * 1. checks if the path is starting from Assets/Models/
             * 2. check if it has a extension or not
             * 3. check if extension is obj or not
@@ -77,9 +77,9 @@ namespace Cold {
                 // TODO to check if name can be empty or not
                 // creation of unique path for geometry
                 aiString name = mesh->mName;
-                std::string geom_path = file_path + std::string(name.C_Str());
+                std::string geom_path =  std::string(name.C_Str());
                 // geom creation
-                GeometryId geometry = GeometrySystem::create_geometry(geom_path);// geometry creation
+                GeometryId geometry = GeometrySystem::create_geometry(name.C_Str());// geometry creation
                 static_mesh->push_geometry(geometry); // adding geom to mesh
                 // setting parent root transform
                 GeometrySystem::get_transform(geometry)->set_parent(static_mesh->get_transform());
@@ -140,16 +140,6 @@ namespace Cold {
                 prepare_index_data(mesh->mFaces, total_faces, index_data);
                 GeometrySystem::pass_data_to_geometry(geometry, vertices_data);
                 GeometrySystem::pass_indicies_data_to_geometry(geometry, index_data);
-                // GeommetryConfig config; // geom config
-                // config.verticies = vertices;
-                // config.vertex_count = total_vertex_count;
-                // config.normals = normals;
-                // config.normal_count = total_vertex_count;
-                // config.tex_coords = tcs;
-                // config.tex_coords_count = total_vertex_count;
-                // config.faces = mesh->mFaces;
-                // config.faces_count = total_faces;
-                // GeometrySystem::pass_data_to_geometry(geometry, config);
             }            
         }
 

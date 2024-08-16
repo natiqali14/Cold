@@ -28,9 +28,11 @@ namespace Cold {
         void push_inicies(const std::vector<u32>& index_data);
         void buffer_data_to_gpu();
         void delete_data_from_gpu();
+        void buffer_material_data();
 
         void render();
         void set_material(const Material& material);
+        void change_material(const Material& material);
         TransformSPtr get_transform();
         inline const u32 get_ref_count() const {return ref_count;}
         inline void increament_ref_count() {ref_count++;}
@@ -41,7 +43,7 @@ namespace Cold {
         /** 
          * gpu vertex data for a geometry 
         */
-         std::vector<Vertex> verticies;
+        std::vector<Vertex> verticies;
         u32 total_vertex_count;
         u32 ref_count;
         /* unique VAO for this geometry  */

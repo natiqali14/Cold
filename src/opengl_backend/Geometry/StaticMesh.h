@@ -12,6 +12,7 @@ namespace Cold {
         void render();
         void load_mesh();
         void set_cull_facing(bool cull_face);
+        void set_material(Material material, const std::string& geom_name);
         TransformSPtr get_transform();
     private:
         TransformSPtr root_transform;

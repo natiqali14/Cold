@@ -13,9 +13,13 @@ namespace Cold {
         GLenum data_type;
         u16 ref_count;
         TextureProps tex_props;
-        Texture(u32 w, u32 h, u16 count, TextureProps props)
-        : width(w), height(h), ref_count(count), tex_props(props) {
+        std::string texture_path;
+        Texture(u32 w, u32 h, u16 count, TextureProps props, std::string path)
+        : width(w), height(h), ref_count(count), tex_props(props), texture_path(std::move(path)) {
 
+        }
+        ~Texture() {
+            COLD_TRACE("Texture object deleted");
         }
     };
 
@@ -59,7 +63,11 @@ namespace Cold {
         if(instance->textures[texture_id]->ref_count <= 0) {
             // ref count goes to 0, delete the texture
             glDeleteTextures(1, &texture_id);
+            auto path = instance->textures[texture_id]->texture_path;
+            instance->external_textures_ref.erase(path);
             instance->textures.erase(texture_id);
+
+            COLD_TRACE("TextureSystem::delete_texture with id %d", texture_id);
             return true;
         }
         return false;
@@ -107,7 +115,7 @@ namespace Cold {
         instance->textures.insert(
             {
                 id,
-                std::make_shared<Texture>(width, height, 1, std::move(props))
+                std::make_shared<Texture>(width, height, 1, std::move(props),path)
 
             }
         );
@@ -158,7 +166,7 @@ namespace Cold {
         instance->textures.insert(
             {
                 id,
-                std::make_shared<Texture>(width, height, 1, std::move(props))
+                std::make_shared<Texture>(width, height, 1, std::move(props), path)
 
             }
         );

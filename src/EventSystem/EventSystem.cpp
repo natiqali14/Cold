@@ -38,11 +38,23 @@ void EventSystem::unsubscribe(EventType type, IEventHandler* event_handle)
 
 void EventSystem::trigger_event(EventType type, IEvent* event_data)
 {
+    bool key_found = false;
     if(!PFN_to_trigger.count(type)) {
         event_data->set_handled_flag(true);
         return;
     }
+
+    if(type == EVENTTYPE_KEY_RELEASED) {
+        auto e = static_cast<KeyReleasedEvent*>(event_data);
+        if (key_pressed.count(e->get_key_code())) key_pressed.erase(e->get_key_code());
+    }
+    else if (type == EVENTTYPE_KEY_PRESSED) {
+        auto e = static_cast<KeyPressedEvent*>(event_data);
+        if (key_pressed.count(e->get_key_code())) key_found = true;
+        else key_pressed.insert(e->get_key_code());
+    }
     for(auto& PFN_handle : PFN_to_trigger[type]) {
+        if (event_handler_map[PFN_handle]->is_toggle && key_found) return;
         event_handler_map[PFN_handle]->call(event_data);
     }
 }

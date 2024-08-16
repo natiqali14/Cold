@@ -27,6 +27,8 @@ public:
      * @brief A virtual destructor
      */
     virtual ~IEventHandler() = default;
+
+    bool is_toggle {false};
 };
 
 /**
@@ -71,6 +73,8 @@ public:
     u32 get_uid() override {
         return uid;
     }
+
+   
     
 private:
     /**

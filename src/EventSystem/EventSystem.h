@@ -1,7 +1,7 @@
 #pragma once
 #include "../includes.h"
 #include "Events.h"
-
+#include <unordered_set>
 class IEventHandler;
 class EventSystem {
 public:
@@ -23,4 +23,5 @@ private:
     // may be use multithreading on events Q that is only changing / depend on cpu code
     // and run one other Q on main thread that is changing / performing some GPU code.
     std::queue<std::pair<EventType, IEvent*>> events_queue; /// right now there is only 1 Q running on main thread.
+    std::unordered_set<i16> key_pressed;
 };

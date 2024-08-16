@@ -1,5 +1,6 @@
 #include "InputSystem.h"
 #include "../EventSystem/EventSystemHelper.h"
+#include <Logger.h>
 InputSystem::InputSystem()
 {
 }

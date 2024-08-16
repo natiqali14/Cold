@@ -88,6 +88,12 @@ namespace Cold {
 
         } 
        
+        buffer_material_data();
+    }
+
+    void Geometry::buffer_material_data()
+    {
+       
         TextureProps props;
         props.image_data_type = GL_UNSIGNED_BYTE;
         props.internal_format = GL_RGBA;
@@ -96,11 +102,20 @@ namespace Cold {
         props.should_generate_mipmap = true;
         props.wrap_x_axis = GL_REPEAT;
         props.wrap_y_axis = GL_REPEAT;
-        geometry_material.diff_tex_id = TextureSystem::texture_2D_immutable_create(geometry_material.diff_tex, std::move(props));
-        if(geometry_material.shininess > 0) {
+        geometry_material.diff_tex_id = TextureSystem::texture_2D_immutable_create(geometry_material.diff_tex,(props));
+        if(geometry_material.shininess > 0) 
+        {
+            TextureProps props2;
+            props2.image_data_type = GL_UNSIGNED_BYTE;
+            props2.internal_format = GL_RGBA;
+            props2.magnification_fillter = GL_LINEAR;
+            props2.minification_filter = GL_LINEAR_MIPMAP_LINEAR;
+            props2.should_generate_mipmap = true;
+            props2.wrap_x_axis = GL_REPEAT;
+            props2.wrap_y_axis = GL_REPEAT;
             geometry_material.specular_texture_id = 
-                TextureSystem::texture_2D_immutable_create(geometry_material.specular_texure, std::move(props));
-        }
+                TextureSystem::texture_2D_immutable_create(geometry_material.specular_texure, std::move(props2));
+        }   
     }
 
     void Geometry::delete_data_from_gpu()
@@ -108,6 +123,7 @@ namespace Cold {
         glDeleteBuffers(1, &ebo);
         vao.reset();
     }
+
 
     void Geometry::render()
     {
@@ -137,6 +153,14 @@ namespace Cold {
     void Geometry::set_material(const Material &material)
     {
         geometry_material = std::move(material);
+    }
+
+    void Geometry::change_material(const Material &material)
+    {
+        TextureSystem::delete_texture(geometry_material.diff_tex_id);
+        TextureSystem::delete_texture(geometry_material.specular_texture_id);
+        geometry_material = material;
+        buffer_material_data();;
     }
 
     TransformSPtr Geometry::get_transform()
