@@ -52,6 +52,9 @@ namespace Cold {
         {
             if(mesh.first ==  "sqaure")
                 mesh.second->get_transform()->anim_rotate({0,0.5,0});
+            if(mesh.first ==  "vase") {
+               // mesh.second->get_transform()->anim_rotate({0.5,0.0,0.0});
+            }
             mesh.second->render();
         }
 
@@ -108,9 +111,21 @@ namespace Cold {
         sqaure_mesh->buffer_to_gpu();
         sqaure_mesh->set_cull_facing(false);
 
-        instance->meshes.insert({"sponza", sponza_mesh});
+       
+
+        TransformSPtr vase_transform = std::make_shared<Cold::Transform>();
+        StaticMesh* vase = new StaticMesh(vase_transform, "Assets/Models/ceramic_vase/antique_ceramic_vase_01_1k.fbx");
+         vase_transform->rotate({90,0,0});
+        vase_transform->translate({10,0,-10});
+        vase_transform->scale({5,5,5});
+       
+        vase->set_cull_facing(false);
+        vase->load_mesh();
+        vase->buffer_to_gpu();
+         instance->meshes.insert({"sponza", sponza_mesh});
         instance->meshes.insert({"falcon", falcon});
         instance->meshes.insert({"sqaure", sqaure_mesh});
+        instance->meshes.insert({"vase", vase});
     }
 
     RendererBackend::~RendererBackend()

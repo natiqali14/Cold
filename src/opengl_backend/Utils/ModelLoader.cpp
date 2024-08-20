@@ -29,7 +29,9 @@ namespace Cold {
         COLD_ASSERT(pos == 0, "ERROR target  model is not in directory Assets/Models");
         u64 obj_file_check = file_path.rfind("."); // TODO right now only .obj is tested and being supported
         COLD_ASSERT(obj_file_check != std::string::npos, "No file extension is provided");
-        COLD_ASSERT((file_path.length() - obj_file_check) ==  3 + 1, "Provided file is not of obj extension");
+        std::string extension = file_path.substr(obj_file_check+1, file_path.length());
+        COLD_ASSERT(strcmp(extension.c_str(), "obj") == 0 || strcmp(extension.c_str(), "fbx") == 0 , 
+                            "Provided file is not of obj or fbx extension");
         u64 split_pos = file_path.rfind(Helper::normalize_paths("/"));
         return file_path.substr(0,split_pos+1);
     }
