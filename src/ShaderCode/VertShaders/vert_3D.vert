@@ -32,7 +32,8 @@ void main()
     out_fdb.ambient_color = ambient_color;
     out_fdb.directional_light_color = directional_light_color;
     out_fdb.directional_light_vector = directional_light_vector;
-    out_fdb.normal = mat3(model) * aNormal;
+    out_fdb.normal = normalize(mat3(model) * aNormal);
+
     out_fdb.diffuse_color = diffuse_color;
     out_fdb.camera_position = camera_position;
     out_fdb.frag_position = frag;
