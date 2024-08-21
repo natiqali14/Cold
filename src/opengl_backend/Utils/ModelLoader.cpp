@@ -36,15 +36,19 @@ namespace Cold {
         return file_path.substr(0,split_pos+1);
     }
 
-    static void  prepare_vertex3D_data(aiVector3D* vertices, aiVector3D* tex_coords, aiVector3D* normals, u32 vertex_count ,std::vector<Vertex>& data) {
+    static void  prepare_vertex3D_data(aiVector3D* vertices, aiVector3D* tex_coords, aiVector3D* normals, aiVector3D* tangents, aiVector3D* biTangents, u32 vertex_count ,std::vector<Vertex>& data) {
         Vertex v;
         for(u32 i = 0; i < vertex_count; i++) {
             aiVector3D vert = vertices[i];
             aiVector3D tex = tex_coords[i];
             aiVector3D norm = normals[i];
+            aiVector3D tang = tangents[i];
+            aiVector3D biTang = biTangents[i];
             v.position = {vert.x, vert.y, vert.z};
             v.normals = {norm.x, norm.y, norm.z};
             v.tex_coord = {tex.x, tex.y};
+            v.tangents = {tang.x, tang.y, tang.z};
+            v.bitangents = {biTang.x, biTang.y, biTang.z};
             data.push_back(v);
         }
     }
@@ -133,10 +137,12 @@ namespace Cold {
                 u32 total_vertex_count = mesh->mNumVertices;
                 aiVector3D* vertices = mesh->mVertices;
                 aiVector3D* normals = mesh->mNormals;
+                aiVector3D* t = mesh->mTangents;
+                aiVector3D* b = mesh->mBitangents;
                 aiVector3D* tcs = mesh->mTextureCoords[0];
                 u32 total_faces = mesh->mNumFaces;
                 std::vector<Vertex> vertices_data;
-                prepare_vertex3D_data(vertices, tcs, normals, total_vertex_count, vertices_data);
+                prepare_vertex3D_data(vertices, tcs, normals, t, b, total_vertex_count, vertices_data);
                 std::vector<u32> index_data;
                 prepare_index_data(mesh->mFaces, total_faces, index_data);
                 GeometrySystem::pass_data_to_geometry(geometry, vertices_data);

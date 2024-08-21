@@ -70,7 +70,9 @@ namespace Cold {
             {
                 {"aPos", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, position)},
                 {"aNormal", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, normals)},
-                {"aTexCoord", 2, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, tex_coord)}
+                {"aTexCoord", 2, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, tex_coord)},
+                {"aTangent", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, tangents)},
+                {"aBitangent", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, bitangents)}
             }
             );
             vao = VertexArrayBuffer::create_vertex_array_buffer();

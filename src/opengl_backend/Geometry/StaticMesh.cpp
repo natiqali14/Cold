@@ -38,7 +38,7 @@ namespace Cold {
     {
         // TODO have to find some ways for the flags but for now const flags are ok
         ModelLoader::model_load(mesh_file_path,
-                                aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals,
+                                aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace,
                                 this);
     }
     void StaticMesh::set_cull_facing(bool cull_face)
