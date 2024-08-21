@@ -52,9 +52,6 @@ namespace Cold {
         {
             if(mesh.first ==  "sqaure")
                 mesh.second->get_transform()->anim_rotate({0,0.5,0});
-            if(mesh.first ==  "vase") {
-               // mesh.second->get_transform()->anim_rotate({0.0,0.0,0.0});
-            }
             mesh.second->render();
         }
 
@@ -93,42 +90,28 @@ namespace Cold {
     void RendererBackend::load_data()
     {
        // MEMORY LEAK HERE
-        // TransformSPtr root = std::make_shared<Cold::Transform>();
-        // TransformSPtr root_2 = std::make_shared<Cold::Transform>();
-        // StaticMesh* sponza_mesh = new StaticMesh(root, "Assets/Models/sponza/sponza.obj");
-        // root->scale({0.05,00.05,0.05});
-        // sponza_mesh->load_mesh();
-        // sponza_mesh->buffer_to_gpu();
-        // StaticMesh* falcon = new StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
-        // root_2->translate({50,0,0});
-        // falcon->load_mesh();
-        // falcon->buffer_to_gpu();
+        TransformSPtr root = std::make_shared<Cold::Transform>();
+        TransformSPtr root_2 = std::make_shared<Cold::Transform>();
+        StaticMesh* sponza_mesh = new StaticMesh(root, "Assets/Models/sponza/sponza.obj");
+        root->scale({0.05,00.05,0.05});
+        sponza_mesh->load_mesh();
+        sponza_mesh->buffer_to_gpu();
+        StaticMesh* falcon = new StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
+        root_2->translate({50,0,0});
+        falcon->load_mesh();
+        falcon->buffer_to_gpu();
 
-        // TransformSPtr square_transform = std::make_shared<Transform>();
-        // square_transform->translate({0,10,0});
-        // square_transform->scale({5,5,5});
-        // auto sqaure_mesh = new StaticMesh(square_transform, "Assets/Models/Cube/cube.obj");
-        // sqaure_mesh->load_mesh();
-        // sqaure_mesh->buffer_to_gpu();
-        // sqaure_mesh->set_cull_facing(false);
+        TransformSPtr square_transform = std::make_shared<Transform>();
+        square_transform->translate({0,10,0});
+        square_transform->scale({5,5,5});
+        auto sqaure_mesh = new StaticMesh(square_transform, "Assets/Models/Cube/cube.obj");
+        sqaure_mesh->load_mesh();
+        sqaure_mesh->buffer_to_gpu();
+        sqaure_mesh->set_cull_facing(false);
 
-       
-
-        TransformSPtr vase_transform = std::make_shared<Cold::Transform>();
-        StaticMesh* vase = new StaticMesh(vase_transform, "Assets/Models/brass_vase/brass_vase.fbx");
-
-        vase_transform->scale({10,10,10});
-        vase_transform->translate({10,10,0});
-        vase_transform->rotate({-90,0,0});
-       
-       // vase->set_cull_facing(false);
-        vase->load_mesh();
-        vase->buffer_to_gpu();
-
-        // instance->meshes.insert({"sponza", sponza_mesh});
-        // instance->meshes.insert({"falcon", falcon});
-        // instance->meshes.insert({"sqaure", sqaure_mesh});
-        instance->meshes.insert({"vase", vase});
+        instance->meshes.insert({"sponza", sponza_mesh});
+        instance->meshes.insert({"falcon", falcon});
+        instance->meshes.insert({"sqaure", sqaure_mesh});
     }
 
     RendererBackend::~RendererBackend()
@@ -146,14 +129,27 @@ namespace Cold {
         static u32 i = 2;
         if(event->get_key_code() == GLFW_KEY_T) {
             Material mat;
-            if (i%2 == 0) {
+            if (i == 2) {
+                mat.diff_tex = cobble_stone.diffuse;
+                
+               
+                
+            }
+            else if (i == 3) {
                 mat.diff_tex = cobble_stone.diffuse;
                 mat.specular_texure = cobble_stone.specular;
                 mat.shininess = cobble_stone.shininess;
-                
+            }
+
+            else if (i == 4) {
+                mat.diff_tex = cobble_stone.diffuse;
+                mat.specular_texure = cobble_stone.specular;
+                mat.shininess = cobble_stone.shininess;
+                mat.normal_texture = cobble_stone.normal;
             }
             else {
                 mat.diff_tex = default_data.default_texture_path;
+                i = 1;
             }
             if(instance->meshes.count("sqaure")) {
                 instance->meshes["sqaure"]->set_material(mat, "Cube");

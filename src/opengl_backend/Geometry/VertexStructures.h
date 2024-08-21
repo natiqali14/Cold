@@ -17,6 +17,9 @@ namespace Cold {
         std::string specular_texure {""};
         u32 specular_texture_id;
         f32 shininess{0};
+
+        std::string normal_texture {""};
+        u32 normal_texture_id;
     };
 
 }

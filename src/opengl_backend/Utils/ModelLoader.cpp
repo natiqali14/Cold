@@ -62,6 +62,61 @@ namespace Cold {
         }
     }
 
+    static void set_diffusion_info(Material& mater, aiMaterial* material, const std::string& texture_dir) {
+        auto count = material->GetTextureCount(aiTextureType_DIFFUSE);
+        std::stringstream texture_path;
+        // if yes then make a full path of this texture
+        if(count > 0) {
+            aiString path;  // path for diffuse texture
+            material->GetTexture(aiTextureType_DIFFUSE, 0, &path);
+            texture_path << texture_dir;
+            texture_path << path.C_Str();
+        }
+        // if not then use default texture
+        else {
+            texture_path << Helper::normalize_paths("Assets/default.png");
+        }
+
+        mater.diff_tex = texture_path.str();
+
+        aiColor3D diffuse_color;
+        auto status = material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color);
+        if(status == AI_SUCCESS) {
+            mater.diffuse_color = {diffuse_color.r, diffuse_color.g, diffuse_color.b};
+        }
+    }
+
+    static void set_specular_info(Material& mater, aiMaterial* material, const std::string& texture_dir) {
+        std::stringstream specular_path;
+        auto count = material->GetTextureCount(aiTextureType_SPECULAR);
+        if(count > 0) 
+        {
+            aiString path;  // path for diffuse texture
+            material->GetTexture(aiTextureType_SPECULAR, 0, &path);
+            specular_path << texture_dir;
+            specular_path << path.C_Str();
+            mater.specular_texure = specular_path.str();
+            f32 shininess;
+                if (AI_SUCCESS == material->Get(AI_MATKEY_SHININESS, shininess)) 
+            {
+                mater.shininess = shininess;
+            }
+        }
+    }
+
+    static void set_normal_info(Material& mater, aiMaterial* material, const std::string& texture_dir) {
+        std::stringstream normal_path;
+        auto count = material->GetTextureCount(aiTextureType_NORMALS);
+        if(count > 0)
+        {
+            aiString path;
+            material->GetTexture(aiTextureType_NORMALS, 0, &path);
+            normal_path << texture_dir;
+            normal_path << path.C_Str();
+            mater.normal_texture = normal_path.str();
+        }
+    }
+
     void  ModelLoader::model_load(const std::string &file_path, u32 flags, StaticMesh* static_mesh)
     {
         std::string texture_dir = helper_verification_for_model_loader(file_path);
@@ -92,45 +147,15 @@ namespace Cold {
                 auto mat = mesh->mMaterialIndex;
                 // creation of material object for geom
                 Material mater;
-                // checking if it has diffuse texture or not
-                auto count = scene->mMaterials[mat]->GetTextureCount(aiTextureType_DIFFUSE);
-                auto material_for_geom = scene->mMaterials[mat];
-                std::stringstream texture_path;
-                // if yes then make a full path of this texture
-                if(count > 0) {
-                    aiString path;  // path for diffuse texture
-                    scene->mMaterials[mat]->GetTexture(aiTextureType_DIFFUSE, 0, &path);
-                    texture_path << texture_dir;
-                    texture_path << path.C_Str();
-                }
-                // if not then use default texture
-                else {
-                    texture_path << Helper::normalize_paths("Assets/default.png");
-                }
+                // for diffusion
+                set_diffusion_info(mater, scene->mMaterials[mat], texture_dir);
 
                 // for specular 
-                std::stringstream specular_path;
-                count = scene->mMaterials[mat]->GetTextureCount(aiTextureType_SPECULAR);
-                if(count > 0) 
-                {
-                    aiString path;  // path for diffuse texture
-                    scene->mMaterials[mat]->GetTexture(aiTextureType_SPECULAR, 0, &path);
-                    specular_path << texture_dir;
-                    specular_path << path.C_Str();
-                    mater.specular_texure = specular_path.str();
-                    f32 shininess;
-                     if (AI_SUCCESS == scene->mMaterials[mat]->Get(AI_MATKEY_SHININESS, shininess)) 
-                    {
-                        mater.shininess = shininess;
-                    }
-                }
+                set_specular_info(mater,scene->mMaterials[mat], texture_dir);
 
-                mater.diff_tex = texture_path.str(); // diffusion texture path final
-                aiColor3D diffuse_color;
-                auto status = material_for_geom->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse_color);
-                if(status == AI_SUCCESS) {
-                    mater.diffuse_color = {diffuse_color.r, diffuse_color.g, diffuse_color.b};
-                }
+                // for normals
+                set_normal_info(mater, scene->mMaterials[mat], texture_dir);
+                
                 GeometrySystem::set_material(geometry, mater); // setting material for our geometry
 
                 /* Setting vertex data and index data for geometry*/

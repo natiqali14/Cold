@@ -116,8 +116,21 @@ namespace Cold {
             props2.wrap_x_axis = GL_REPEAT;
             props2.wrap_y_axis = GL_REPEAT;
             geometry_material.specular_texture_id = 
-                TextureSystem::texture_2D_immutable_create(geometry_material.specular_texure, std::move(props2));
-        }   
+                TextureSystem::texture_2D_immutable_create(geometry_material.specular_texure, props2);
+        } 
+        if(geometry_material.normal_texture.length() > 0)
+        {
+            TextureProps props2;
+            props2.image_data_type = GL_UNSIGNED_BYTE;
+            props2.internal_format = GL_RGBA;
+            props2.magnification_fillter = GL_LINEAR;
+            props2.minification_filter = GL_LINEAR_MIPMAP_LINEAR;
+            props2.should_generate_mipmap = true;
+            props2.wrap_x_axis = GL_REPEAT;
+            props2.wrap_y_axis = GL_REPEAT;
+            geometry_material.normal_texture_id = 
+                TextureSystem::texture_2D_immutable_create(geometry_material.normal_texture, std::move(props2));
+        }  
     }
 
     void Geometry::delete_data_from_gpu()
@@ -134,7 +147,11 @@ namespace Cold {
         if(geometry_material.shininess > 0) {
             ShaderSystem::pass_sampler_to_gpu(shader, geometry_material.specular_texture_id, 1, "frameTexture");
         }
+        if(geometry_material.normal_texture.length() > 0) {
+            ShaderSystem::pass_sampler_to_gpu(shader, geometry_material.normal_texture_id, 2, "frameTexture");   
+        }
         ShaderSystem::local_uniform_object_add(shader, "shininess", geometry_material.shininess, EUT_FLOAT_1);
+        ShaderSystem::local_uniform_object_add(shader, "hasNormal", geometry_material.normal_texture.length() > 0 ? 1: 0, EUT_INT_1);
             
         ShaderSystem::local_uniform_object_add(shader, "model", transform->get_world_model(), EUT_MAT_4x4);
         ShaderSystem::local_uniform_object_add(shader, "diffuse_color", geometry_material.diffuse_color, EUT_FLOAT_3);

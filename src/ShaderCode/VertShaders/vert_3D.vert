@@ -2,6 +2,8 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
+layout (location = 3) in vec3 aTangent;
+layout (location = 4) in vec3 aBitangent;
 uniform mat4 model;
 uniform vec3 diffuse_color;
 
@@ -22,6 +24,7 @@ struct fragment_data_object {
     vec3 diffuse_color;
     vec3 camera_position;
     vec3 frag_position;
+    mat3 TBN;
 };
 
 out vec2 tc;
@@ -32,7 +35,12 @@ void main()
     out_fdb.ambient_color = ambient_color;
     out_fdb.directional_light_color = directional_light_color;
     out_fdb.directional_light_vector = directional_light_vector;
-    out_fdb.normal = normalize(mat3(model) * aNormal);
+    mat3 model_mat = mat3(model);
+    out_fdb.normal = normalize(model_mat * aNormal);
+    vec3 norm_tangent = normalize(model_mat * aTangent);
+    vec3 norm_bitangent = normalize(model_mat * aBitangent);
+    norm_tangent = (norm_tangent - dot(norm_tangent, out_fdb.normal) * out_fdb.normal);
+    out_fdb.TBN = mat3(norm_tangent, norm_bitangent, out_fdb.normal);
 
     out_fdb.diffuse_color = diffuse_color;
     out_fdb.camera_position = camera_position;
