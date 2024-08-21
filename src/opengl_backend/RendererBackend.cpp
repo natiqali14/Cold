@@ -53,7 +53,7 @@ namespace Cold {
             if(mesh.first ==  "sqaure")
                 mesh.second->get_transform()->anim_rotate({0,0.5,0});
             if(mesh.first ==  "vase") {
-               // mesh.second->get_transform()->anim_rotate({0.5,0.0,0.0});
+               // mesh.second->get_transform()->anim_rotate({0.0,0.0,0.0});
             }
             mesh.second->render();
         }
@@ -93,38 +93,41 @@ namespace Cold {
     void RendererBackend::load_data()
     {
        // MEMORY LEAK HERE
-        TransformSPtr root = std::make_shared<Cold::Transform>();
-        TransformSPtr root_2 = std::make_shared<Cold::Transform>();
-        StaticMesh* sponza_mesh = new StaticMesh(root, "Assets/Models/sponza/sponza.obj");
-        root->scale({0.05,00.05,0.05});
-        sponza_mesh->load_mesh();
-        sponza_mesh->buffer_to_gpu();
-        StaticMesh* falcon = new StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
-        root_2->translate({50,0,0});
-        falcon->load_mesh();
-        falcon->buffer_to_gpu();
+        // TransformSPtr root = std::make_shared<Cold::Transform>();
+        // TransformSPtr root_2 = std::make_shared<Cold::Transform>();
+        // StaticMesh* sponza_mesh = new StaticMesh(root, "Assets/Models/sponza/sponza.obj");
+        // root->scale({0.05,00.05,0.05});
+        // sponza_mesh->load_mesh();
+        // sponza_mesh->buffer_to_gpu();
+        // StaticMesh* falcon = new StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
+        // root_2->translate({50,0,0});
+        // falcon->load_mesh();
+        // falcon->buffer_to_gpu();
 
-        TransformSPtr square_transform = std::make_shared<Transform>();
-        square_transform->scale({5,5,5});
-        auto sqaure_mesh = new StaticMesh(square_transform, "Assets/Models/Cube/cube.obj");
-        sqaure_mesh->load_mesh();
-        sqaure_mesh->buffer_to_gpu();
-        sqaure_mesh->set_cull_facing(false);
+        // TransformSPtr square_transform = std::make_shared<Transform>();
+        // square_transform->translate({0,10,0});
+        // square_transform->scale({5,5,5});
+        // auto sqaure_mesh = new StaticMesh(square_transform, "Assets/Models/Cube/cube.obj");
+        // sqaure_mesh->load_mesh();
+        // sqaure_mesh->buffer_to_gpu();
+        // sqaure_mesh->set_cull_facing(false);
 
        
 
         TransformSPtr vase_transform = std::make_shared<Cold::Transform>();
-        StaticMesh* vase = new StaticMesh(vase_transform, "Assets/Models/ceramic_vase/antique_ceramic_vase_01_1k.fbx");
-         vase_transform->rotate({90,0,0});
-        vase_transform->translate({10,0,-10});
-        vase_transform->scale({5,5,5});
+        StaticMesh* vase = new StaticMesh(vase_transform, "Assets/Models/brass_vase/brass_vase.fbx");
+
+        vase_transform->scale({10,10,10});
+        vase_transform->translate({10,10,0});
+        vase_transform->rotate({-90,0,0});
        
-        vase->set_cull_facing(false);
+       // vase->set_cull_facing(false);
         vase->load_mesh();
         vase->buffer_to_gpu();
-         instance->meshes.insert({"sponza", sponza_mesh});
-        instance->meshes.insert({"falcon", falcon});
-        instance->meshes.insert({"sqaure", sqaure_mesh});
+
+        // instance->meshes.insert({"sponza", sponza_mesh});
+        // instance->meshes.insert({"falcon", falcon});
+        // instance->meshes.insert({"sqaure", sqaure_mesh});
         instance->meshes.insert({"vase", vase});
     }
 

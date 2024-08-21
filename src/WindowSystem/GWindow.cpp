@@ -64,7 +64,7 @@ void GWindow::poll_input_events()
 
 void GWindow::should_hide_cursor(bool should_hide)
 {
-    u32 value = should_hide ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL;
+    u32 value = should_hide ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
     glfwSetInputMode(window, GLFW_CURSOR, value);
 }
 

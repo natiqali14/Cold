@@ -82,7 +82,7 @@
     "editor.cursorStyle": "block",
     "editor.cursorSmoothCaretAnimation": "off",
     "editor.cursorBlinking": "blink",
-    "workbench.colorTheme": "Palenight (Mild Contrast)",
+    "workbench.colorTheme": "Material Theme Palenight",
     "editor.tokenColorCustomizations": {
         "textMateRules": [{
             "scope": "comment",

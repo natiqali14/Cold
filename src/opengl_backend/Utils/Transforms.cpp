@@ -32,30 +32,34 @@ namespace Cold {
 
     void Transform::translate(glm::vec3 amount)
     {
-        model_matrix = glm::translate(model_matrix, amount);
+        translation_matrix = glm::translate(translation_matrix, amount);
         is_dirty = true;
+        model_matrix = translation_matrix * roation_matrix * scale_matrix;
     }
     
     void Transform::set_absolute_position(glm::vec3 position)
     {
         if(is_dirty) re_calculate_transform_members();
         glm::vec3 to_translate = position - this->position;
-        model_matrix = glm::translate(model_matrix, to_translate);
+        translation_matrix = glm::translate(translation_matrix, to_translate);
         this->position = position;
+        model_matrix = translation_matrix * roation_matrix * scale_matrix;
     }
 
     void Transform::scale(glm::vec3 amount)
     {
-        model_matrix = glm::scale(model_matrix, amount);
+        scale_matrix = glm::scale(scale_matrix, amount);
         is_dirty = true;
+        model_matrix = translation_matrix * roation_matrix * scale_matrix;
     }
 
     void Transform::set_absolute_scale(glm::vec3 _scale)
     {
         if(is_dirty) re_calculate_transform_members();
         glm::vec3 target_scale = _scale / this->_scale;
-        model_matrix = glm::scale(model_matrix, target_scale);
+        scale_matrix = glm::scale(scale_matrix, target_scale);
         this->_scale = _scale;
+        model_matrix = translation_matrix * roation_matrix * scale_matrix;
     }
 
     void Transform::rotate(glm::vec3 amount)
@@ -65,16 +69,18 @@ namespace Cold {
         glm::vec3 to_rotate = amount - current_in_degrees;
         glm::quat new_rot = glm::quat(glm::radians(to_rotate));
         glm::mat4 rot_mat = glm::mat4_cast(new_rot);
-        model_matrix = rot_mat * model_matrix;
+        roation_matrix = rot_mat * roation_matrix;
         rotation = new_rot;
         is_dirty = true;
+        model_matrix = translation_matrix * roation_matrix * scale_matrix;
     }
     void Transform::anim_rotate(glm::vec3 amount)
     {
         glm::quat new_rot = glm::quat(glm::radians(amount));
         glm::mat4 rot_mat = glm::mat4_cast(new_rot);
-        model_matrix = rot_mat * model_matrix;
+        roation_matrix = rot_mat * roation_matrix;
         rotation += new_rot;
         is_dirty = true;
+        model_matrix = translation_matrix * roation_matrix * scale_matrix;
     }
 }

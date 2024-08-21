@@ -7,6 +7,10 @@ namespace Cold {
         glm::vec3 position {glm::vec3(0.0f)};
         glm::quat rotation {glm::identity<glm::quat>()}; // TODO make it to quant
         glm::vec3 _scale {glm::vec3(1.0f)};;
+
+        glm::mat4 translation_matrix {glm::mat4(1.0)};
+        glm::mat4 roation_matrix {glm::mat4(1.0)};
+        glm::mat4 scale_matrix {glm::mat4(1.0)};
         bool is_dirty {false};
 
         void re_calculate_transform_members();

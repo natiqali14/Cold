@@ -72,16 +72,15 @@ namespace Cold {
             aiString p;
             auto mesh_id = root->mChildren[i]->mMeshes;
             auto n_mesh = root->mChildren[i]->mNumMeshes;
-            if(n_mesh > 0)
-            {
-               
+            if(n_mesh > 0) 
+            {  
                 auto mesh =  scene->mMeshes[mesh_id[0]];
                 // TODO to check if name can be empty or not
                 // creation of unique path for geometry
                 aiString name = mesh->mName;
                 std::string geom_path =  std::string(name.C_Str());
                 // geom creation
-                GeometryId geometry = GeometrySystem::create_geometry(name.C_Str());// geometry creation
+                GeometryId geometry = GeometrySystem::create_geometry(geom_path);// geometry creation
                 static_mesh->push_geometry(geometry); // adding geom to mesh
                 // setting parent root transform
                 GeometrySystem::get_transform(geometry)->set_parent(static_mesh->get_transform());
