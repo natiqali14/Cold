@@ -97,7 +97,7 @@ namespace Cold {
             specular_path << path.C_Str();
             mater.specular_texure = specular_path.str();
             f32 shininess;
-                if (AI_SUCCESS == material->Get(AI_MATKEY_SHININESS, shininess)) 
+            if (AI_SUCCESS == material->Get(AI_MATKEY_SHININESS, shininess)) 
             {
                 mater.shininess = shininess;
             }
@@ -106,11 +106,11 @@ namespace Cold {
 
     static void set_normal_info(Material& mater, aiMaterial* material, const std::string& texture_dir) {
         std::stringstream normal_path;
-        auto count = material->GetTextureCount(aiTextureType_NORMALS);
+        auto count = material->GetTextureCount(aiTextureType_HEIGHT);
         if(count > 0)
         {
             aiString path;
-            material->GetTexture(aiTextureType_NORMALS, 0, &path);
+            material->GetTexture(aiTextureType_HEIGHT, 0, &path);
             normal_path << texture_dir;
             normal_path << path.C_Str();
             mater.normal_texture = normal_path.str();
@@ -147,6 +147,7 @@ namespace Cold {
                 auto mat = mesh->mMaterialIndex;
                 // creation of material object for geom
                 Material mater;
+
                 // for diffusion
                 set_diffusion_info(mater, scene->mMaterials[mat], texture_dir);
 

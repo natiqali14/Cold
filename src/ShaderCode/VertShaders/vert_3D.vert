@@ -39,7 +39,7 @@ void main()
     out_fdb.normal = normalize(model_mat * aNormal);
     vec3 norm_tangent = normalize(model_mat * aTangent);
     vec3 norm_bitangent = normalize(model_mat * aBitangent);
-    norm_tangent = (norm_tangent - dot(norm_tangent, out_fdb.normal) * out_fdb.normal);
+    norm_tangent = normalize((norm_tangent - dot(norm_tangent, out_fdb.normal) * out_fdb.normal));
     out_fdb.TBN = mat3(norm_tangent, norm_bitangent, out_fdb.normal);
 
     out_fdb.diffuse_color = diffuse_color;
