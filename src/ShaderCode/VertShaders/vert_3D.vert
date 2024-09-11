@@ -16,6 +16,17 @@ layout(std140) uniform GlobalUniformObject {
     vec3 directional_light_vector;
 };
 
+struct point_light {
+    vec3 position;
+    vec3 color;
+    float linear;
+    float quadratic;
+    float constant;
+};
+
+
+// TODO Make this lights code into a UBO to pass info from cpu right now hard coding it, into this shader
+
 struct fragment_data_object {
     vec3 directional_light_color;
     vec3 directional_light_vector;
@@ -29,6 +40,7 @@ struct fragment_data_object {
 
 out vec2 tc;
 out fragment_data_object out_fdb;
+out point_light p0;
 void main() 
 {
     vec3 frag  = vec3(model * vec4(aPos, 1.0));
@@ -47,4 +59,12 @@ void main()
     out_fdb.frag_position = frag;
     gl_Position = projection * view_model * model * vec4(aPos, 1.0);
     tc = aTexCoord;
+
+    // Point lights code
+
+    p0.color = vec3(1.0,0.0,0.0);
+    p0.constant = 1.0;
+    p0.position = vec3(0.0,10.0,-5.0);
+    p0.linear = 0.49;
+    p0.quadratic = 0.3;
 }

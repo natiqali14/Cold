@@ -17,6 +17,9 @@
 #include <sstream>
 #include <ShaderCode/ShaderGetter.h>
 #include <RendererBackend.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -24,6 +27,8 @@ void processInput(GLFWwindow *window);
 
 int main()
 {
+   
+
     Cold::Clock main_clock;
     EventSystemHelper::initialise();
     WindowSystemUtility::initialise_glfw();
@@ -36,11 +41,26 @@ int main()
     // --------------------------------  Creating main window  --------------------------------
 
 
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
+
+    //  -------------------------------  ImGUI INIT  -------------------------------  //
+
+    const char* glsl_version = "#version 400"; // For OpenGL 3.2+
+
+    // Initialize ImGui
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    ImGui_ImplGlfw_InitForOpenGL(main_window->get_window_ptr(), true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    //  -------------------------------  ImGUI INIT  -------------------------------  //
+    
 
     // --------------------------------  Backend Preparations ---------------------------------
 
@@ -62,11 +82,28 @@ int main()
         // -----
         processInput(main_window->get_window_ptr());
         EventSystemHelper::dispatch_events();
+        // imGUI
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // ImGui rendering
+        ImGui::Begin("Hello, ImGui!");
+        ImGui::Text("This is a demo window!");
+        bool a = true;
+        ImGui::ShowDemoWindow(&a);
+        ImGui::End();
+
+        ImGui::Render();
+
         // render
         // ------
         Cold::RendererBackend::on_camera_props_change(camera->get_camera_view_space(),
                                                       camera->get_camera_position());
         Cold::RendererBackend::on_frame_render();
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -94,8 +131,13 @@ int main()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    static bool should_hide = false;
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        u32 value = should_hide ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+        glfwSetInputMode(window, GLFW_CURSOR, value);
+        should_hide = !should_hide;
+    }
+        
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

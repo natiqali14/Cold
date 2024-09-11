@@ -10,6 +10,7 @@ namespace Cold {
     void RendererBackend::initiate()
     {
         instance = new RendererBackend;
+        // initialising global ubo
         instance->global_uniform_object = new GlobalUniformObject;
 
 

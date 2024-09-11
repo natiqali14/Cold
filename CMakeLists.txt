@@ -33,6 +33,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders
     ${CMAKE_SOURCE_DIR}/src/ShaderCode
     ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src/third_party/ImGUI
+    
 
 )
 
@@ -53,6 +55,7 @@ file(GLOB_RECURSE SOURCES
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders/ShaderSystem.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils/*.cpp"
     "${CMAKE_SOURCE_DIR}/glad.c"
+    "${CMAKE_SOURCE_DIR}/src/third_party/ImGUI/*.cpp"
 )
 
 set(CMAKE_BUILD_TYPE Debug)
