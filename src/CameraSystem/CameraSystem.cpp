@@ -31,6 +31,7 @@ CameraSystem::CameraSystem()
     EventSystemHelper::subscribe(EVENTTYPE_CURSOR_ACTIVATED,
     event_cursor_activated);
 
+    // HACK just for now seem to be a fast and good hack
     auto e1 = new KeyMouseMovedEvent(0,0);
     on_mouse_moved(e1);
     auto e2 = new KeyMouseMovedEvent(1, 1);
