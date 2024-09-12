@@ -18,6 +18,7 @@ private:
     EventHandler<KeyPressedEvent> *key_press_handler;
     EventHandler<KeyReleasedEvent> *key_release_handler;
     EventHandler<KeyMouseMovedEvent> *key_mouse_moved_handler;
+    EventHandler<EventCursorActivated> *event_cursor_activated;
     f32 camera_speed = 0.5f;
     f32 rotation_factor = 3.0f;
 
@@ -29,8 +30,15 @@ private:
     // for angles
     f32 last_x;
     f32 last_y;
+    bool on_first_move {true};
 
     f32 pitch;
     f32 yaw;
+    bool should_move {true};
+
+
+    // functions
+
+    void on_cursor_activated(EventCursorActivated* event);
 
 };

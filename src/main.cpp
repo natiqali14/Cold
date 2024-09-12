@@ -131,12 +131,12 @@ int main()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
-    static bool should_hide = false;
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        u32 value = should_hide ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
-        glfwSetInputMode(window, GLFW_CURSOR, value);
-        should_hide = !should_hide;
-    }
+    // static bool should_hide = false;
+    // if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {
+    //     u32 value = should_hide ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+    //     glfwSetInputMode(window, GLFW_CURSOR, value);
+    //     should_hide = !should_hide;
+    // }
         
 }
 

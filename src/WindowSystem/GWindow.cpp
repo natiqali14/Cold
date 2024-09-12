@@ -7,6 +7,7 @@ GWindow::GWindow(u16 w, u16 h, std::string w_name)
 , height(h)
 , window_name(std::move(w_name))
 , input_system(new InputSystem)
+
 {
     // window creation
     window = glfwCreateWindow(width, height, window_name.c_str(), nullptr, nullptr);
@@ -33,6 +34,7 @@ GWindow::GWindow(u16 w, u16 h, std::string w_name)
 
     glfwSetKeyCallback(window, lambda_ftn);
     glfwSetCursorPosCallback(window, mouse_input_ftn_ptr);
+    input_system->set_current_window(this);
 
 }
 
@@ -64,6 +66,7 @@ void GWindow::poll_input_events()
 
 void GWindow::should_hide_cursor(bool should_hide)
 {
+    EventSystemHelper::queue_events(EVENTTYPE_CURSOR_ACTIVATED, new EventCursorActivated(should_hide));
     u32 value = should_hide ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
     glfwSetInputMode(window, GLFW_CURSOR, value);
 }

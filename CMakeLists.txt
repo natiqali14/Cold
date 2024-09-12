@@ -34,6 +34,8 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/ShaderCode
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/src/third_party/ImGUI
+    ${CMAKE_SOURCE_DIR}/src/WindowSystem
+    ${CMAKE_SOURCE_DIR}/src/EventSystem
     
 
 )

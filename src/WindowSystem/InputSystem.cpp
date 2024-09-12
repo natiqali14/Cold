@@ -1,6 +1,7 @@
 #include "InputSystem.h"
 #include "../EventSystem/EventSystemHelper.h"
 #include <Logger.h>
+#include <GWindow.h>
 InputSystem::InputSystem()
 {
 }
@@ -24,6 +25,7 @@ void InputSystem::key_input_callback(int key, int scancode, int action, int mods
         if (input_keys_pressed.count(key))
             input_keys_pressed.erase(key);
         EventSystemHelper::queue_events(EVENTTYPE_KEY_RELEASED, new KeyReleasedEvent(key));
+        direct_input_release_process(key);
         break;
     }
     }
@@ -40,4 +42,25 @@ void InputSystem::repeat_input_callbacks()
 void InputSystem::mouse_input_callback(f64 x_pos, f64 y_pos)
 {
     EventSystemHelper::queue_events(EVENTTYPE_MOUSE_MOVED, new KeyMouseMovedEvent(x_pos, y_pos));
+}
+
+void InputSystem::set_current_window(GWindow *window)
+{
+    current_window = window;
+}
+
+void InputSystem::direct_input_release_process(i32 key)
+{
+    switch (key)
+    {
+    case GLFW_KEY_ESCAPE: {
+        static bool close = false;
+        current_window->should_hide_cursor(close);
+        close = !close;
+        break;
+    }
+    
+    default:
+        break;
+    }
 }

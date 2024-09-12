@@ -12,6 +12,10 @@ enum EventType : u16
     EVENTTYPE_MOUSE_BUTTON_PRESSED,  // Mouse button pressed event
     EVENTTYPE_MOUSE_BUTTON_RELEASED, // Mouse button released event
     EVENTTYPE_MOUSE_SCROLLED,        // Mouse scrolled event
+
+    // GUI EVENTS
+    EVENTTYPE_CURSOR_ACTIVATED,
+    // GUI EVENTS
 };
 
 // Interface for all events
@@ -140,4 +144,18 @@ public:
      * @return EventType The type of the event
      */
     EventType get_type() const override { return EVENTTYPE_MOUSE_MOVED; }
+};
+
+//  -------------------------------------- GUI EVENTS  --------------------------------------  //
+class EventCursorActivated : public IEvent {
+    bool is_activated;
+public:
+    EventCursorActivated(bool activate) {
+        is_activated = activate;
+    }
+    bool get_status() {
+        return is_activated;
+    }
+
+    EventType get_type() const override { return EVENTTYPE_CURSOR_ACTIVATED; }
 };
