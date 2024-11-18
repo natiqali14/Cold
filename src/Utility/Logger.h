@@ -2,7 +2,7 @@
 #include "../includes.h"
 #include <csignal>
 #include <string>
-#include <unistd.h>
+#include <stdlib.h>
 namespace Cold {
     namespace Logger {
 
@@ -30,7 +30,7 @@ namespace Cold {
     if(expression) {}                                                                                        \
     else {                                                                                                   \
         COLD_ERROR("-ASSERTION FAILED- expression %s, with msg %s at line %d at file %s", #expression, msg, __LINE__, __FILE__);  \
-        kill(getpid(), SIGABRT);                                                                                   \
+        abort();                                                                                \
     }                                                                                                        \
 }
 

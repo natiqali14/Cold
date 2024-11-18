@@ -19,10 +19,12 @@ namespace Cold{
         }
         inline std::string normalize_paths(const std::string& path) {
             // TODO make this function runnable on both mac / windows platforms
-                std::string normalized_string = path;
-             //   std::replace(normalized_string.begin(), normalized_string.end(), '\\', '\\');
-                 std::replace(normalized_string.begin(), normalized_string.end(), '\\', '/');
-                return normalized_string;
+            std::string normalized_string = path;
+            //   std::replace(normalized_string.begin(), normalized_string.end(), '\\', '\\');
+            #ifdef WINDOWS
+            std::replace(normalized_string.begin(), normalized_string.end(), '/', '\\');
+            #endif
+            return normalized_string;
         }
     }
 }

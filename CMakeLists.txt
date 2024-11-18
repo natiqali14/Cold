@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add compiler flags
 if(WIN32)
+    set(CMAKE_GENERATOR_PLATFORM x64)
     add_definitions(-DWIN=1)
     add_compile_options(/W1)
 endif(WIN32)
@@ -79,6 +80,7 @@ if(APPLE)
 
 endif(APPLE)
 if(WIN32)
+    set(CMAKE_GENERATOR_PLATFORM x64)
     target_link_libraries(app
     ${CMAKE_SOURCE_DIR}/libs/Windows/assimp-vc143-mtd.lib
 
