@@ -38,4 +38,3 @@ This is a work-in-progress **3D graphics engine** built using **C++** and **Open
    mkdir build && cd build
    cmake ..
    cmake --build
-  ```
