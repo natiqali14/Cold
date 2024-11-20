@@ -24,7 +24,7 @@ This is a work-in-progress **3D graphics engine** built using **C++** and **Open
 ### Prerequisites
 
 - **C++17** or higher (tested on macOS and Windows environments).
-- Write now su OpenGL 3.3+ compatible GPU and drivers.  
+- Write now supportin OpenGL 4.0 compatible GPU and drivers.  
 - Required libraries:
   - [GLFW](https://www.glfw.org/) for windowing and input handling.
   - [GLM](https://github.com/g-truc/glm) for mathematics.
@@ -38,3 +38,4 @@ This is a work-in-progress **3D graphics engine** built using **C++** and **Open
    mkdir build && cd build
    cmake ..
    cmake --build
+   ./app
