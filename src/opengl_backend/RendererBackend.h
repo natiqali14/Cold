@@ -7,6 +7,8 @@
 #include <Events.h>
 #include <EventHandler.h>
 #include <EventSystemHelper.h>
+#include <GeometrySystem.h>
+
 namespace Cold {
     struct FramePacket {
         f32 frame_rate;
@@ -39,15 +41,19 @@ namespace Cold {
         static void on_camera_props_change(const glm::mat4& new_view_model, const glm::vec3 new_camera_position);
         static void load_data(); // TODO should not be here, make a scene class or something similar
 
-        private:
-            GlobalUniformObject* global_uniform_object;
-            std::unordered_map<std::string , StaticMesh*> meshes;
-            ~RendererBackend();
-            void initialise_default_shader(); // TODO SHOULD BE MOVED FROM HERE
+    private:
+        GlobalUniformObject* global_uniform_object;
+        std::unordered_map<std::string , StaticMesh*> meshes;
+        GeometrySystemSPtr geometry_system;
+        RendererBackend();
+        ~RendererBackend();
+        void initialise_default_shader(); // TODO SHOULD BE MOVED FROM HERE
 
-            // TODO move to some place else here just for testing
-            EventHandler<KeyPressedEvent>* key_press_handler;
+        // TODO move to some place else here just for testing
+        EventHandler<KeyPressedEvent>* key_press_handler;
 
-            void on_key_press_event(KeyPressedEvent* event);
+        void on_key_press_event(KeyPressedEvent* event);
+
+
     };
 }

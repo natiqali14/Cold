@@ -19,7 +19,7 @@ namespace Cold {
 
      /** This function will do following things
             * 1. checks if the path is starting from Assets/Models/
-            * 2. check if it has a extension or not
+            * 2. check if it has an extension or not
             * 3. check if extension is obj or not
             * 4. also returns the sub path for textures staring from Assets/Models/     
     */
@@ -117,7 +117,7 @@ namespace Cold {
         }
     }
 
-    void  ModelLoader::model_load(const std::string &file_path, u32 flags, StaticMesh* static_mesh)
+    void  ModelLoader::model_load(const std::string &file_path, u32 flags, StaticMesh* static_mesh, const GeometrySystemSPtr& geom)
     {
         std::string texture_dir = helper_verification_for_model_loader(file_path);
         std::filesystem::path cwd = std::filesystem::current_path();
@@ -139,10 +139,10 @@ namespace Cold {
                 aiString name = mesh->mName;
                 std::string geom_path =  std::string(name.C_Str());
                 // geom creation
-                GeometryId geometry = GeometrySystem::create_geometry(geom_path);// geometry creation
+                GeometryId geometry = geom->create_geometry(geom_path);// geometry creation
                 static_mesh->push_geometry(geometry); // adding geom to mesh
                 // setting parent root transform
-                GeometrySystem::get_transform(geometry)->set_parent(static_mesh->get_transform());
+                geom->get_transform(geometry)->set_parent(static_mesh->get_transform());
                 // getting material index for this geom
                 auto mat = mesh->mMaterialIndex;
                 // creation of material object for geom
@@ -157,7 +157,7 @@ namespace Cold {
                 // for normals
                 set_normal_info(mater, scene->mMaterials[mat], texture_dir);
                 
-                GeometrySystem::set_material(geometry, mater); // setting material for our geometry
+                geom->set_material(geometry, mater); // setting material for our geometry
 
                 /* Setting vertex data and index data for geometry*/
                 u32 total_vertex_count = mesh->mNumVertices;
@@ -171,8 +171,8 @@ namespace Cold {
                 prepare_vertex3D_data(vertices, tcs, normals, t, b, total_vertex_count, vertices_data);
                 std::vector<u32> index_data;
                 prepare_index_data(mesh->mFaces, total_faces, index_data);
-                GeometrySystem::pass_data_to_geometry(geometry, vertices_data);
-                GeometrySystem::pass_indicies_data_to_geometry(geometry, index_data);
+                geom->pass_data_to_geometry(geometry, vertices_data);
+                geom->pass_indicies_data_to_geometry(geometry, index_data);
             }            
         }
 

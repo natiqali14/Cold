@@ -140,8 +140,9 @@ namespace Cold {
     }
 
 
-    void Geometry::render()
+    void Geometry::render(TransformSPtr static_mesh_root)
     {
+        transform->set_parent(std::move(static_mesh_root));
         // TODO change this
         ShaderSystem::pass_sampler_to_gpu(shader, geometry_material.diff_tex_id, 0, "frameTexture");
         if(geometry_material.shininess > 0) {

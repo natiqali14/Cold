@@ -7,6 +7,10 @@
 #include "../includes/GLFW/glfw3.h"
 namespace Cold {
     RendererBackend* instance = nullptr;
+    RendererBackend::RendererBackend() {
+       // geometry_system = GeometrySystem::initiate();
+    }
+
     void RendererBackend::initiate()
     {
         instance = new RendererBackend;
@@ -18,7 +22,7 @@ namespace Cold {
         TextureSystem::initiate();
 
         // Geometry sub-system
-        GeometrySystem::initiate();
+        instance->geometry_system = GeometrySystem::initiate();
 
         // shader sub-system
         initiate_shader_map();
@@ -47,13 +51,13 @@ namespace Cold {
 
     void RendererBackend::on_frame_render()
     {
-        glClearColor(0.2f, 0.1f, 0.1f, 01.0f);
+        glClearColor(01.0f, 01.0f, 01.0f, 01.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        for(auto mesh : instance->meshes) 
+        for(auto [mesh_name, mesh] : instance->meshes)
         {
-            if(mesh.first ==  "sqaure")
-                mesh.second->get_transform()->anim_rotate({0,0.5,0});
-            mesh.second->render();
+            if(mesh_name ==  "sqaure")
+                mesh->get_transform()->anim_rotate({0,0.5,0});
+            mesh->render(instance->geometry_system);
         }
 
     }
@@ -95,19 +99,19 @@ namespace Cold {
         TransformSPtr root_2 = std::make_shared<Cold::Transform>();
         StaticMesh* sponza_mesh = new StaticMesh(root, "Assets/Models/sponza/sponza.obj");
         root->scale({0.05,00.05,0.05});
-        sponza_mesh->load_mesh();
-        sponza_mesh->buffer_to_gpu();
+        sponza_mesh->load_mesh(instance->geometry_system);
+        sponza_mesh->buffer_to_gpu(instance->geometry_system);
         StaticMesh* falcon = new StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
         root_2->translate({50,0,0});
-        falcon->load_mesh();
-        falcon->buffer_to_gpu();
+        falcon->load_mesh(instance->geometry_system);
+        falcon->buffer_to_gpu(instance->geometry_system);
 
         TransformSPtr square_transform = std::make_shared<Transform>();
         square_transform->translate({0,10,0});
         square_transform->scale({5,5,5});
         auto sqaure_mesh = new StaticMesh(square_transform, "Assets/Models/Cube/cube.obj");
-        sqaure_mesh->load_mesh();
-        sqaure_mesh->buffer_to_gpu();
+        sqaure_mesh->load_mesh(instance->geometry_system);
+        sqaure_mesh->buffer_to_gpu(instance->geometry_system);
         sqaure_mesh->set_cull_facing(false);
 
         instance->meshes.insert({"sponza", sponza_mesh});
@@ -153,8 +157,7 @@ namespace Cold {
                 i = 1;
             }
             if(instance->meshes.count("sqaure")) {
-                instance->meshes["sqaure"]->set_material(mat, "Cube");
-
+                instance->meshes["sqaure"]->set_material(instance->geometry_system, mat, "Cube");
             }
             i++;
         }

@@ -22,29 +22,31 @@ namespace Cold {
     using GeometrySPtr = std::shared_ptr<Geometry>;
     class GeometrySystem {
     public:
-        static void initiate();
+        GeometrySystem() = default;
+        static std::shared_ptr<GeometrySystem> initiate();
         static void shutdown();
         /* Here the path is file name + mesh name provided by assimp */
-        static GeometryId create_geometry(const std::string& geometry_path);
-        static GeometryId generate_id();
-        static void pass_data_to_geometry(GeometryId id, const GeommetryConfig& geometry_config);
-        static void pass_data_to_geometry(GeometryId id, const std::vector<Vertex>& geom_data);
-        static void pass_indicies_data_to_geometry(GeometryId id, const std::vector<u32>& index_data);
-        static void buffer_geometry_data_to_gpu(GeometryId id);
-        static void render_geometry(GeometryId id);
-        static bool delete_geometry(GeometryId id);
-        static bool should_load_geometry_data(const std::string& geometry_path);
-        static void set_material(GeometryId id, const Material& material);
-        static void change_material(GeometryId id, const Material& material);
-        static void set_geometry_parent_transform(GeometryId id, TransformSPtr transform);
-        static GeometryId get_geometry_id(const std::string& geom_name);
-        static void pass_material_to_gpu(GeometryId id);
-        static TransformSPtr get_transform(GeometryId id);
-    private: 
-        GeometrySystem() = default;
+        GeometryId create_geometry(const std::string& geometry_path);
+        GeometryId generate_id();
+        void pass_data_to_geometry(GeometryId id, const GeommetryConfig& geometry_config);
+        void pass_data_to_geometry(GeometryId id, const std::vector<Vertex>& geom_data);
+        void pass_indicies_data_to_geometry(GeometryId id, const std::vector<u32>& index_data);
+        void buffer_geometry_data_to_gpu(GeometryId id);
+        void render_geometry(GeometryId id, TransformSPtr static_mesh_transform);
+        bool delete_geometry(GeometryId id);
+        bool should_load_geometry_data(const std::string& geometry_path);
+        void set_material(GeometryId id, const Material& material);
+        void change_material(GeometryId id, const Material& material);
+        void set_geometry_parent_transform(GeometryId id, TransformSPtr transform);
+        GeometryId get_geometry_id(const std::string& geom_name);
+        void pass_material_to_gpu(GeometryId id);
+        TransformSPtr get_transform(GeometryId id);
         ~GeometrySystem();
+    private: 
         std::unordered_map<GeometryId, GeometrySPtr> geometries;
         std::unordered_map<std::string , GeometryId> geometry_path_refs;
         std::unordered_set<GeometryId> geometries_with_gpu_data;
     };
+
+    using GeometrySystemSPtr = std::shared_ptr<GeometrySystem>;
 }
