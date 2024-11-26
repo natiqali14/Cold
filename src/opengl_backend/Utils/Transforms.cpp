@@ -15,7 +15,7 @@ namespace Cold {
 
     void Transform::set_parent(TransformSPtr p)
     {
-        this->parent = p;
+        this->parent = std::move(p);
     }
     
     glm::mat4 Transform::get_world_model()

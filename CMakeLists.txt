@@ -56,6 +56,7 @@ file(GLOB_RECURSE SOURCES
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers/Vertexbuffer.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures/TextureSystem.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders/ShaderSystem.cpp"
+    "${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry/*/cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils/*.cpp"
     "${CMAKE_SOURCE_DIR}/glad.c"
     "${CMAKE_SOURCE_DIR}/src/third_party/ImGUI/*.cpp"

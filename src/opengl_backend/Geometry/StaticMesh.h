@@ -5,14 +5,14 @@
 namespace Cold {
     class StaticMesh {
     public:
-        StaticMesh(TransformSPtr root, const std::string mesh_path);
+        StaticMesh(TransformSPtr root, const std::string& mesh_path);
         ~StaticMesh();
         void push_geometry(GeometryId geometry_id);
-        void buffer_to_gpu();
-        void render();
-        void load_mesh();
+        void buffer_to_gpu(const GeometrySystemSPtr& geom);
+        void render(const GeometrySystemSPtr& geom);
+        void load_mesh(const GeometrySystemSPtr& geom);
         void set_cull_facing(bool cull_face);
-        void set_material(Material material, const std::string& geom_name);
+        void set_material(const GeometrySystemSPtr& geom, const Material& material, const std::string& geom_name);
         TransformSPtr get_transform();
     private:
         TransformSPtr root_transform;

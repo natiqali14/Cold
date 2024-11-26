@@ -4,7 +4,7 @@
 #include <BackendConfigData.h>
 namespace Cold {
     namespace BackendUtil {
-        StaticMesh* create_sqaure() 
+        StaticMesh* create_sqaure(const GeometrySystemSPtr& geom)
         {
             std::vector<Cold::Vertex> vertices (36 * 8);
             std::vector<u32> faces(36);
@@ -31,16 +31,16 @@ namespace Cold {
             sqaur_trans->scale({5.0,5.0,5.0});
             sqaur_trans->translate({0,3,0});
 
-            Cold::GeometryId square_geom = Cold::GeometrySystem::create_geometry("sqaure_my");
-            Cold::GeometrySystem::set_geometry_parent_transform(square_geom, sqaur_trans);
-            Cold::GeometrySystem::pass_data_to_geometry(square_geom, vertices);
-            Cold::GeometrySystem::pass_indicies_data_to_geometry(square_geom, faces);
+            Cold::GeometryId square_geom = geom->create_geometry("sqaure_my");
+            geom->set_geometry_parent_transform(square_geom, sqaur_trans);
+            geom->pass_data_to_geometry(square_geom, vertices);
+            geom->pass_indicies_data_to_geometry(square_geom, faces);
             
             Cold::Material sqaure_material;
             sqaure_material.diff_tex = cobble_stone.diffuse;
             sqaure_material.specular_texure = cobble_stone.specular;
             sqaure_material.shininess = cobble_stone.shininess;
-            Cold::GeometrySystem::set_material(square_geom, sqaure_material);
+            geom->set_material(square_geom, sqaure_material);
             sqaure_mesh->push_geometry(square_geom);
 
             return sqaure_mesh;

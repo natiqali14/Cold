@@ -30,7 +30,7 @@ namespace Cold {
         void delete_data_from_gpu();
         void buffer_material_data();
 
-        void render();
+        void render(TransformSPtr static_mesh_root);
         void set_material(const Material& material);
         void change_material(const Material& material);
         TransformSPtr get_transform();
@@ -44,7 +44,7 @@ namespace Cold {
          * gpu vertex data for a geometry 
         */
         std::vector<Vertex> verticies;
-        u32 total_vertex_count;
+        i32 total_vertex_count;
         u32 ref_count;
         /* unique VAO for this geometry  */
         VertexArrayBufferSPtr vao;

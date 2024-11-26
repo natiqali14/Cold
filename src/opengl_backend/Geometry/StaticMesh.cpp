@@ -3,8 +3,8 @@
 #include <ModelLoader.h>
 #include <helper.h>
 namespace Cold {
-    StaticMesh::StaticMesh(TransformSPtr root, const std::string file_path)
-    : root_transform(root)
+    StaticMesh::StaticMesh(TransformSPtr root, const std::string& file_path)
+    : root_transform(std::move(root))
     , mesh_file_path(Helper::normalize_paths(file_path))
     , should_cull_face(true)
     {
@@ -14,19 +14,19 @@ namespace Cold {
     {
         geometries.push_back(geometry_id);
     }
-    void StaticMesh::buffer_to_gpu()
+    void StaticMesh::buffer_to_gpu(const GeometrySystemSPtr& geom)
     {
         for(GeometryId id : geometries) {
-            GeometrySystem::buffer_geometry_data_to_gpu(id);
+            geom->buffer_geometry_data_to_gpu(id);
         }
     }
-    void StaticMesh::render()
+    void StaticMesh::render(const GeometrySystemSPtr& geom)
     {
         if(!should_cull_face) {
             glDisable(GL_CULL_FACE);
         }
         for(GeometryId id : geometries) {
-            GeometrySystem::render_geometry(id);
+            geom->render_geometry(id, root_transform);
         }
         if(!should_cull_face) {
             glEnable(GL_CULL_FACE);
@@ -34,22 +34,22 @@ namespace Cold {
             glFrontFace(GL_CW);
         }
     }
-    void StaticMesh::load_mesh()
+    void StaticMesh::load_mesh(const GeometrySystemSPtr& geom)
     {
         // TODO have to find some ways for the flags but for now const flags are ok
         ModelLoader::model_load(mesh_file_path,
                                 aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace,
-                                this);
+                                this, geom);
     }
     void StaticMesh::set_cull_facing(bool cull_face)
     {
         should_cull_face = cull_face;
     }
 
-    void StaticMesh::set_material(Material material, const std::string &geom_name)
+    void StaticMesh::set_material(const GeometrySystemSPtr& geom, const Material& material, const std::string &geom_name)
     {
-        auto id = GeometrySystem::get_geometry_id(geom_name);
-        GeometrySystem::change_material(id, material);
+        auto id = geom->get_geometry_id(geom_name);
+        geom->change_material(id, material);
     }
 
     TransformSPtr StaticMesh::get_transform()
