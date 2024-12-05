@@ -73,6 +73,7 @@ int main()
     // render loop
     // -----------
     u64 start = main_clock.get_current_time_in_us();
+    bool a = true;
     while (!main_window->should_close_window())
     {
         u64 last_frame_time = main_clock.get_current_time_in_us();
@@ -82,6 +83,12 @@ int main()
         // -----
         processInput(main_window->get_window_ptr());
         EventSystemHelper::dispatch_events();
+
+        // render
+        // ------
+        Cold::RendererBackend::on_camera_props_change(camera->get_camera_view_space(),
+                                                      camera->get_camera_position());
+        Cold::RendererBackend::on_frame_render();
         // imGUI
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -89,20 +96,19 @@ int main()
         ImGui::NewFrame();
 
         // ImGui rendering
-        ImGui::Begin("Hello, ImGui!");
-        ImGui::Text("This is a demo window!");
-        bool a = true;
-        ImGui::ShowDemoWindow(&a);
+        ImGui::Begin("Hello, ImGui!", &a, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoTitleBar);
+        // Write text
+        const char* text = "This is a demo window!";
+        ImGui::Text("%s", text);
+
+        // Calculate the text width
+        float textWidth = ImGui::CalcTextSize(text).x;
+
+        // Use the text width for the button
+        ImGui::Button("My Button", {textWidth, 0});
         ImGui::End();
 
         ImGui::Render();
-
-        // render
-        // ------
-        Cold::RendererBackend::on_camera_props_change(camera->get_camera_view_space(),
-                                                      camera->get_camera_position());
-        Cold::RendererBackend::on_frame_render();
-
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
  
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

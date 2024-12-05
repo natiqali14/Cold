@@ -29,6 +29,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils
+    ${CMAKE_SOURCE_DIR}/src/opengl_backend/UI
     ${CMAKE_SOURCE_DIR}/src/CameraSystem
     ${CMAKE_SOURCE_DIR}/src/EventSystem
     ${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders
@@ -58,6 +59,8 @@ file(GLOB_RECURSE SOURCES
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders/ShaderSystem.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry/*/cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Button/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/UIHolder/*.cpp"
     "${CMAKE_SOURCE_DIR}/glad.c"
     "${CMAKE_SOURCE_DIR}/src/third_party/ImGUI/*.cpp"
 )
