@@ -61,6 +61,8 @@ file(GLOB_RECURSE SOURCES
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Button/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/UIHolder/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Inputs/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Text/*.cpp"
     "${CMAKE_SOURCE_DIR}/glad.c"
     "${CMAKE_SOURCE_DIR}/src/third_party/ImGUI/*.cpp"
 )
