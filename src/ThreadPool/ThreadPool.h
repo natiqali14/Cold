@@ -18,9 +18,14 @@ namespace Cold {
         void stop();
 
         template<typename Func, typename... Args>
-        auto submit(Func&& func, Args&&... args) -> std::future<decltype(std::invoke(std::forward<Func>(func), std::forward<Args>(args)))>
+        auto submit(Func&& func, Args&&... args) -> std::future<std::invoke_result_t<Func,  Args...>>
         {
-
+            using ReturnType = std::future<std::invoke_result_t<Func,  Args...>>;
+            auto task = std::make_shared<std::packaged_task<ReturnType()>>(
+                std::bind(std::forward<Func>(func), std::forward<Args>(args)...)
+                );
+            std::future<ReturnType> r = task->get_future();
+            return r;
         }
 
     private:
