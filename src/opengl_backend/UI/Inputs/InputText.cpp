@@ -20,7 +20,7 @@ namespace Cold {
         , input_flags(flags)
         , text_length(length)
     {
-        input_text.reserve(text_length);
+        input_text.resize(text_length);
     }
 
     void InputText::render() {
@@ -29,12 +29,12 @@ namespace Cold {
     }
 
     i32 InputText::text_input_callback(ImGuiInputTextCallbackData *data) {
-        if (data->EventFlag == ImGuiInputTextFlags_CallbackResize && input_text.length() >= text_length - 1) {
+        if (data->EventFlag == ImGuiInputTextFlags_CallbackResize && data->BufTextLen >= text_length - 1) {
             COLD_ERROR("Resize Callback Cold in TextINPUT %d", text_length);
             text_length *= 2;
-            input_text.reserve(asfja[otext_length);
+            input_text.resize(text_length);
             data->Buf = input_text.data();
-            data->BufSize = text_length;
+            data->BufSize = static_cast<i32>(text_length);
         }
 
         return 0;

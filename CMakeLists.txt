@@ -18,26 +18,27 @@ endif(APPLE)
 
 # Include directories
 include_directories(
-    ${CMAKE_SOURCE_DIR}/includes
-    ${CMAKE_SOURCE_DIR}/includes/glm
-    ${CMAKE_SOURCE_DIR}/includes/assimp
-    ${CMAKE_SOURCE_DIR}/src/Utility
-    ${CMAKE_SOURCE_DIR}/src/Utility/Clock
-    ${CMAKE_SOURCE_DIR}/src/third_party
-    ${CMAKE_SOURCE_DIR}/src/opengl_backend
-    ${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures
-    ${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers
-    ${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry
-    ${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils
-    ${CMAKE_SOURCE_DIR}/src/opengl_backend/UI
-    ${CMAKE_SOURCE_DIR}/src/CameraSystem
-    ${CMAKE_SOURCE_DIR}/src/EventSystem
-    ${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders
-    ${CMAKE_SOURCE_DIR}/src/ShaderCode
-    ${CMAKE_SOURCE_DIR}/src
-    ${CMAKE_SOURCE_DIR}/src/third_party/ImGUI
-    ${CMAKE_SOURCE_DIR}/src/WindowSystem
-    ${CMAKE_SOURCE_DIR}/src/EventSystem
+        ${CMAKE_SOURCE_DIR}/includes
+        ${CMAKE_SOURCE_DIR}/includes/glm
+        ${CMAKE_SOURCE_DIR}/includes/assimp
+        ${CMAKE_SOURCE_DIR}/src/Utility
+        ${CMAKE_SOURCE_DIR}/src/Utility/Clock
+        ${CMAKE_SOURCE_DIR}/src/third_party
+        ${CMAKE_SOURCE_DIR}/src/opengl_backend
+        ${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures
+        ${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers
+        ${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry
+        ${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils
+        ${CMAKE_SOURCE_DIR}/src/opengl_backend/UI
+        ${CMAKE_SOURCE_DIR}/src/CameraSystem
+        ${CMAKE_SOURCE_DIR}/src/EventSystem
+        ${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders
+        ${CMAKE_SOURCE_DIR}/src/ShaderCode
+        ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/src/third_party/ImGUI
+        ${CMAKE_SOURCE_DIR}/src/WindowSystem
+        ${CMAKE_SOURCE_DIR}/src/EventSystem
+        ${CMAKE_SOURCE_DIR}/src/Globals
     
 
 )
@@ -47,30 +48,41 @@ find_package(OpenGL REQUIRED)
 
 # Add source files
 file(GLOB_RECURSE SOURCES 
-    "${CMAKE_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/WindowSystem/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/EventSystem/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/CameraSystem/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Utility/Clock/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/Utility/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers/VertexArrayBuffer.cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers/Vertexbuffer.cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures/TextureSystem.cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders/ShaderSystem.cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry/*/cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Button/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/UIHolder/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/WindowSystem/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/EventSystem/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/CameraSystem/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Utility/Clock/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Utility/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/Globals/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers/VertexArrayBuffer.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/buffers/Vertexbuffer.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/Textures/TextureSystem.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/Shaders/ShaderSystem.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/Geometry/*/cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/Utils/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Button/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/UIHolder/*.cpp"
         "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Inputs/*.cpp"
-    "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Text/*.cpp"
-    "${CMAKE_SOURCE_DIR}/glad.c"
-    "${CMAKE_SOURCE_DIR}/src/third_party/ImGUI/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Text/*.cpp"
+
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/ThreadPool/*.cpp"
+
+        "${CMAKE_SOURCE_DIR}/glad.c"
+        "${CMAKE_SOURCE_DIR}/src/third_party/ImGUI/*.cpp"
 )
 
 set(CMAKE_BUILD_TYPE Debug)
 
 # Create executable
-add_executable(app ${SOURCES})
+add_executable(app ${SOURCES}
+        src/UI_Utils/AssetLoaderUI.cpp
+        src/UI_Utils/AssetLoaderUI.h
+        src/Globals/g_EngineData.cpp
+        src/Globals/g_EngineData.h
+        src/ThreadPool/ThreadPool.cpp
+        src/ThreadPool/ThreadPool.h
+        src/ThreadPool/ThreadSafeQueue.h)
 
 # Link libraries
 if(APPLE)

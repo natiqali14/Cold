@@ -9,6 +9,7 @@
 
 #include "../i_UIComponent.h"
 #include <vector>
+#include <unordered_map>
 #include <includes.h>
 #include <imgui.h>
 namespace Cold {
@@ -24,8 +25,9 @@ namespace Cold {
     };
     class UIHolder {
     public:
-        explicit UIHolder(const glm::vec2& location ,std::string title = "NO NAME", i32 flags =
+        static std::shared_ptr<UIHolder> create_ui_holder_object(const glm::vec2& location ,std::string title = "Window", i32 flags =
             UIHOLDER_NOMOVE | UIHOLDER_NOCOLLAPSE | UIHOLDER_AUTORESIZE | UIHOLDER_NOMOVE | UIHOLDER_NOBACKGROUND | UIHOLDER_NOTITLEBAR);
+        explicit UIHolder(const glm::vec2& location, std::string title, i32 flags);
         void add_component_in_row(iUIComponentSPtr component, u32 row_number);
         void add_component(iUIComponentSPtr component);
         void add_component_in_new_row(iUIComponentSPtr component);
@@ -37,6 +39,7 @@ namespace Cold {
         glm::vec2 holder_location;
         std::string window_title;
         i32 holder_flags {0};
+        static inline std::unordered_map<std::string, u32> ui_holder_titles;
     };
 }
 

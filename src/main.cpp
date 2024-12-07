@@ -80,7 +80,7 @@ int main()
     // -----------
     u64 start = main_clock.get_current_time_in_us();
     bool a = true;
-    Cold::UIHolder* ui_holder = new Cold::UIHolder({400,400});
+    auto ui_holder = Cold::UIHolder::create_ui_holder_object({400,400});
     std::shared_ptr<Cold::InputText> asset_input =
         std::shared_ptr<Cold::InputText>(new Cold::InputText("Enter Asset pathe"));
     auto btn_on_click = [&]() {
@@ -96,10 +96,12 @@ int main()
     // -----------------------------  Graphic Setting UI ------------------------ //
 
     f32 frame_rate = 0;
-    Cold::UIHolder* setting_ui_holder = new Cold::UIHolder({0,0});
-    std::shared_ptr<Cold::Text> fps = std::shared_ptr<Cold::Text>(new Cold::Text("0", 2.0, {1,0,1,1}));
+    auto setting_ui_holder =Cold::UIHolder::create_ui_holder_object({0,0}, "2");
+    std::shared_ptr<Cold::Text> fps = std::shared_ptr<Cold::Text>(new Cold::Text("0", 2.0, {1,1,0,1}));
     setting_ui_holder->add_component(fps);
+
     // -----------------------------  Graphic Setting UI ------------------------ //
+
     while (!main_window->should_close_window())
     {
         u64 last_frame_time = main_clock.get_current_time_in_us();
@@ -118,44 +120,12 @@ int main()
         Cold::RendererBackend::on_frame_render();
         // imGUI
 
-     ImGui_ImplOpenGL3_NewFrame();
-     ImGui_ImplGlfw_NewFrame();
-     ImGui::NewFrame();
-
-
-     //
-     // //  ImGui rendering
-     //    ImGui::Begin("Hello, ImGui!", &a, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove  | ImGuiWindowFlags_NoTitleBar);
-     //    // Write text
-     //    ImFont* defaultFont = ImGui::GetFont();
-     //    defaultFont->Scale = 2.0; // Temporarily scale the font
-     //    ImGui::PushFont(defaultFont);
-     //    ImVec4 textColor = ImVec4(1.0f, 0.0f, 0.0f, 0.5f); // Red with 50% transparency
-     //
-     //    // Push the color for text
-     //    ImGui::PushStyleColor(ImGuiCol_Text, textColor);
-     //
-     //    const char* text = "This is a demo window!";
-     //    ImGui::Text("%s", text);
-     //    ImGui::PopFont();
-     //    defaultFont->Scale = 1.0;
-     //    ImGui::PushFont(defaultFont);
-     //    ImGui::PopStyleColor();
-     //    ImGui::Text("%s", text);
-     //    defaultFont->Scale = 1.0; // Temporarily scale the font
-     //
-     //    float textWidth = ImGui::CalcTextSize(text).x;
-     //    COLD_ERROR("Text size %f", textWidth);
-     //
-     //    // Calculate the text width
-     //
-     //    // Use the text width for the button
-     //    ImGui::Button("My Button", {100, 0});
-     //    ImGui::PopFont();
-     //    ImGui::End();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         ui_holder->render();
-        fps->set_content(std::to_string(frame_rate));
+        fps->set_content(std::to_string(static_cast<i32>(frame_rate)));
         setting_ui_holder->render();
 
         ImGui::Render();

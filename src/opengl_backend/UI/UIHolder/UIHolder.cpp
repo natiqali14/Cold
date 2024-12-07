@@ -3,7 +3,23 @@
 //
 
 #include "UIHolder.h"
+
+#include <string>
+
 namespace Cold {
+    std::shared_ptr<UIHolder> UIHolder::create_ui_holder_object(const glm::vec2 &location, std::string title, i32 flags) {
+        if (ui_holder_titles.count(title)) {
+            ui_holder_titles[title]++;
+            title+= "##" + std::to_string( ui_holder_titles[title]);
+        }
+        else {
+            ui_holder_titles[title] = 0;
+            title+= "##0";
+        }
+
+        return std::shared_ptr<UIHolder>( new UIHolder(location, std::move(title), flags));
+    }
+
     UIHolder::UIHolder(const glm::vec2& location, std::string title, i32 flags)
     : window_title(std::move(title))
     , holder_location(location)

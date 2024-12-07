@@ -15,6 +15,7 @@ namespace Cold {
                 case LogType::LOGTYPE_INFO:
                     return "[INFO]: ";
             }
+            return "[DEFAULT]";
         }
             
 
