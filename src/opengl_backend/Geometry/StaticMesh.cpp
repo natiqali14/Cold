@@ -12,7 +12,9 @@ namespace Cold {
     }
     void StaticMesh::push_geometry(GeometryId geometry_id)
     {
+        std::lock_guard<std::mutex> lock(mtx);
         geometries.push_back(geometry_id);
+       // should_buffer_gpu_data = true;
     }
     void StaticMesh::buffer_to_gpu(const GeometrySystemSPtr& geom)
     {
@@ -22,6 +24,8 @@ namespace Cold {
     }
     void StaticMesh::render(const GeometrySystemSPtr& geom)
     {
+        std::lock_guard<std::mutex> lock(mtx);
+        buffer_to_gpu(geom);
         if(!should_cull_face) {
             glDisable(GL_CULL_FACE);
         }

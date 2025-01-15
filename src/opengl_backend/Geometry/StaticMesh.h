@@ -16,8 +16,10 @@ namespace Cold {
         TransformSPtr get_transform();
     private:
         TransformSPtr root_transform;
-        std::vector<GeometryId> geometries;
+        std::vector<GeometryId> geometries {};
         std::string mesh_file_path;
         bool should_cull_face;
+        bool should_buffer_gpu_data {true};
+        std::mutex mtx;
     };
 }

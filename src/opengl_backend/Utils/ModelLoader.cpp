@@ -140,7 +140,6 @@ namespace Cold {
                 std::string geom_path =  std::string(name.C_Str());
                 // geom creation
                 GeometryId geometry = geom->create_geometry(geom_path);// geometry creation
-                static_mesh->push_geometry(geometry); // adding geom to mesh
                 // setting parent root transform
                 geom->get_transform(geometry)->set_parent(static_mesh->get_transform());
                 // getting material index for this geom
@@ -173,6 +172,8 @@ namespace Cold {
                 prepare_index_data(mesh->mFaces, total_faces, index_data);
                 geom->pass_data_to_geometry(geometry, vertices_data);
                 geom->pass_indicies_data_to_geometry(geometry, index_data);
+                // after the geom is ready with all info pass it to static mesh to render.
+                static_mesh->push_geometry(geometry); // adding geom to mesh
             }            
         }
 

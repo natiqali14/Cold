@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <vector>
 #include "Geometry.h"
+#include <mutex>
 namespace Cold {
    
     struct GeommetryConfig {
@@ -46,6 +47,8 @@ namespace Cold {
         std::unordered_map<GeometryId, GeometrySPtr> geometries;
         std::unordered_map<std::string , GeometryId> geometry_path_refs;
         std::unordered_set<GeometryId> geometries_with_gpu_data;
+        std::mutex geom_mutex;
+
     };
 
     using GeometrySystemSPtr = std::shared_ptr<GeometrySystem>;

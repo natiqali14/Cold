@@ -22,6 +22,7 @@ namespace Cold {
 
     GeometryId GeometrySystem::create_geometry(const std::string& geometry_path)
     {
+        std::lock_guard<std::mutex> lock(geom_mutex);
         if(geometry_path_refs.count(geometry_path)) {
             auto geomerty_ref = geometry_path_refs[geometry_path];
             geometries[geomerty_ref]->increament_ref_count();
@@ -82,6 +83,7 @@ namespace Cold {
 
     bool GeometrySystem::delete_geometry(GeometryId id)
     {
+        std::lock_guard<std::mutex> lock(geom_mutex);
         COLD_ASSERT(geometries.count(id) > 0, "No Geometry found in the map");
         auto geometry_ref = geometries[id];
         geometry_ref->decreament_ref_count();
@@ -94,6 +96,7 @@ namespace Cold {
     /* NO in use this function*/
     bool GeometrySystem::should_load_geometry_data(const std::string &geometry_path)
     {
+        std::lock_guard<std::mutex> lock(geom_mutex);
         if(geometry_path_refs.count(geometry_path)) {
             return false;
         }
@@ -124,6 +127,7 @@ namespace Cold {
 
     GeometryId GeometrySystem::get_geometry_id(const std::string & geom_name)
     {
+        std::lock_guard<std::mutex> lock(geom_mutex);
         COLD_ASSERT(geometry_path_refs.count(geom_name) != 0, "No Geometry found in the map");
         return geometry_path_refs[geom_name];
     }

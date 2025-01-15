@@ -30,7 +30,6 @@ namespace Cold {
 
     i32 InputText::text_input_callback(ImGuiInputTextCallbackData *data) {
         if (data->EventFlag == ImGuiInputTextFlags_CallbackResize && data->BufTextLen >= text_length - 1) {
-            COLD_ERROR("Resize Callback Cold in TextINPUT %d", text_length);
             text_length *= 2;
             input_text.resize(text_length);
             data->Buf = input_text.data();

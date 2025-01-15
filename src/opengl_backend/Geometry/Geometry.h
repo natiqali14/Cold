@@ -7,13 +7,8 @@
 #include <Transforms.h>
 #include <VertexStructures.h>
 #include <ShaderSystem.h>
+#include <mutex>
 namespace Cold {
-
-    
-
-   
-
-
     class Geometry {
     public:
         Geometry(GLenum geometry_usage);
@@ -59,6 +54,8 @@ namespace Cold {
 
         // shaders
         std::string shader;
+
+        std::mutex mtx;
 
     };
 

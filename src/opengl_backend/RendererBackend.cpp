@@ -4,7 +4,11 @@
 #include <ShaderSystem.h>
 #include <BackendConfigData.h>
 #include <BackendUtil.h>
+#include <GLCommandCentre/GLCommandCentre.h>
+
 #include "../includes/GLFW/glfw3.h"
+#include "ThreadPool/ThreadPool.h"
+
 namespace Cold {
     RendererBackend* instance = nullptr;
     RendererBackend::RendererBackend() {
@@ -37,10 +41,13 @@ namespace Cold {
         EventSystemHelper::subscribe(EVENTTYPE_KEY_PRESSED, instance->key_press_handler);
         instance->key_press_handler->is_toggle = true;
 
+        GLCommandCentre::start();
+
 
     }
     void RendererBackend::shut_down()
     {
+        GLCommandCentre::stop();
         ShaderSystem::shut_down();
         GeometrySystem::shutdown();
         TextureSystem::shutdown();
@@ -51,8 +58,9 @@ namespace Cold {
 
     void RendererBackend::on_frame_render()
     {
-        glClearColor(01.0f, 01.0f, 01.0f, 01.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 01.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GLCommandCentre::get_instance()->run_commands();
         for(auto [mesh_name, mesh] : instance->meshes)
         {
             if(mesh_name ==  "sqaure")
@@ -81,13 +89,18 @@ namespace Cold {
     {
         instance->global_uniform_object->view_model = new_view_model;
         instance->global_uniform_object->camera_position = new_camera_position;
+        GLCommandCentre::get_instance()->submit(&RendererBackend::pass_camera_props_to_gpu,
+            instance);
+    }
+
+    void RendererBackend::pass_camera_props_to_gpu() {
         ShaderSystem::global_uniform_buffer_object_update(global_data.global_uniform_buffer_name,
-                                                            &instance->global_uniform_object->view_model,
+                                                            &global_uniform_object->view_model,
                                                             sizeof(glm::mat4),
                                                             offsetof(GlobalUniformObject, view_model));
 
         ShaderSystem::global_uniform_buffer_object_update(global_data.global_uniform_buffer_name,
-                                                            &instance->global_uniform_object->camera_position,
+                                                            &global_uniform_object->camera_position,
                                                             sizeof(glm::vec3),
                                                             offsetof(GlobalUniformObject, camera_position));
     }
@@ -99,19 +112,23 @@ namespace Cold {
         TransformSPtr root_2 = std::make_shared<Cold::Transform>();
         StaticMesh* sponza_mesh = new StaticMesh(root, "Assets/Models/sponza/sponza.obj");
         root->scale({0.05,00.05,0.05});
-        sponza_mesh->load_mesh(instance->geometry_system);
-        sponza_mesh->buffer_to_gpu(instance->geometry_system);
+        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, sponza_mesh, instance->geometry_system);
+     ///   sponza_mesh->load_mesh(instance->geometry_system);
+    //    sponza_mesh->buffer_to_gpu(instance->geometry_system);
+
         StaticMesh* falcon = new StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
         root_2->translate({50,0,0});
-        falcon->load_mesh(instance->geometry_system);
-        falcon->buffer_to_gpu(instance->geometry_system);
+        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, falcon, instance->geometry_system);
+       // falcon->load_mesh(instance->geometry_system);
+     //   falcon->buffer_to_gpu(instance->geometry_system);
 
         TransformSPtr square_transform = std::make_shared<Transform>();
         square_transform->translate({0,10,0});
         square_transform->scale({5,5,5});
         auto sqaure_mesh = new StaticMesh(square_transform, "Assets/Models/Cube/cube.obj");
-        sqaure_mesh->load_mesh(instance->geometry_system);
-        sqaure_mesh->buffer_to_gpu(instance->geometry_system);
+        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, sqaure_mesh, instance->geometry_system);
+    //    sqaure_mesh->load_mesh(instance->geometry_system);
+     //   sqaure_mesh->buffer_to_gpu(instance->geometry_system);
         sqaure_mesh->set_cull_facing(false);
 
         instance->meshes.insert({"sponza", sponza_mesh});

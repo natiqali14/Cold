@@ -19,17 +19,20 @@ namespace Cold {
 
     void Geometry::push_vertex(const Vertex &vertex_data)
     {
+        std::lock_guard<std::mutex> lock(mtx);
         verticies.push_back(std::move(vertex_data));
 
     }
 
     void Geometry::push_index(u32 index)
     {
+        std::lock_guard<std::mutex> lock(mtx);
         indicies.push_back(index);
     }
 
     void Geometry::push_vertex_data(aiVector3D *vertices, u32 vertex_count, aiVector3D *normals, u32 normal_count, aiVector3D *tex_coords, u32 tex_coords_count)
     {
+        std::lock_guard<std::mutex> lock(mtx);
         total_vertex_count = vertex_count;
         for(u32 i = 0; i < vertex_count; i++) {
             Vertex v;
@@ -42,13 +45,16 @@ namespace Cold {
 
     void Geometry::push_vertex_data(const std::vector<Vertex> &vert_data)
     {
+        std::lock_guard<std::mutex> lock(mtx);
+        // TODO to check we can delete these verticies after we push them to gpu ??? same for indices too
         if(!verticies.empty()) verticies.clear();
         total_vertex_count = vert_data.size();
         this->verticies = std::move(vert_data);
     }
 
     void Geometry::push_indicies(aiFace *faces, u32 face_count)
-    {   
+    {
+        std::lock_guard<std::mutex> lock(mtx);
         for(u32 i = 0; i < face_count; i++) {
             aiFace face = faces[i];
             indicies.push_back(face.mIndices[0]);
@@ -59,13 +65,16 @@ namespace Cold {
 
     void Geometry::push_inicies(const std::vector<u32> &index_data)
     {
+        std::lock_guard<std::mutex> lock(mtx);
         if(!indicies.empty()) indicies.clear();
         indicies = std::move(index_data);
     }
 
     void Geometry::buffer_data_to_gpu()
     {
+        std::lock_guard<std::mutex> lock(mtx);
         if(!vao) {
+            COLD_ERROR("Buffering gpu data");
             auto vbo_data = VertexBuffer::create_vertex_buffer(verticies.data(), verticies.size() * sizeof(Vertex), usage,
             {
                 {"aPos", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, position)},
@@ -86,16 +95,16 @@ namespace Cold {
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(u32), indicies.data(), usage);
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             }
-           
+
+            buffer_material_data();
 
         } 
        
-        buffer_material_data();
+
     }
 
     void Geometry::buffer_material_data()
     {
-       
         TextureProps props;
         props.image_data_type = GL_UNSIGNED_BYTE;
         props.internal_format = GL_RGBA;
@@ -129,12 +138,13 @@ namespace Cold {
             props2.wrap_x_axis = GL_REPEAT;
             props2.wrap_y_axis = GL_REPEAT;
             geometry_material.normal_texture_id = 
-                TextureSystem::texture_2D_immutable_create(geometry_material.normal_texture, std::move(props2));
+                TextureSystem::texture_2D_immutable_create(geometry_material.normal_texture, props2);
         }  
     }
 
     void Geometry::delete_data_from_gpu()
     {
+        std::lock_guard<std::mutex> lock(mtx);
         glDeleteBuffers(1, &ebo);
         vao.reset();
     }
@@ -142,6 +152,7 @@ namespace Cold {
 
     void Geometry::render(TransformSPtr static_mesh_root)
     {
+        std::lock_guard<std::mutex> lock(mtx);
         transform->set_parent(std::move(static_mesh_root));
         // TODO change this
         ShaderSystem::pass_sampler_to_gpu(shader, geometry_material.diff_tex_id, 0, "frameTexture");
@@ -172,11 +183,13 @@ namespace Cold {
 
     void Geometry::set_material(const Material &material)
     {
+        std::lock_guard<std::mutex> lock(mtx);
         geometry_material = std::move(material);
     }
 
     void Geometry::change_material(const Material &material)
     {
+        std::lock_guard<std::mutex> lock(mtx);
         TextureSystem::delete_texture(geometry_material.diff_tex_id);
         TextureSystem::delete_texture(geometry_material.specular_texture_id);
         geometry_material = material;

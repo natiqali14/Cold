@@ -25,6 +25,7 @@
 #include <Inputs/InputText.h>
 #include <Text/Text.h>
 #include <UIHolder/UIHolder.h>
+#include "ThreadPool/ThreadPool.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -35,6 +36,9 @@ int main()
 {
    
 
+    //////////////////////  THREAD POOL  //////////////////////
+    Cold::ThreadPool::start(5);
+    /////////////////////////  THREAD POOL  //////////////////
     Cold::Clock main_clock;
     EventSystemHelper::initialise();
     WindowSystemUtility::initialise_glfw();
@@ -118,7 +122,8 @@ int main()
         Cold::RendererBackend::on_camera_props_change(camera->get_camera_view_space(),
                                                       camera->get_camera_position());
         Cold::RendererBackend::on_frame_render();
-        // imGUI
+
+        // imGUI start
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();

@@ -54,6 +54,6 @@ namespace Cold {
 
         void on_key_press_event(KeyPressedEvent* event);
 
-
+        void pass_camera_props_to_gpu();
     };
 }

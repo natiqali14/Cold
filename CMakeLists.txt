@@ -66,7 +66,11 @@ file(GLOB_RECURSE SOURCES
         "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Inputs/*.cpp"
         "${CMAKE_SOURCE_DIR}/src/opengl_backend/UI/Text/*.cpp"
 
-        "${CMAKE_SOURCE_DIR}/src/opengl_backend/ThreadPool/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/ThreadPool/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/ThreadPool/Worker.cpp"
+        "${CMAKE_SOURCE_DIR}/src/ThreadPool/Worker.cpp"
+        "${CMAKE_SOURCE_DIR}/src/opengl_backend/GLCommandCentre/*.cpp"
+
 
         "${CMAKE_SOURCE_DIR}/glad.c"
         "${CMAKE_SOURCE_DIR}/src/third_party/ImGUI/*.cpp"
