@@ -23,7 +23,7 @@ CameraSystem::CameraSystem()
     // for key release events
     EventSystemHelper::subscribe(EVENTTYPE_KEY_RELEASED, 
     key_release_handler);
-    // for move move event
+    // for move event
     EventSystemHelper::subscribe(EVENTTYPE_MOUSE_MOVED, 
     key_mouse_moved_handler);
 

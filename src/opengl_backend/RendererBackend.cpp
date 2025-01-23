@@ -10,38 +10,38 @@
 #include "ThreadPool/ThreadPool.h"
 
 namespace Cold {
-    RendererBackend* instance = nullptr;
     RendererBackend::RendererBackend() {
        // geometry_system = GeometrySystem::initiate();
     }
 
     void RendererBackend::initiate()
     {
-        instance = new RendererBackend;
         // initialising global ubo
-        instance->global_uniform_object = new GlobalUniformObject;
+        this->global_uniform_object = new GlobalUniformObject;
 
 
         // Texture Sub-system
         TextureSystem::initiate();
 
         // Geometry sub-system
-        instance->geometry_system = GeometrySystem::initiate();
+        geometry_system = GeometrySystem::initiate();
 
         // shader sub-system
         initiate_shader_map();
         ShaderSystem::initiate();
-        ShaderSystem::global_uniform_buffer_object_add(instance->global_uniform_object,
+        ShaderSystem::global_uniform_buffer_object_add(global_uniform_object,
                      sizeof(GlobalUniformObject), global_data.global_uniform_buffer_name);
-        instance->initialise_default_shader();
+        initialise_default_shader();
+
+        GLCommandCentre::start();
+        set_open_gl_settings();
 
         // TODO move these
 
-        instance->key_press_handler = BIND_EVENT_FUNCTION(KeyPressedEvent, &RendererBackend::on_key_press_event, instance);
-        EventSystemHelper::subscribe(EVENTTYPE_KEY_PRESSED, instance->key_press_handler);
-        instance->key_press_handler->is_toggle = true;
+        key_press_handler = BIND_EVENT_FUNCTION(KeyPressedEvent, &RendererBackend::on_key_press_event, this);
+        key_press_handler->is_toggle = true;
+        EventSystemHelper::subscribe(EVENTTYPE_KEY_PRESSED, key_press_handler);
 
-        GLCommandCentre::start();
 
 
     }
@@ -51,21 +51,18 @@ namespace Cold {
         ShaderSystem::shut_down();
         GeometrySystem::shutdown();
         TextureSystem::shutdown();
-
-        delete instance;
-        instance = nullptr;
     }
 
     void RendererBackend::on_frame_render()
     {
-        glClearColor(1.0f, 1.0f, 1.0f, 01.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         GLCommandCentre::get_instance()->run_commands();
-        for(auto [mesh_name, mesh] : instance->meshes)
+        for(auto [mesh_name, mesh] : meshes)
         {
             if(mesh_name ==  "sqaure")
                 mesh->get_transform()->anim_rotate({0,0.5,0});
-            mesh->render(instance->geometry_system);
+            mesh->render(geometry_system);
         }
 
     }
@@ -87,10 +84,10 @@ namespace Cold {
 
     void RendererBackend::on_camera_props_change(const glm::mat4& new_view_model, const glm::vec3 new_camera_position)
     {
-        instance->global_uniform_object->view_model = new_view_model;
-        instance->global_uniform_object->camera_position = new_camera_position;
+        global_uniform_object->view_model = new_view_model;
+        global_uniform_object->camera_position = new_camera_position;
         GLCommandCentre::get_instance()->submit(&RendererBackend::pass_camera_props_to_gpu,
-            instance);
+            this);
     }
 
     void RendererBackend::pass_camera_props_to_gpu() {
@@ -112,33 +109,35 @@ namespace Cold {
         TransformSPtr root_2 = std::make_shared<Cold::Transform>();
         StaticMesh* sponza_mesh = new StaticMesh(root, "Assets/Models/sponza/sponza.obj");
         root->scale({0.05,00.05,0.05});
-        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, sponza_mesh, instance->geometry_system);
-     ///   sponza_mesh->load_mesh(instance->geometry_system);
-    //    sponza_mesh->buffer_to_gpu(instance->geometry_system);
+        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, sponza_mesh, geometry_system);
+     ///   sponza_mesh->load_mesh(geometry_system);
+    //    sponza_mesh->buffer_to_gpu(geometry_system);
 
         StaticMesh* falcon = new StaticMesh(root_2, "Assets/Models/falcon/falcon.obj");
         root_2->translate({50,0,0});
-        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, falcon, instance->geometry_system);
-       // falcon->load_mesh(instance->geometry_system);
-     //   falcon->buffer_to_gpu(instance->geometry_system);
+        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, falcon, geometry_system);
+       // falcon->load_mesh(geometry_system);
+     //   falcon->buffer_to_gpu(geometry_system);
 
         TransformSPtr square_transform = std::make_shared<Transform>();
         square_transform->translate({0,10,0});
         square_transform->scale({5,5,5});
         auto sqaure_mesh = new StaticMesh(square_transform, "Assets/Models/Cube/cube.obj");
-        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, sqaure_mesh, instance->geometry_system);
-    //    sqaure_mesh->load_mesh(instance->geometry_system);
-     //   sqaure_mesh->buffer_to_gpu(instance->geometry_system);
+        ThreadPool::get_instance()->submit(&StaticMesh::load_mesh, sqaure_mesh, geometry_system);
+    //    sqaure_mesh->load_mesh(geometry_system);
+     //   sqaure_mesh->buffer_to_gpu(geometry_system);
         sqaure_mesh->set_cull_facing(false);
 
-        instance->meshes.insert({"sponza", sponza_mesh});
-        instance->meshes.insert({"falcon", falcon});
-        instance->meshes.insert({"sqaure", sqaure_mesh});
+        meshes.insert({"sponza", sponza_mesh});
+        meshes.insert({"falcon", falcon});
+        meshes.insert({"sqaure", sqaure_mesh});
     }
+
 
     RendererBackend::~RendererBackend()
     {
         delete global_uniform_object;
+        shut_down();
     }
 
     void RendererBackend::initialise_default_shader()
@@ -153,10 +152,8 @@ namespace Cold {
             Material mat;
             if (i == 2) {
                 mat.diff_tex = cobble_stone.diffuse;
-                
-               
-                
             }
+
             else if (i == 3) {
                 mat.diff_tex = cobble_stone.diffuse;
                 mat.specular_texure = cobble_stone.specular;
@@ -169,16 +166,37 @@ namespace Cold {
                 mat.shininess = cobble_stone.shininess;
                 mat.normal_texture = cobble_stone.normal;
             }
+
             else {
                 mat.diff_tex = default_data.default_texture_path;
                 i = 1;
             }
-            if(instance->meshes.count("sqaure")) {
-                instance->meshes["sqaure"]->set_material(instance->geometry_system, mat, "Cube");
+
+            if(meshes.count("sqaure")) {
+                meshes["sqaure"]->set_material(geometry_system, mat, "Cube");
             }
             i++;
+            COLD_ERROR("Value of i = %d", i);
         }
 
         event->set_handled_flag(true);
     }
+
+    ////////////////////////////////////  API CALLS  ////////////////////////////////////
+
+    i32 RendererBackend::create_static_mesh(const std::string& path,
+        glm::vec3 translation , glm::vec3 scale) {
+        TransformSPtr root = std::make_shared<Transform>();
+        root->translate(translation);
+        root->scale(scale);
+        StaticMesh* s = new StaticMesh(root, path);
+        s->load_mesh(geometry_system);
+        meshes.insert({path, s});
+        return 0; // TODO for now return 0 as will make a Mesh manager
+    }
+
+    void RendererBackend::delete_static_mesh(i32 static_mesh_id) {
+    }
+
+    ////////////////////////////////////  API CALLS  ////////////////////////////////////
 }

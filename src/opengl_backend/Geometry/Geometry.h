@@ -1,7 +1,6 @@
 #pragma once
 #include <includes.h>
-#include <glad/glad.h>
-#include <VertexBuffer.h>
+
 #include <VertexArrayBuffer.h>
 #include <assimp/scene.h>
 #include <Transforms.h>
@@ -21,7 +20,7 @@ namespace Cold {
         void push_vertex_data(const std::vector<Vertex> &vert_data);
         void push_indicies(aiFace* faces, u32 face_count);
         void push_inicies(const std::vector<u32>& index_data);
-        void buffer_data_to_gpu();
+        bool buffer_data_to_gpu();
         void delete_data_from_gpu();
         void buffer_material_data();
 
@@ -56,6 +55,10 @@ namespace Cold {
         std::string shader;
 
         std::mutex mtx;
+
+        bool buffered_to_gpu {false};
+
+        inline static u64 total_size_of_geoms = 0;
 
     };
 

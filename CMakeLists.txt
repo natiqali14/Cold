@@ -11,7 +11,7 @@ if(WIN32)
     add_compile_options(/W1)
 endif(WIN32)
 if(APPLE)
-    add_compile_options(-fcolor-diagnostics -Wall -fansi-escape-codes -g -Wno-deprecated)   
+    add_compile_options(-fcolor-diagnostics -Wall -fansi-escape-codes -g -Wno-deprecated -rdynamic)
 endif(APPLE)
 
 
@@ -47,7 +47,8 @@ include_directories(
 find_package(OpenGL REQUIRED)
 
 # Add source files
-file(GLOB_RECURSE SOURCES 
+file(GLOB_RECURSE SOURCES
+        "${CMAKE_SOURCE_DIR}/glad.c"
         "${CMAKE_SOURCE_DIR}/src/*.cpp"
         "${CMAKE_SOURCE_DIR}/src/WindowSystem/*.cpp"
         "${CMAKE_SOURCE_DIR}/src/EventSystem/*.cpp"
@@ -70,13 +71,15 @@ file(GLOB_RECURSE SOURCES
         "${CMAKE_SOURCE_DIR}/src/ThreadPool/Worker.cpp"
         "${CMAKE_SOURCE_DIR}/src/ThreadPool/Worker.cpp"
         "${CMAKE_SOURCE_DIR}/src/opengl_backend/GLCommandCentre/*.cpp"
+        "${CMAKE_SOURCE_DIR}/src/FrontEnd/*.cpp"
 
 
-        "${CMAKE_SOURCE_DIR}/glad.c"
+
         "${CMAKE_SOURCE_DIR}/src/third_party/ImGUI/*.cpp"
 )
 
 set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
 # Create executable
 add_executable(app ${SOURCES}
@@ -130,3 +133,10 @@ set_target_properties(app PROPERTIES
 if(WIN32)
     target_link_options(app PRIVATE /NODEFAULTLIB:MSVCRT)
 endif(WIN32)
+
+if (APPLE)
+    # For the entire target:
+    target_compile_definitions(app PRIVATE
+            __APPLE__
+    )
+endif (APPLE)

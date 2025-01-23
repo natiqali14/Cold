@@ -5,6 +5,7 @@
 #include "Text.h"
 
 #include <imgui.h>
+#include <Logger.h>
 
 namespace Cold {
     Text::Text(std::string text, f32 scale, const glm::vec4 &color)
@@ -49,7 +50,6 @@ namespace Cold {
         ImGui::PushFont(current_font);
         auto text_size =  ImGui::CalcTextSize(content.c_str());
         ImGui::PopFont();
-
         current_font->FontSize = 1.0;
         ImGui::PushFont(current_font);
         ImGui::PopFont();

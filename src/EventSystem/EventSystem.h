@@ -5,9 +5,7 @@
 class IEventHandler;
 class EventSystem {
 public:
-
     void initialise();
-    
     void subscribe(EventType type, IEventHandler* event_handle);
     void unsubscribe(EventType type, IEventHandler* event_handle);
     void trigger_event(EventType type, IEvent* event_data);

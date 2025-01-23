@@ -56,6 +56,18 @@ namespace Cold {
             queue.pop_front();
         }
 
+        std::shared_ptr<Type> wait_and_pop_with_ret() {
+            std::unique_lock<std::mutex> lock(q_mtx);
+            std::shared_ptr<Type> element;
+            q_cond.wait(lock, [this](){return !queue.empty() || force;});
+            if (force) {
+                return element;
+            }
+            element = std::make_shared<T>(std::move(queue.front()));
+            queue.pop_front();
+            return element;
+        }
+
         void wait_and_pop(Type& element) {
             std::lock_guard<std::mutex> lock(q_mtx);
             q_cond.wait(lock, [this](){return !queue.empty();});

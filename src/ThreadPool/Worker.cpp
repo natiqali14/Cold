@@ -7,10 +7,12 @@
 #include <Logger.h>
 
 namespace Cold {
+    Worker::~Worker() {
+
+    }
+
     void Worker::run() {
-        while (!b_stop_worker) {
-            std::shared_ptr<VoidFtn> task;
-            tasks.wait_and_pop(task);
+        while (auto task = tasks.wait_and_pop_with_ret()) {
             if (!task) break;
             (*task)();
         }
@@ -30,6 +32,7 @@ namespace Cold {
     }
 
     void Worker::force_wake_up_queue() {
+        b_stop_worker = true;
         tasks.force_wake_up(true);
     }
 }

@@ -66,11 +66,11 @@ namespace Cold {
         geometry->push_inicies(index_data);
     }
 
-    void GeometrySystem::buffer_geometry_data_to_gpu(GeometryId id)
+    bool GeometrySystem::buffer_geometry_data_to_gpu(GeometryId id)
     {
         COLD_ASSERT(geometries.count(id) > 0, "No Geometry found in the map");
         GeometrySPtr geometry = geometries.at(id);
-        geometry->buffer_data_to_gpu();
+        return geometry->buffer_data_to_gpu();
 
     }
 

@@ -75,6 +75,7 @@ GWindow::~GWindow()
 {
     glfwSetWindowShouldClose(window, 1);
     glfwDestroyWindow(window);
+    glfwTerminate();
 }
 
 void GWindow::mouse_input_callback(GLFWwindow *window, f64 x_pos, f64 y_pos)

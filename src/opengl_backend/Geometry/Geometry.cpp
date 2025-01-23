@@ -4,6 +4,8 @@
 #include <TextureSystem.h>
 #include <comman_data.h>
 #include <BackendConfigData.h>
+#include "buffers/Vertexbuffer.h"
+#include "buffers/VertexArrayBuffer.h"
 namespace Cold {
     Geometry::Geometry(GLenum geometry_usage)
     : ref_count(1)
@@ -70,7 +72,7 @@ namespace Cold {
         indicies = std::move(index_data);
     }
 
-    void Geometry::buffer_data_to_gpu()
+    bool Geometry::buffer_data_to_gpu()
     {
         std::lock_guard<std::mutex> lock(mtx);
         if(!vao) {
@@ -98,8 +100,10 @@ namespace Cold {
 
             buffer_material_data();
 
-        } 
-       
+            buffered_to_gpu = true;
+            return true;
+        }
+        return false;
 
     }
 
@@ -153,6 +157,7 @@ namespace Cold {
     void Geometry::render(TransformSPtr static_mesh_root)
     {
         std::lock_guard<std::mutex> lock(mtx);
+        if (!buffered_to_gpu) return;
         transform->set_parent(std::move(static_mesh_root));
         // TODO change this
         ShaderSystem::pass_sampler_to_gpu(shader, geometry_material.diff_tex_id, 0, "frameTexture");

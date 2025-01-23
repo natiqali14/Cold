@@ -33,20 +33,29 @@ namespace Cold {
 
     class RendererBackend {
     public:
-        static void initiate();
-        static void shut_down();
-        static void on_frame_render();
-        static void set_frame_packet(FramePacketSPtr frame_packet);
-        static void set_open_gl_settings();
-        static void on_camera_props_change(const glm::mat4& new_view_model, const glm::vec3 new_camera_position);
-        static void load_data(); // TODO should not be here, make a scene class or something similar
+        RendererBackend();
+        ~RendererBackend();
+         void initiate();
+         void shut_down();
+         void on_frame_render();
+         void set_frame_packet(FramePacketSPtr frame_packet);
+         void set_open_gl_settings();
+         void on_camera_props_change(const glm::mat4& new_view_model, const glm::vec3 new_camera_position);
+         void load_data(); // TODO should not be here, make a scene class or something similar
+
+        ////////////////////////////////////  API CALLS  ////////////////////////////////////
+
+        /// 1. For Static Mesh.
+
+        i32 create_static_mesh(const std::string& path, glm::vec3 translation , glm::vec3 scale);
+        void delete_static_mesh(i32 static_mesh_id);
+
+        ////////////////////////////////////  API CALLS  ////////////////////////////////////
 
     private:
         GlobalUniformObject* global_uniform_object;
         std::unordered_map<std::string , StaticMesh*> meshes;
         GeometrySystemSPtr geometry_system;
-        RendererBackend();
-        ~RendererBackend();
         void initialise_default_shader(); // TODO SHOULD BE MOVED FROM HERE
 
         // TODO move to some place else here just for testing

@@ -13,6 +13,7 @@ namespace Cold {
     class Worker {
         using VoidFtn = std::function<void()>;
     public:
+        ~Worker();
         void run();
         void add_task(VoidFtn task);
         std::shared_ptr<VoidFtn> get_next_task_to_run();

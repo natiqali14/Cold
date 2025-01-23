@@ -21,6 +21,6 @@ namespace Cold {
     inline vertex_data v_data = {};
 }
 
-
+inline static  std::string glsl_version = "#version 400"; // For OpenGL 3.2+
 #define FRAME_RATE 60
 #define MICRO_SECONDS_PER_FRAME 1000000 / FRAME_RATE

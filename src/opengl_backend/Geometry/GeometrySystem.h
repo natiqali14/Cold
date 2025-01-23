@@ -1,7 +1,6 @@
 #pragma once
 #include <includes.h>
-#include <initializer_list>
-#include <VertexBuffer.h>
+
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -32,7 +31,7 @@ namespace Cold {
         void pass_data_to_geometry(GeometryId id, const GeommetryConfig& geometry_config);
         void pass_data_to_geometry(GeometryId id, const std::vector<Vertex>& geom_data);
         void pass_indicies_data_to_geometry(GeometryId id, const std::vector<u32>& index_data);
-        void buffer_geometry_data_to_gpu(GeometryId id);
+        bool buffer_geometry_data_to_gpu(GeometryId id);
         void render_geometry(GeometryId id, TransformSPtr static_mesh_transform);
         bool delete_geometry(GeometryId id);
         bool should_load_geometry_data(const std::string& geometry_path);

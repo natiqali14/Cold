@@ -1,4 +1,7 @@
 #include "EventSystem.h"
+
+#include <Logger.h>
+
 #include "EventHandler.h"
 void EventSystem::initialise()
 {
@@ -54,8 +57,10 @@ void EventSystem::trigger_event(EventType type, IEvent* event_data)
         else key_pressed.insert(e->get_key_code());
     }
     for(auto& PFN_handle : PFN_to_trigger[type]) {
-        if (event_handler_map[PFN_handle]->is_toggle && key_found) return;
+        if (event_handler_map[PFN_handle]->is_toggle && key_found) continue;
         event_handler_map[PFN_handle]->call(event_data);
+
+
     }
 }
 
@@ -64,11 +69,8 @@ void EventSystem::dispatch_events()
     while(!events_queue.empty()) {
         auto queue_event_data = events_queue.front();
         trigger_event(queue_event_data.first, queue_event_data.second);
-        if(queue_event_data.second->is_handled()) {
-            events_queue.pop();
-            delete queue_event_data.second;
-
-        }
+        events_queue.pop();
+        delete queue_event_data.second;
     }
 }
 

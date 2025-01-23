@@ -13,6 +13,7 @@ namespace Cold {
     }
 
     ThreadPool::~ThreadPool() {
+        COLD_TRACE("ThreadPool::~ThreadPool Called");
     }
 
     void ThreadPool::start(u8 number_of_threads) {

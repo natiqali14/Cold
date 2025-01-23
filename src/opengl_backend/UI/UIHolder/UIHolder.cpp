@@ -27,38 +27,58 @@ namespace Cold {
         ui_components.emplace_back();
     }
 
-    void UIHolder::add_component_in_row(iUIComponentSPtr component, u32 row_number) {
+    void UIHolder::add_component_in_row(iUIComponentSPtr component, u32 row_number, f32 spacing) {
         if (row_number <= ui_components.size()) {
-            ui_components[row_number].push_back(std::move(component));
+            UIHolderProps props;
+            props.ui = std::move(component);
+            props.spacing_on_right_side = spacing;
+            ui_components[row_number].push_back(std::move(props));
         }
 
     }
 
-    void UIHolder::add_component(iUIComponentSPtr component) {
-        ui_components[ui_components.size() - 1].push_back(std::move(component));
+    void UIHolder::add_component(iUIComponentSPtr component, f32 spacing) {
+        UIHolderProps props;
+        props.ui = std::move(component);
+        props.spacing_on_right_side = spacing;
+        ui_components[ui_components.size() - 1].push_back(std::move(props));
     }
 
-    void UIHolder::add_component_in_new_row(iUIComponentSPtr component) {
+    void UIHolder::add_component_in_new_row(iUIComponentSPtr component, f32 spacing) {
         ui_components.emplace_back();
-        ui_components[ui_components.size() - 1].push_back(std::move(component));
+        UIHolderProps props;
+        props.ui = std::move(component);
+        props.spacing_on_right_side = spacing;
+        ui_components[ui_components.size() - 1].push_back(std::move(props));
     }
 
-    iUIComponentSPtr UIHolder::replace_component(iUIComponentSPtr component_to_replace, const glm::u32vec2 &index) {
+    UIHolderProps UIHolder::replace_component(iUIComponentSPtr component_to_replace, const glm::u32vec2 &index, f32 new_spacing) {
         if (ui_components.size() <= index.x && ui_components[index.y].size() <= index.y) {
             auto replaced_component = ui_components[index.x][index.y];
-            ui_components[index.x][index.y] = std::move(component_to_replace);
+            UIHolderProps props;
+            props.ui = std::move(component_to_replace);
+            props.spacing_on_right_side = new_spacing;
+            ui_components[index.x][index.y] = std::move(props);
             return replaced_component;
         }
-        return nullptr;
+        return {};
 
+    }
+
+    void UIHolder::set_spacing(i32 row, i32 index, f32 new_spacing) {
+        ui_components[row][index].spacing_on_right_side = new_spacing;
     }
 
     void UIHolder::render() {
         ImGui::SetNextWindowPos({holder_location.x, holder_location.y}, ImGuiCond_Always);
         ImGui::Begin(window_title.c_str(), nullptr, holder_flags);
         for (auto& ui_component_row : ui_components) {
-            for (const auto& ui : ui_component_row) {
+            i32 index = 0;
+            for (const auto&[ui, spacing_on_right_side] : ui_component_row) {
                 ui->render();
+                if (index < ui_component_row.size() - 1)
+                    ImGui::SameLine(0.0f, spacing_on_right_side);
+                index++;
             }
         }
         ImGui::End();

@@ -1,6 +1,6 @@
 #include "VertexArrayBuffer.h"
 
-#include <glad/glad.h>
+
 #include <Logger.h>
 namespace Cold {
     VertexArrayBufferSPtr VertexArrayBuffer::create_vertex_array_buffer()

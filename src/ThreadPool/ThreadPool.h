@@ -9,6 +9,7 @@
 #include <mutex>
 #include <thread>
 #include <future>
+#include <Logger.h>
 #include <vector>
 #include "ThreadSafeQueue.h"
 #include "Worker.h"
@@ -25,6 +26,7 @@ namespace Cold {
         ~ThreadWorker() {
             worker->force_wake_up_queue();
             if (worker_thread.joinable()) worker_thread.join();
+            COLD_TRACE("~ThreadWorker destroyed successfully");
         }
 
     };
