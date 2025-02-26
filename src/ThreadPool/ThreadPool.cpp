@@ -17,7 +17,7 @@ namespace Cold {
     }
 
     void ThreadPool::start(u8 number_of_threads) {
-        instance = new ThreadPool;
+        instance = new ThreadPool(number_of_threads);
     }
 
     void ThreadPool::stop() {

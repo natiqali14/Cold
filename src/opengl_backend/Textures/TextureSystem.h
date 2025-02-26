@@ -31,5 +31,7 @@ namespace Cold {
     private:
         std::unordered_map<TextureId,TextureSPtr> textures;
         std::unordered_map<std::string, TextureId> external_textures_ref;
+
+        std::mutex mtx;
     };
 }

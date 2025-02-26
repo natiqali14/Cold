@@ -49,7 +49,7 @@ Application::~Application() {
 void Application::run() {
     f32 frame_rate = 0;
     u64 start = application_clock.get_current_time_in_us();
-    renderer_backend->load_data();
+ //   renderer_backend->load_data();
     // -----------------------------  Graphic Setting UI ------------------------ //
 
     while (!main_window->should_close_window())

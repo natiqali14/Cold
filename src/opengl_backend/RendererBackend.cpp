@@ -55,7 +55,7 @@ namespace Cold {
 
     void RendererBackend::on_frame_render()
     {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         GLCommandCentre::get_instance()->run_commands();
         for(auto [mesh_name, mesh] : meshes)
@@ -191,7 +191,14 @@ namespace Cold {
         root->scale(scale);
         StaticMesh* s = new StaticMesh(root, path);
         s->load_mesh(geometry_system);
-        meshes.insert({path, s});
+        static int i = 0;
+        if (meshes.count(path)) {
+            auto new_path = path + std::to_string(i);
+            i++;
+            meshes.insert({new_path, s});
+        }
+        else
+            meshes.insert({path, s});
         return 0; // TODO for now return 0 as will make a Mesh manager
     }
 

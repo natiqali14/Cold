@@ -189,7 +189,9 @@ namespace Cold {
     void Geometry::set_material(const Material &material)
     {
         std::lock_guard<std::mutex> lock(mtx);
+        if (set) return; // TODO change this
         geometry_material = std::move(material);
+        set = true;
     }
 
     void Geometry::change_material(const Material &material)

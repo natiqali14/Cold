@@ -56,6 +56,7 @@ namespace Cold {
 
     bool TextureSystem::delete_texture(const TextureId texture_id)
     {
+        std::lock_guard<std::mutex> lock(instance->mtx);
         // texture id not found
         if(!instance->textures.count(texture_id)) return false;
         // texture id found, ref count decrease by 1
@@ -75,6 +76,7 @@ namespace Cold {
 
     TextureId TextureSystem::texture_2D_immutable_create(const std::string &path, const TextureProps& props)
     {
+        std::lock_guard<std::mutex> lock(instance->mtx);
         if(instance->external_textures_ref.count(path)) {
             TextureId u_id = instance->external_textures_ref[path];
             instance->textures[u_id]->ref_count++;
@@ -133,6 +135,7 @@ namespace Cold {
 
     TextureId TextureSystem::texture_2D_mutable_create(const std::string &path, const TextureProps& props)
     {
+        std::lock_guard<std::mutex> lock(instance->mtx);
        if(instance->external_textures_ref.count(path)) {
             TextureId u_id = instance->external_textures_ref.count(path);
             instance->textures[u_id]->ref_count++;

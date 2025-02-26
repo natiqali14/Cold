@@ -59,6 +59,7 @@ namespace Cold {
         bool buffered_to_gpu {false};
 
         inline static u64 total_size_of_geoms = 0;
+        bool set {false};
 
     };
 
