@@ -176,7 +176,6 @@ namespace Cold {
                 meshes["sqaure"]->set_material(geometry_system, mat, "Cube");
             }
             i++;
-            COLD_ERROR("Value of i = %d", i);
         }
 
         event->set_handled_flag(true);

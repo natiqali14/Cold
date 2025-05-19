@@ -76,7 +76,6 @@ namespace Cold {
     {
         std::lock_guard<std::mutex> lock(mtx);
         if(!vao) {
-            COLD_ERROR("Buffering gpu data");
             auto vbo_data = VertexBuffer::create_vertex_buffer(verticies.data(), verticies.size() * sizeof(Vertex), usage,
             {
                 {"aPos", 3, GL_FLOAT, false, sizeof(Vertex), offsetof(Vertex, position)},

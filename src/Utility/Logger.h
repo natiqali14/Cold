@@ -18,7 +18,7 @@ namespace Cold {
     }
 }
 
-#define TRACE_ENABLED 1
+#define TRACE_ENABLED 0
 #define ERROR_ENABLED 1
 #define INFO_ENABLED 0
 #define WARNING_ENABLED 1

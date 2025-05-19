@@ -7,6 +7,9 @@
 
 #include <includes.h>
 #include <RendererBackend.h>
+#include <Inputs/DragInput.h>
+#include <Inputs/InputText.h>
+#include <Text/Text.h>
 
 #include "../opengl_backend/UI/UIHolder/UIHolder.h"
 namespace Cold {
@@ -25,14 +28,12 @@ namespace Cold {
     private:
         UIHolderSPtr main_holder;
         bool b_should_hide {false};
-        iUIComponentSPtr model_path_input;
-        iUIComponentSPtr model_path_input_btn;
-        iUIComponentSPtr frame_rate_text;
-        iUIComponentSPtr model_render_button;
-        iUIComponentSPtr drag_trans_x, drag_trans_y, drag_trans_z, drag_scale;
+        std::shared_ptr<InputText> model_path_input;
+        std::shared_ptr<Button> model_path_input_btn;
+        std::shared_ptr<Text> frame_rate_text;
+        std::shared_ptr<Button> model_render_button;
+        std::shared_ptr<DragInput> drag_trans_x, drag_trans_y, drag_trans_z, drag_scale;
         std::string model_path;
-
-
 
         // functions
         void on_model_path_input_btn_click();

@@ -4,11 +4,6 @@
 
 #include "MainGUI.h"
 
-#include <Logger.h>
-#include <Inputs/DragInput.h>
-#include <Inputs/InputText.h>
-#include <Text/Text.h>
-
 namespace Cold {
     MainGUI::MainGUI() {
     }
@@ -28,7 +23,7 @@ namespace Cold {
     }
 
     void MainGUI::set_frame_rate(const std::string &frame_rate) {
-        dynamic_cast<Text*>(frame_rate_text.get())->set_content(frame_rate);
+        frame_rate_text.get()->set_content(frame_rate);
     }
 
     void MainGUI::initialise() {
@@ -64,11 +59,11 @@ namespace Cold {
     }
 
     void MainGUI::on_model_path_input_btn_click() {
-        model_path = dynamic_cast<InputText*>(model_path_input.get())->get_text();
-        auto x = dynamic_cast<DragInput*>(drag_trans_x.get())->get_value();
-        auto y = dynamic_cast<DragInput*>(drag_trans_y.get())->get_value();
-        auto z = dynamic_cast<DragInput*>(drag_trans_z.get())->get_value();
-        auto s =  dynamic_cast<DragInput*>(drag_scale.get())->get_value();
+        model_path = model_path_input.get()->get_text();
+        auto x = drag_trans_x.get()->get_value();
+        auto y = drag_trans_y.get()->get_value();
+        auto z = drag_trans_z.get()->get_value();
+        auto s = drag_scale.get()->get_value();
         backend_ptr->create_static_mesh(model_path, {x,y,z}, {s,s,s});
     }
 

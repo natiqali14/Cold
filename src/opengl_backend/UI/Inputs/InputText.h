@@ -27,8 +27,6 @@ namespace Cold {
         std::string input_label;
         i32 input_flags;
         u32 text_length;
-
-
     };
 }
 

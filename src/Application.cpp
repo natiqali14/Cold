@@ -26,13 +26,8 @@ Application::Application() {
     renderer_backend->initiate();
     main_editor = new Cold::MainGUI;
     main_editor->initialise();
-
-    COLD_ERROR("Application 1");
    // renderer_backend->initiate();
-    COLD_ERROR("Application 2");
     main_editor->initialise();
-    COLD_ERROR("Application 3");
-
     main_editor->backend_ptr = renderer_backend;
 
 
